@@ -22,8 +22,12 @@ const KEEP_AWAKE_TAG = 'dingin.player';
 
 export default function PlayerRoute() {
   const [sleepMode, setSleepMode] = useState(false);
-  const body = <PlayerScreen sleepMode={sleepMode} onSleepMode={setSleepMode} />;
-  return sleepMode ? <ThemeProvider night>{body}</ThemeProvider> : body;
+  // Always keep the same tree shape so toggling sleep mode does not remount the player (which would flush the log and reload the preset).
+  return (
+    <ThemeProvider night={sleepMode}>
+      <PlayerScreen sleepMode={sleepMode} onSleepMode={setSleepMode} />
+    </ThemeProvider>
+  );
 }
 
 function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepMode: (v: boolean) => void }) {

@@ -58,7 +58,7 @@ function Illustration({ kind }: { kind: 0 | 1 | 2 }) {
   );
 }
 
-function CheckRow({ checked, label, hint, onToggle, required }: { checked: boolean; label: string; hint?: string; onToggle: () => void; required?: boolean }) {
+function CheckRow({ checked, label, hint, onToggle }: { checked: boolean; label: string; hint?: string; onToggle: () => void }) {
   const { colors, radius, space } = useTheme();
   return (
     <Pressable
@@ -72,7 +72,7 @@ function CheckRow({ checked, label, hint, onToggle, required }: { checked: boole
         {checked ? <Check size={18} color={colors.onPrimary} strokeWidth={3} /> : null}
       </View>
       <View style={{ flex: 1 }}>
-        <Text variant="body">{label}{required ? '' : ''}</Text>
+        <Text variant="body">{label}</Text>
         {hint ? <Text variant="caption" tone="secondary">{hint}</Text> : null}
       </View>
     </Pressable>
@@ -122,6 +122,7 @@ export default function Onboarding() {
         </View>
         <FlatList
           ref={listRef}
+          style={{ flex: 1 }}
           data={pages}
           horizontal
           pagingEnabled
@@ -170,8 +171,8 @@ export default function Onboarding() {
         <Text variant="h1" accessibilityRole="header">{t('onb.consent.title')}</Text>
         <Text variant="body" tone="secondary">{t('onb.consent.intro')}</Text>
         <Card>
-          <CheckRow checked={notDiagnosis} label={t('onb.consent.notDiagnosis')} onToggle={() => setNotDiagnosis((v) => !v)} required />
-          <CheckRow checked={privacy} label={t('onb.consent.privacy')} hint={t('onb.consent.privacyBody')} onToggle={() => setPrivacy((v) => !v)} required />
+          <CheckRow checked={notDiagnosis} label={t('onb.consent.notDiagnosis')} onToggle={() => setNotDiagnosis((v) => !v)} />
+          <CheckRow checked={privacy} label={t('onb.consent.privacy')} hint={t('onb.consent.privacyBody')} onToggle={() => setPrivacy((v) => !v)} />
           <CheckRow checked={anonymous} label={t('onb.consent.anonymous')} hint={t('onb.consent.anonymousHint')} onToggle={() => setAnonymous((v) => !v)} />
         </Card>
         <Card>

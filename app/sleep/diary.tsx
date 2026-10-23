@@ -16,7 +16,7 @@ interface SleepDetail {
 const pad2 = (n: number) => String(n).padStart(2, '0');
 const hm = (h: number, m: number) => `${pad2(h)}:${pad2(m)}`;
 
-export function computeSleep(bedH: number, bedM: number, wakeH: number, wakeM: number, sol: number, waso: number) {
+function computeSleep(bedH: number, bedM: number, wakeH: number, wakeM: number, sol: number, waso: number) {
   const tib = ((wakeH * 60 + wakeM) - (bedH * 60 + bedM) + 1440) % 1440;
   const tst = Math.max(0, tib - sol - waso);
   const efficiency = tib > 0 ? Math.round((tst / tib) * 100) : 0;

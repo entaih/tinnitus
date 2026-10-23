@@ -1032,3 +1032,355 @@ The balanced thought is longer and less dramatic. Being less dramatic is good; a
     },
     citations: ['fuller2020', 'beukes2018', 'hesser2012'],
   },
+  {
+    id: 'cbt.relax5',
+    title: { tr: 'Derin gevşeme 5: hızlı gevşeme', en: 'Deep relaxation 5: rapid relaxation' },
+    intro: {
+      tr: 'Beşinci adımda gevşeme 20–30 saniyeye iner ve günün doğal akışına bağlanır. Günde 15–20 kez, önceden belirlediğiniz işaretlerle uygulanır: telefon çaldığında, kapıdan geçtiğinizde, su içtiğinizde.',
+      en: 'In the fifth step relaxation comes down to 20–30 seconds and is tied to the natural flow of the day. It is practised 15–20 times a day at cues you choose in advance: when the phone rings, when you walk through a door, when you drink water.',
+    },
+    sections: [
+      {
+        heading: { tr: 'Gündelik işaretler', en: 'Everyday cues' },
+        body: {
+          tr: `Önceki adımlarda gevşeme belirli bir oturuma bağlıydı. Şimdi onu gün içine dağıtıyoruz. Öst'ün protokolünde kişi gün boyunca tekrar eden birkaç doğal olayı işaret olarak seçer ve her işaret geldiğinde 20–30 saniyelik bir gevşeme yapar. Günde 15–20 kez tekrarlanan bu kısa uygulamalar, gün boyu biriken gerginliği oluşmadan boşaltır.
+
+İşaret olarak işe yarayanlar: telefon çalması veya bildirim sesi, saate bakmak, bir kapıdan geçmek, su içmek, bilgisayarda yeni bir sekme açmak, kırmızı ışıkta beklemek, merdiven çıkmak. İşaretin günde çok kez, fark edilir biçimde ve stresli olmayan bir bağlamda gerçekleşmesi gerekir. Üç dört işaret yeterlidir; telefonunuzun duvar kâğıdına ya da masanıza küçük bir renkli nokta koymak hatırlamaya yardım eder.`,
+          en: `In the earlier steps relaxation was tied to a set session. Now we spread it through the day. In Öst's protocol the person chooses a few natural events that recur during the day as cues and does a 20–30 second relaxation each time one occurs. Repeated 15–20 times a day, these brief practices drain tension before it accumulates.
+
+Cues that work: the phone ringing or a notification tone, looking at the clock, walking through a door, drinking water, opening a new tab on the computer, waiting at a red light, climbing stairs. The cue must occur many times a day, be noticeable and happen in a context that is not stressful. Three or four cues are enough; a small coloured dot on your phone wallpaper or your desk helps you remember.`,
+        },
+      },
+      {
+        heading: { tr: '20–30 saniyelik gevşeme', en: 'The 20–30 second relaxation' },
+        kind: 'exercise',
+        body: {
+          tr: `1. İşareti fark edin.
+2. Bir iki derin nefes alın.
+3. Her nefes verişte zihninizden "gevşe" deyin.
+4. Omuzlardan başlayarak bedeni hızla tarayın: yüz, çene, omuzlar, eller, karın. Gerginlik bulduğunuz yeri nefesle bırakın.
+5. Yaptığınız işe devam edin.
+
+Bu uygulama göze çarpmaz; toplantıda, kuyrukta, otobüste yapılabilir. Kimse fark etmez. Bir hafta boyunca günde en az 15 kez uygulayın; her uygulamayı saymak gerekmez, işaretler hatırlatacaktır.`,
+          en: `1. Notice the cue.
+2. Take one or two deep breaths.
+3. On each out-breath say "relax" in your mind.
+4. Scan the body quickly from the shoulders down: face, jaw, shoulders, hands, abdomen. Release any tension you find with the breath.
+5. Carry on with what you were doing.
+
+This practice is invisible; it can be done in a meeting, in a queue, on the bus. No one notices. For a week practise at least 15 times a day; you do not need to count each one, the cues will remind you.`,
+        },
+      },
+      {
+        heading: { tr: 'Tinnitusun kendisi bir işaret olarak', en: 'The tinnitus itself as a cue' },
+        kind: 'tip',
+        body: {
+          tr: `Bu haftadan itibaren tinnitusu fark etmenin kendisini bir işaret yapmayı deneyin. Sesi fark ettiğiniz anda iki nefes, "gevşe", hızlı tarama. Bu, beynin ses ile gerginlik arasında kurduğu bağı ses ile gevşeme arasında yeni bir bağa dönüştürmeye başlar. Bir gecede olmaz; ama her tekrar, sesin anlamını biraz değiştirir.
+
+Dikkat: sesi gevşeme ile "kapatmaya" çalışmayın. Gevşemenin amacı sesi yok etmek değil, sesle birlikte sakin kalabilmektir. Ses gevşemeden sonra da oradaysa uygulama yine başarılıdır.`,
+          en: `From this week on, try making the noticing of tinnitus itself a cue. The moment you notice the sound: two breaths, "relax", quick scan. This begins to turn the link the brain has made between sound and tension into a new link between sound and relaxation. It does not happen overnight; but each repetition shifts the meaning of the sound a little.
+
+Note: do not try to "switch off" the sound with relaxation. The purpose of relaxation is not to remove the sound but to stay calm alongside it. If the sound is still there after relaxing, the practice has still worked.`,
+        },
+      },
+    ],
+    practice: {
+      kind: 'checklist',
+      minutes: 3,
+      items: [
+        { tr: 'Gün içinde sık tekrar eden üç dört işaret seçtim (telefon, kapı, su, saat…).', en: 'I chose three or four cues that recur often during the day (phone, door, water, clock…).' },
+        { tr: 'Hatırlatıcı olarak bir yere küçük bir işaret koydum.', en: 'I placed a small reminder mark somewhere.' },
+        { tr: 'Bugün en az 15 kez 20–30 saniyelik gevşeme yaptım.', en: 'Today I did the 20–30 second relaxation at least 15 times.' },
+        { tr: 'Tinnitusu fark ettiğim en az üç anda hızlı gevşeme uyguladım.', en: 'I applied rapid relaxation in at least three moments when I noticed the tinnitus.' },
+      ],
+    },
+    keyTakeaway: {
+      tr: 'Günde 15–20 kez, gündelik işaretlerle yapılan 20–30 saniyelik gevşeme, gerginliğin birikmesini önler; sesi fark etmek de bir işaret olabilir.',
+      en: 'A 20–30 second relaxation done 15–20 times a day at everyday cues stops tension from building; noticing the sound can itself be a cue.',
+    },
+    citations: ['ost1987', 'beukes2018'],
+  },
+  {
+    id: 'cbt.exposure',
+    title: { tr: 'Sese bilinçli maruz kalma', en: 'Deliberate exposure to the sound' },
+    intro: {
+      tr: 'Bu modül programın en zor ve en önemli adımlarından biridir. Haftalardır sesten uzaklaşmanın yollarını çalıştık; şimdi tam tersini yapacağız: sese bilerek, belirli bir süre ve güvenli koşullarda kulak vereceksiniz. Bunun nedeni, kaçınmanın korkuyu beslemesidir.',
+      en: 'This module is one of the hardest and most important steps of the programme. For weeks we have practised ways of moving away from the sound; now we will do the opposite: you will deliberately listen to the sound for a set time under safe conditions. The reason is that avoidance feeds fear.',
+    },
+    sections: [
+      {
+        heading: { tr: 'Korku-kaçınma döngüsü', en: 'The fear-avoidance loop' },
+        body: {
+          tr: `Tinnitus rahatsız ettiğinde doğal tepki ondan uzaklaşmaktır: televizyonu açmak, odadan çıkmak, dikkati zorla başka yere çekmek. Bu, kısa vadede rahatlatır. Ancak her kaçınma beyne aynı mesajı verir: "Bu ses tehlikeli, ondan kaçmak gerekiyor." Ses bir sonraki sefer daha büyük bir tehdit olarak gelir ve kaçınma daha da gerekli görünür. Buna korku-kaçınma döngüsü denir; kaygı bozukluklarında ve kronik ağrıda da aynı mekanizma çalışır.
+
+Döngüyü kıran şey, korkulan uyaranla kontrollü biçimde kalmaktır. Sese güvenli bir ortamda, belirli bir süre, kaçmadan kulak verdiğinizde iki şey olur: kaygı önce yükselir, sonra kendiliğinden düşer (buna alışma denir) ve beyin "bu sese kulak verdim, hiçbir şey olmadı" bilgisini kaydeder. Tekrarlarla tehdit etiketi zayıflar. Tinnitus için internet temelli BDT programlarında bu, altıncı haftanın ana modülüdür.`,
+          en: `When tinnitus is unpleasant the natural response is to move away from it: turn on the television, leave the room, force attention elsewhere. That brings short-term relief. But each avoidance sends the brain the same message: "This sound is dangerous; it must be escaped." Next time the sound arrives as a bigger threat and avoidance seems even more necessary. This is the fear-avoidance loop; the same mechanism operates in anxiety disorders and chronic pain.
+
+What breaks the loop is staying with the feared stimulus in a controlled way. When you listen to the sound in a safe setting, for a set time, without escaping, two things happen: anxiety rises first and then falls by itself (this is habituation), and the brain records "I listened to this sound and nothing happened." With repetition the threat label weakens. In internet-based CBT programmes for tinnitus this is the core module of week six.`,
+        },
+      },
+      {
+        heading: { tr: 'Nasıl yapılır', en: 'How to do it' },
+        kind: 'exercise',
+        body: {
+          tr: `1. **Hazırlık.** Sakin bir yerde oturun. Ortam sesi varsa kapatın; bu egzersizde ses yalnız olmalı. Kısa bir gevşeme (nefesle işaretli) yapın.
+2. **Önce puanlayın.** Şu anki rahatsızlığınızı 0–10 arasında puanlayın.
+3. **Dinleyin.** Dikkatinizi bilerek sese yöneltin. Sesi merakla inceleyin: perdesi, dokusu, bir mi birden çok mu, sabit mi dalgalı mı, hangi kulakta ya da başın neresinde. Sesi bir araştırmacı gibi betimleyin; yargılamadan.
+4. **Kalın.** Kaygı yükselirse kaçmayın; nefesi verin ve dinlemeye devam edin. Dikkat dağılırsa sese geri getirin. Hedef, kaygının kendi başına düştüğünü yaşamaktır.
+5. **Sonra puanlayın.** Süre bitince rahatsızlığı yeniden 0–10 puanlayın.
+
+**Süre:** İlk gün 5 dakika. Her gün ya da iki günde bir 2–3 dakika artırarak bir hafta içinde 15 dakikaya çıkın. Günde bir kez, bir iki hafta boyunca. Sonrasında haftada bir iki "bakım" seansı yeterlidir.`,
+          en: `1. **Prepare.** Sit somewhere calm. Turn off any background sound; in this exercise the sound should be alone. Do a short relaxation (cue-controlled breathing).
+2. **Rate first.** Rate your current distress 0–10.
+3. **Listen.** Deliberately turn your attention to the sound. Examine it with curiosity: its pitch, its texture, whether it is one sound or several, steady or fluctuating, in which ear or where in the head. Describe it like a researcher, without judging.
+4. **Stay.** If anxiety rises, do not escape; breathe out and keep listening. If attention drifts, bring it back to the sound. The goal is to experience anxiety falling on its own.
+5. **Rate after.** When the time is up, rate your distress 0–10 again.
+
+**Duration:** Day one, 5 minutes. Add 2–3 minutes every day or every other day to reach 15 minutes within a week. Once a day for one to two weeks. After that one or two "maintenance" sessions a week are enough.`,
+        },
+      },
+      {
+        heading: { tr: 'Ne beklemeli', en: 'What to expect' },
+        body: {
+          tr: `İlk seanslarda ses daha gürültülü gelebilir; dikkat sese dönünce bu beklenir. Kaygı ilk dakikalarda yükselir, sonra çoğu kişide 5–10 dakika içinde düşmeye başlar. Puanlar seanstan seansa dalgalanır; önemli olan bir iki hafta içindeki eğilimdir: başlangıç puanı düşer, düşüş daha hızlı olur, ses daha az "olay" hâline gelir.
+
+Bazı kişiler ilk seansta rahatlama hisseder; bazıları için birkaç gün gerekir. Puanlar hiç düşmüyorsa süreyi kısaltıp sıklığı artırın ve kaçınmadığınızdan emin olun: dinlerken aynı anda telefona bakmak, zihinde başka şeye kaçmak ya da sesi "ölçerek" tehdit değerlendirmesi yapmak örtülü kaçınmadır.`,
+          en: `In the first sessions the sound may seem louder; that is expected when attention turns to it. Anxiety rises in the first minutes, then for most people starts to fall within 5–10 minutes. Scores fluctuate from session to session; what matters is the trend over one or two weeks: the starting score drops, the fall comes faster, the sound becomes less of an "event".
+
+Some people feel relief in the first session; others need a few days. If the scores never fall, shorten the time and increase the frequency, and make sure you are not avoiding: looking at the phone while listening, escaping into other thoughts, or "measuring" the sound to assess threat are covert avoidance.`,
+        },
+      },
+      {
+        heading: { tr: 'Güvenlik', en: 'Safety' },
+        kind: 'warning',
+        body: {
+          tr: `Bu egzersiz sese kulak vermektir; ses eklemek değildir. Tinnitusu "duymak için" sesi yükseltmeyin, kulaklık takmayın. Rahatsızlık 10 puana çıkıp birkaç dakika düşmüyorsa seansı kısa gevşeme ile bitirin ve ertesi gün daha kısa süreyle tekrar deneyin. Ses hassasiyeti (hiperakuzi) belirtileriniz varsa programın ses hassasiyeti bölümü bu egzersizi ayrı bir yöntemle ele alır. Egzersiz sonrası sürekli kötüleşme fark ederseniz ara verin ve bir uzmanla konuşun.`,
+          en: `This exercise is about listening to the sound, not adding sound. Do not raise the volume or put on earphones "to hear" the tinnitus. If distress reaches 10 and does not fall for several minutes, end the session with a short relaxation and try again the next day for a shorter time. If you have symptoms of sound sensitivity (hyperacusis), the sound sensitivity section of the programme handles this exercise with a separate method. If you notice sustained worsening after the exercise, pause and talk to a specialist.`,
+        },
+      },
+    ],
+    practice: { kind: 'exposure', minutes: 5 },
+    keyTakeaway: {
+      tr: 'Kaçınma korkuyu besler; sese güvenli koşullarda 5 dakikadan 15 dakikaya çıkarak bilerek kulak vermek, kaygının kendi başına düştüğünü yaşatır ve tehdit etiketini zayıflatır.',
+      en: 'Avoidance feeds fear; deliberately listening to the sound under safe conditions, building from 5 to 15 minutes, lets you experience anxiety falling on its own and weakens the threat label.',
+    },
+    citations: ['beukes2018', 'fuller2020', 'hesser2012'],
+  },
+  {
+    id: 'cbt.relax6',
+    title: { tr: 'Derin gevşeme 6: uygulamalı gevşeme', en: 'Deep relaxation 6: applied relaxation' },
+    intro: {
+      tr: 'Son adım, öğrendiğiniz hızlı gevşemeyi gerçekten gerginleştiren durumlarda kullanmaktır. Beceri artık hazır; şimdi işe koşulacak. Bu adım tamamlandığında gevşeme bir egzersiz olmaktan çıkar ve sesle, kaygıyla, günün zorluklarıyla karşılaştığınızda otomatik olarak devreye giren bir araç olur.',
+      en: 'The final step is using the rapid relaxation you have learned in situations that genuinely raise tension. The skill is ready; now it goes to work. Once this step is complete, relaxation stops being an exercise and becomes a tool that switches on automatically when you meet the sound, anxiety or the strains of the day.',
+    },
+    sections: [
+      {
+        heading: { tr: 'Uygulama eğitimi', en: 'Application training' },
+        body: {
+          tr: `Öst'ün protokolünde son aşama "uygulama eğitimi"dir: kişi, kaygı yaratan durumları önce hafiften zora doğru sıralar ve hızlı gevşemeyi bu durumlarda sırayla dener. Tinnitus için bu durumlar genellikle şunlardır: sessiz bir odada oturmak, gece yatakta uyanmak, kalabalık ve gürültülü bir ortamda bulunmak, yorgun olmak, sesin aniden yükselmesi, başkalarına tinnitustan söz etmek, konsantrasyon gerektiren bir iş yapmak.
+
+Yöntem: durum başladığında ilk gerginlik işaretini fark edin (omuz, çene, nefes, kalp atışı), 20–30 saniyelik gevşemeyi uygulayın, durumda kalmaya devam edin. Gevşeme durumu değiştirmez; sizin durum içindeki tepkinizi değiştirir. Her uygulama, "bu durumla baş edebiliyorum" kaydını güçlendirir.`,
+          en: `The last stage of Öst's protocol is "application training": the person ranks anxiety-provoking situations from mild to hard and tries rapid relaxation in them in turn. For tinnitus these situations are usually: sitting in a quiet room, waking in bed at night, being in a crowded noisy place, being tired, the sound rising suddenly, telling others about the tinnitus, doing work that demands concentration.
+
+The method: when the situation starts, notice the first sign of tension (shoulder, jaw, breath, heartbeat), apply the 20–30 second relaxation, and stay in the situation. Relaxation does not change the situation; it changes your reaction within it. Each application strengthens the record "I can handle this situation."`,
+        },
+      },
+      {
+        heading: { tr: 'Kendi listenizi yapın', en: 'Make your own list' },
+        kind: 'exercise',
+        body: {
+          tr: `Sizi gerginleştiren beş altı durum yazın ve her birine 0–100 arasında bir gerginlik puanı verin. En düşük puanlıdan başlayın. Bu hafta her gün en az bir durumda hızlı gevşemeyi bilerek uygulayın; durumu aramak gerekmez, günün içinde zaten gelecektir. Bir durumda gevşeme üst üste birkaç kez işe yaradığında listede bir üst basamağa geçin.
+
+Önceki haftanın maruz kalma egzersizi ile birleştirin: sese kulak verirken kaygı yükseldiğinde hızlı gevşemeyi kullanın, ama sesi dinlemeyi bırakmayın. Gevşeme burada kaçış değil, kalmanın aracıdır.`,
+          en: `Write down five or six situations that make you tense and give each a tension score 0–100. Start with the lowest. This week deliberately apply rapid relaxation in at least one situation each day; you do not need to seek them out, the day will bring them. When relaxation has worked several times in a row in one situation, move up a rung on the list.
+
+Combine it with last week's exposure exercise: when anxiety rises while listening to the sound, use rapid relaxation but do not stop listening. Here relaxation is not an escape but the means of staying.`,
+        },
+      },
+      {
+        heading: { tr: 'Bakım', en: 'Maintenance' },
+        kind: 'tip',
+        body: {
+          tr: `- Haftada bir kez 15 dakikalık tam kas gevşetme (1. adım) beceriyi taze tutar.
+- Günlük hızlı gevşemelere devam edin; bunlar artık alışkanlık olmalıdır.
+- Stresli dönemlerde beceri zayıflarsa 2. ve 3. adıma birkaç gün dönün; sıfırdan başlamak gerekmez.
+- Uygulamanın Egzersizler bölümündeki nefes ve kas gevşetme oturumları bu adımların rehberli sürümleridir.`,
+          en: `- A full 15-minute muscle relaxation (step 1) once a week keeps the skill fresh.
+- Keep the daily rapid relaxations; by now they should be a habit.
+- If the skill weakens during stressful periods, return to steps 2 and 3 for a few days; there is no need to start from scratch.
+- The breathing and muscle relaxation sessions in the Exercises section of the app are guided versions of these steps.`,
+        },
+      },
+    ],
+    practice: {
+      kind: 'worksheet',
+      minutes: 6,
+      items: [
+        { tr: 'En hafif durum ve gerginlik puanı (0–100)', en: 'Mildest situation and tension score (0–100)' },
+        { tr: '2. durum ve puanı', en: 'Situation 2 and score' },
+        { tr: '3. durum ve puanı', en: 'Situation 3 and score' },
+        { tr: '4. durum ve puanı', en: 'Situation 4 and score' },
+        { tr: 'En zor durum ve puanı', en: 'Hardest situation and score' },
+        { tr: 'Bu hafta hızlı gevşemeyi hangi durumda, kaç kez uyguladınız ve ne oldu?', en: 'This week, in which situation did you apply rapid relaxation, how many times, and what happened?' },
+      ],
+    },
+    keyTakeaway: {
+      tr: 'Uygulamalı gevşeme, hızlı gevşemeyi hafiften zora sıralanmış gerçek durumlarda kullanmaktır; gevşeme durumu değil, durum içindeki tepkinizi değiştirir.',
+      en: 'Applied relaxation means using rapid relaxation in real situations ranked from mild to hard; it changes not the situation but your reaction within it.',
+    },
+    citations: ['ost1987', 'beukes2018'],
+  },
+  {
+    id: 'cbt.attention',
+    title: { tr: 'Dikkati yönlendirme', en: 'Redirecting attention' },
+    intro: {
+      tr: 'Dikkat bir fener gibidir: bir yere yöneltildiğinde orası aydınlanır, gerisi kararır. Tinnitus feneri kendine çeker. Bu modülde feneri bilinçli olarak nasıl hareket ettireceğinizi ve tinnitusu dışlamadan dikkati genişletmeyi çalışacaksınız.',
+      en: 'Attention is like a torch: wherever it points lights up, the rest goes dark. Tinnitus pulls the torch towards itself. In this module you will practise moving the torch deliberately and widening attention without shutting the tinnitus out.',
+    },
+    sections: [
+      {
+        heading: { tr: 'Dikkat eğitilebilir', en: 'Attention can be trained' },
+        body: {
+          tr: `Dikkat bir kas gibidir; kullanıldıkça güçlenir ve yönlendirilebilir hâle gelir. Tinnitusta sorun dikkatin "bozuk" olması değil, sesin yüksek öncelik almasıdır. Öncelik, sesin tehdit değeriyle (önceki modüller) ve dikkat alışkanlığıyla belirlenir. Alışkanlık kısmını egzersizle değiştirmek mümkündür.
+
+İki yanlış strateji vardır. Birincisi sesi zorla görmezden gelmeye çalışmak: "Sese dikkat etme" komutu, dikkati sese çeker; beyaz ayıyı düşünmemeye çalışmak gibi. İkincisi dikkati sürekli meşgul tutarak sesi bastırmak: bu yorucudur ve meşguliyet bittiğinde ses daha güçlü döner. Doğru strateji dikkati **esnetmektir**: sesi dahil ederek, ama tek odak yapmadan, dikkati birçok uyaran arasında gezdirmek.`,
+          en: `Attention is like a muscle; it strengthens with use and becomes steerable. In tinnitus the problem is not that attention is "broken" but that the sound takes high priority. Priority is set by the sound's threat value (earlier modules) and by habit. The habit part can be changed with exercise.
+
+There are two wrong strategies. The first is trying to ignore the sound by force: the command "do not attend to the sound" draws attention to it, like trying not to think of a white bear. The second is suppressing the sound by keeping attention constantly busy: this is exhausting, and when the activity ends the sound returns stronger. The right strategy is to **stretch** attention: including the sound but not making it the single focus, moving attention among many stimuli.`,
+        },
+      },
+      {
+        heading: { tr: 'Üç egzersiz', en: 'Three exercises' },
+        kind: 'exercise',
+        body: {
+          tr: `**1. Ses tarama (3 dakika).** Oturun, gözleri kapatın. Ortamdaki sesleri sayın: en uzaktan en yakına. Trafik, bir kapı, buzdolabı, nefesiniz, tinnitus. Her sese 20–30 saniye kulak verin, sonra bir sonrakine geçin. Tinnitus listedeki seslerden yalnızca biridir; ne atlanır ne de öne alınır.
+
+**2. Dikkat kaydırma (3 dakika).** Dikkatinizi sırayla beş duyuya götürün: üç şey görün, üç ses duyun, üç dokunma hissedin, bir koku, bir tat. Sonra tekrar görmeye dönün. Tinnitus "duyma" turunda yer alır; diğer turlarda arka planda kalır. Bu egzersiz dikkatin ne kadar hızlı taşınabildiğini gösterir.
+
+**3. Geniş dikkat (3 dakika).** Dikkati tek bir noktaya değil, bütün alana açın: bütün sesler, bütün beden, bütün oda aynı anda. Bu "yumuşak odak" hâlinde tinnitus büyük bir resmin küçük bir parçasıdır. Dikkat daralıp sese yapıştığında yeniden genişletin.
+
+Günde bir kez 10 dakika, iki hafta. Egzersizler sesi azaltmak için değil, dikkatin sahibinin siz olduğunu hatırlatmak içindir.`,
+          en: `**1. Sound scan (3 minutes).** Sit, close your eyes. Count the sounds around you, from farthest to nearest. Traffic, a door, the fridge, your breath, the tinnitus. Give each sound 20–30 seconds, then move to the next. The tinnitus is only one sound on the list; it is neither skipped nor put first.
+
+**2. Attention shifting (3 minutes).** Take your attention through the five senses in turn: see three things, hear three sounds, feel three touches, one smell, one taste. Then return to seeing. The tinnitus belongs in the "hearing" round; in the other rounds it stays in the background. This exercise shows how quickly attention can be moved.
+
+**3. Wide attention (3 minutes).** Open attention not to a single point but to the whole field: all sounds, the whole body, the whole room at once. In this "soft focus" the tinnitus is a small part of a large picture. When attention narrows and sticks to the sound, widen it again.
+
+Once a day for 10 minutes, two weeks. The exercises are not meant to reduce the sound but to remind you that attention belongs to you.`,
+        },
+      },
+      {
+        heading: { tr: 'Konsantrasyon gerektiren işlerde', en: 'During tasks that demand concentration' },
+        kind: 'tip',
+        body: {
+          tr: `- Sessiz ortamda çalışıyorsanız düşük düzeyde ortam sesi açın; dikkat için zemin oluşturur.
+- İşi küçük parçalara bölün ve her parçanın başında dikkati bilerek işe yöneltin.
+- Ses dikkati çektiğinde bunu bir hata saymayın; "fark ettim" deyin ve işe dönün. Her dönüş bir tekrardır, bir yenilgi değil.
+- Yorgunken odaklanma herkes için zordur; sesi suçlamadan önce uykuyu kontrol edin.`,
+          en: `- If you work in a quiet room, put on low-level background sound; it gives attention a ground.
+- Break the task into small parts and deliberately point attention at the task at the start of each.
+- When the sound pulls attention, do not count it as a failure; say "noticed" and return to the task. Each return is a repetition, not a defeat.
+- Focus is hard for everyone when tired; check sleep before blaming the sound.`,
+        },
+      },
+    ],
+    practice: {
+      kind: 'timer',
+      minutes: 10,
+      steps: [
+        { tr: 'Ses tarama: gözleri kapatın. En uzaktaki sesten başlayın. Ne duyuyorsunuz?', en: 'Sound scan: close your eyes. Start from the farthest sound. What do you hear?', seconds: 60 },
+        { tr: 'Daha yakın sesler: oda, cihazlar, nefes. Tinnitus da listede, yalnızca biri.', en: 'Nearer sounds: the room, devices, breath. The tinnitus is on the list too, just one of them.', seconds: 60 },
+        { tr: 'Her sese sırayla 20 saniye kulak verin; sonra bir sonrakine geçin.', en: 'Give each sound 20 seconds in turn; then move to the next.', seconds: 60 },
+        { tr: 'Dikkat kaydırma: gözleri açın. Üç şey görün. Üç ses duyun. Üç dokunma hissedin.', en: 'Attention shifting: open your eyes. See three things. Hear three sounds. Feel three touches.', seconds: 90 },
+        { tr: 'Bir koku, bir tat. Sonra tekrar üç şey görün. Dikkatin ne kadar hızlı taşındığını fark edin.', en: 'One smell, one taste. Then see three things again. Notice how fast attention moves.', seconds: 90 },
+        { tr: 'Geniş dikkat: bütün sesler, bütün beden, bütün oda aynı anda. Yumuşak odak.', en: 'Wide attention: all sounds, the whole body, the whole room at once. Soft focus.', seconds: 120 },
+        { tr: 'Dikkat sese yapıştığında yeniden genişletin. Ses büyük resmin küçük bir parçası.', en: 'When attention sticks to the sound, widen it again. The sound is a small part of a big picture.', seconds: 90 },
+        { tr: 'Birkaç nefes. Bitirin.', en: 'A few breaths. Finish.', seconds: 30 },
+      ],
+    },
+    keyTakeaway: {
+      tr: 'Sesi görmezden gelmeye çalışmak dikkati sese çeker; doğru yol dikkati esnetmek, sesi dışlamadan birçok uyaran arasında gezdirmektir.',
+      en: 'Trying to ignore the sound draws attention to it; the right path is to stretch attention, moving it among many stimuli without shutting the sound out.',
+    },
+    citations: ['beukes2018', 'fuller2020', 'mckenna2017'],
+  },
+  {
+    id: 'cbt.activity',
+    title: { tr: 'Etkinlik planlama ve güvenlik davranışları', en: 'Activity planning and safety behaviours' },
+    intro: {
+      tr: 'Tinnitus sessizce hayatı daraltabilir: konserden vazgeçilir, arkadaş yemeği ertelenir, akşamlar televizyon karşısında geçer. Bu modül, sesin kıstığı etkinlikleri geri almayı ve "güvenlik davranışı" adı verilen, kısa vadede koruyup uzun vadede tinnitusu güçlendiren alışkanlıkları tanımayı hedefler.',
+      en: 'Tinnitus can quietly narrow life: the concert is dropped, dinner with friends postponed, evenings spent in front of the television. This module aims to reclaim the activities the sound has squeezed out, and to recognise "safety behaviours", habits that protect in the short term and strengthen tinnitus in the long term.',
+    },
+    sections: [
+      {
+        heading: { tr: 'Daralan hayat', en: 'The narrowing life' },
+        body: {
+          tr: `Sıkıntı veren bir belirtiyle yaşayan kişi, enerjisini korumak için etkinlikleri azaltır. Bu mantıklı görünür; ama etkinlik azaldıkça keyif ve başarı deneyimleri de azalır, ruh hâli düşer ve düşük ruh hâli tinnitusu daha ağır hissettirir. Günler birbirine benzemeye başlar; ses, günün en belirgin olayı olur.
+
+Davranışsal etkinleştirme, depresyon için en iyi kanıta sahip yöntemlerden biridir ve tinnitus BDT programlarının yedinci haftasında yer alır. İlke basittir: önce hareket, sonra motivasyon. Keyif almayı beklemeden, planlayarak etkinliğe dönmek. Ruh hâli etkinliği takip eder; tersi nadiren olur.`,
+          en: `A person living with a distressing symptom reduces activities to conserve energy. That seems sensible; but as activity shrinks, so do experiences of pleasure and achievement, mood drops, and low mood makes tinnitus feel heavier. Days start to look alike; the sound becomes the most prominent event of the day.
+
+Behavioural activation is among the best-evidenced methods for depression and sits in week seven of tinnitus CBT programmes. The principle is simple: action first, motivation second. Returning to activity by plan, without waiting to feel like it. Mood follows activity; the reverse rarely happens.`,
+        },
+      },
+      {
+        heading: { tr: 'Güvenlik davranışları', en: 'Safety behaviours' },
+        body: {
+          tr: `Güvenlik davranışı, tehlike hissini azaltmak için yapılan ama tehlikenin gerçek olmadığını öğrenmeyi engelleyen her şeydir. Tinnitusta sık görülenler:
+
+- **Sessizlikten kaçınmak:** her ortamda bir ses açmak zorunda hissetmek; ses zenginleştirme ile farkı, zorunluluk hissidir.
+- **Kulak tıkacı kullanmak:** gürültülü olmayan ortamlarda (lokanta, toplantı, ev) tıkaç takmak işitme sistemini sese daha duyarlı hâle getirir ve ses hassasiyetine zemin hazırlar.
+- **Sesi kontrol etmek:** gün içinde "hâlâ orada mı, arttı mı" diye dinlemek, parmağıyla kulağı tıkayarak ölçmek.
+- **Sürekli araştırmak:** internette yeni tedaviler aramak, forumlarda kötü hikâyeler okumak.
+- **Konuşmaktan kaçınmak ya da sürekli konuşmak:** her ikisi de sesin önemini büyütür.
+
+Bu davranışların hepsi anlaşılır. Ancak her biri beyne aynı mesajı verir: "Bu ses tehlikeli, önlem gerekiyor." Programın bu haftasında bir iki tanesini bilerek bırakacaksınız.`,
+          en: `A safety behaviour is anything done to reduce the sense of danger that prevents learning the danger is not real. Common ones in tinnitus:
+
+- **Avoiding silence:** feeling compelled to have sound on in every setting; the difference from sound enrichment is the sense of compulsion.
+- **Using earplugs:** wearing plugs in places that are not loud (restaurant, meeting, home) makes the hearing system more sensitive to sound and lays the ground for sound sensitivity.
+- **Checking the sound:** listening during the day to see "is it still there, has it grown", measuring by pressing a finger in the ear.
+- **Constant researching:** searching online for new treatments, reading bad stories on forums.
+- **Avoiding talking about it, or talking constantly:** both enlarge the importance of the sound.
+
+All of these are understandable. But each sends the brain the same message: "This sound is dangerous; precautions are needed." This week you will deliberately drop one or two of them.`,
+        },
+      },
+      {
+        heading: { tr: 'Haftalık plan', en: 'The weekly plan' },
+        kind: 'exercise',
+        body: {
+          tr: `1. Son aylarda azalttığınız ya da bıraktığınız etkinlikleri listeleyin: sosyal (arkadaş görmek), fiziksel (yürüyüş, spor), keyif (müzik, sinema, hobi), başarı (bir işi bitirmek, öğrenmek).
+2. Her birine iki puan verin: keyif 0–10, önem 0–10.
+3. Bu hafta için üç etkinlik seçin: biri kolay, biri orta, biri sizi biraz zorlayan. Gün ve saat belirleyin; "bir ara" planı değildir.
+4. Etkinlikten önce ve sonra ruh hâlinizi 0–10 puanlayın.
+5. Bırakacağınız bir güvenlik davranışı seçin ve bu hafta onu yapmadığınız günleri işaretleyin.
+
+Gürültülü ortam planlıyorsanız (konser, düğün) gerçekten yüksek sesli ortamlarda kulak koruması kullanmak güvenlik davranışı değil, işitme sağlığıdır. Fark, ortamın ses düzeyidir: 85 desibel ve üstü koruma gerektirir; bir lokanta gerektirmez.`,
+          en: `1. List the activities you have reduced or dropped in recent months: social (seeing friends), physical (walking, sport), pleasure (music, cinema, a hobby), achievement (finishing a task, learning).
+2. Give each two scores: pleasure 0–10, importance 0–10.
+3. Choose three activities for this week: one easy, one medium, one that stretches you a little. Set a day and time; "sometime" is not a plan.
+4. Rate your mood 0–10 before and after the activity.
+5. Choose one safety behaviour to drop and mark the days this week on which you did not do it.
+
+If you plan a loud setting (concert, wedding), using hearing protection in genuinely loud environments is not a safety behaviour but hearing health. The difference is the sound level: 85 decibels and above warrants protection; a restaurant does not.`,
+        },
+      },
+    ],
+    practice: {
+      kind: 'worksheet',
+      minutes: 8,
+      items: [
+        { tr: 'Kolay etkinlik: ne, hangi gün, saat kaçta?', en: 'Easy activity: what, which day, what time?' },
+        { tr: 'Orta etkinlik: ne, hangi gün, saat kaçta?', en: 'Medium activity: what, which day, what time?' },
+        { tr: 'Zorlayıcı etkinlik: ne, hangi gün, saat kaçta?', en: 'Stretching activity: what, which day, what time?' },
+        { tr: 'Bu hafta bırakacağım güvenlik davranışı', en: 'The safety behaviour I will drop this week' },
+        { tr: 'Etkinlik sonrası notlar: önce/sonra ruh hâli puanları ve gözlemler', en: 'Notes after the activities: before/after mood scores and observations' },
+      ],
+    },
+    keyTakeaway: {
+      tr: 'Ruh hâli etkinliği izler; planlı etkinliklere dönmek ve kulak tıkacı, ses kontrolü gibi güvenlik davranışlarını bırakmak sesin hayattaki yerini küçültür.',
+      en: 'Mood follows activity; returning to planned activities and dropping safety behaviours such as earplugs and sound checking shrinks the place of the sound in life.',
+    },
+    citations: ['fuller2020', 'beukes2018', 'juris2014'],
+  },

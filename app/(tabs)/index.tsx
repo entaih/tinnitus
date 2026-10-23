@@ -116,7 +116,9 @@ export default function HomeScreen() {
 
       {program && pos ? (
         <Card title={t('home.today')} overline={t('home.today.sub', { week: pos.week, day: pos.day })} right={
-          <ProgressRing size={64} stroke={6} progress={completion.total ? completion.done / completion.total : 0} label={`${completion.done}/${completion.total}`} caption={t('home.today.a11y', { done: completion.done, total: completion.total })} />
+          <View accessible accessibilityLabel={t('home.today.a11y', { done: completion.done, total: completion.total })}>
+            <ProgressRing size={64} stroke={6} progress={completion.total ? completion.done / completion.total : 0} label={`${completion.done}/${completion.total}`} />
+          </View>
         }>
           {completion.total > 0 && completion.done === completion.total ? <Text variant="bodySmall" tone="secondary">{t('home.today.allDone')}</Text> : null}
           <View>

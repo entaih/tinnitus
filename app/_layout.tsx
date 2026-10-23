@@ -8,6 +8,7 @@ import { ThemeProvider, useTheme } from '@/theme';
 import { useSettings } from '@/store/settings';
 import { useT } from '@/i18n';
 import { getLocales } from 'expo-localization';
+import { installNotificationHandler } from '@/notifications';
 
 function Navigator() {
   const { colors, isDark } = useTheme();
@@ -36,6 +37,7 @@ function Navigator() {
 export default function RootLayout() {
   const { locale, onboarded, setLocale } = useSettings();
   useEffect(() => {
+    installNotificationHandler();
     // First launch: follow the device language if it is one we support.
     if (!onboarded) {
       const lang = getLocales()[0]?.languageCode;

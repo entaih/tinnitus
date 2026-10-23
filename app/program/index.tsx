@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
-import { Button, Card, Chip, Screen, Text, useCitation } from '@/components';
+import { Button, Card, Screen, Text, useCitation } from '@/components';
 import { RationaleList, TaskRow, WeekTimeline, openTask, type DayState, type TimelineDay } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
@@ -152,7 +152,7 @@ export default function ProgramScreen() {
             {thi.length < 2 ? <Text variant="bodySmall" tone="secondary">{t('prog.adapt.needThi')}</Text> : null}
             {advice.map((k) => (
               <View key={k} style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
-                <Chip small label={k === 'adapt.safety' ? '!' : '•'} tone={k === 'adapt.safety' ? 'danger' : k === 'adapt.onTrack' || k === 'adapt.responder' || k === 'adapt.improving' ? 'success' : 'warning'} />
+                <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: k === 'adapt.safety' ? colors.danger : k === 'adapt.onTrack' || k === 'adapt.responder' || k === 'adapt.improving' ? colors.success : colors.warning }} />
                 <Text variant="body" style={{ flex: 1 }}>{t(k)}</Text>
               </View>
             ))}
