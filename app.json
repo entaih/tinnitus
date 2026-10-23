@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Dingin",
+    "slug": "dingin",
+    "version": "1.0.0",
+    "scheme": "dingin",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B2A3A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aiheartech.tinnova",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"],
+        "NSMicrophoneUsageDescription": "Ortam gürültüsünü ölçerek işitme testinin sessiz bir ortamda yapıldığını doğrulamak için mikrofon kullanılır."
+      }
+    },
+    "android": {
+      "package": "com.aiheartech.tinnova",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B2A3A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": ["RECORD_AUDIO", "POST_NOTIFICATIONS"],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      ["expo-audio", { "microphonePermission": "Ortam gürültüsünü ölçmek için mikrofon izni gerekir." }],
+      ["expo-splash-screen", { "backgroundColor": "#0B2A3A", "image": "./assets/splash-icon.png", "imageWidth": 160 }],
+      "expo-font",
+      "expo-notifications"
+    ],
+    "experiments": { "typedRoutes": false }
+  }
+}
