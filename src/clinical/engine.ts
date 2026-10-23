@@ -73,6 +73,7 @@ export function computeTriage(a: Assessment): TriageResult {
   if (rf?.suddenHearingLoss) return { tier: 1, triage: 'urgent', reasons: ['triage.suddenHL'] };
 
   const severeDistress = (thi && thi.total >= 58) || (phq && phq.total >= 20) || (gad && gad.total >= 15);
+  if (rf?.rapidWorsening) reasons.push('triage.rapidWorsening');
   if (severeDistress) reasons.push('triage.severeDistress');
   if (reasons.length) return { tier: 2, triage: 'urgent', reasons };
 

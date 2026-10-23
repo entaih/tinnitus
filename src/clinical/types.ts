@@ -14,6 +14,7 @@ export interface RedFlags {
   otorrhoeaOrPain: boolean; // discharge or ear pain
   headTrauma: boolean;
   selfHarm: boolean;        // PHQ-9 item 9 > 0 or direct item
+  rapidWorsening?: boolean; // hearing worsening over 4–90 days (NICE 2-week tier)
 }
 
 export interface CaseHistory {
@@ -34,7 +35,7 @@ export interface CaseHistory {
 }
 
 export interface QuestionnaireResult {
-  id: 'THI' | 'TFI' | 'HQ' | 'PHQ9' | 'GAD7' | 'ISI' | 'TCQ';
+  id: 'THI' | 'TFI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'ISI' | 'TCQ';
   date: string;
   answers: number[];
   total: number;

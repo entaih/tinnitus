@@ -97,6 +97,7 @@ export const assessStrings = {
     'triage.hearingLoss': 'İşitme güçlüğü belirttiniz ya da taramada düşüklük saptandı',
     'triage.neverTested': 'Çınlamanız 3 aydan uzun sürüyor ve henüz işitme taraması yapılmadı',
     'triage.selfcare': 'Acil ya da sevk gerektiren bir bulgu görünmüyor',
+    'triage.rapidWorsening': 'Son aylarda hızla kötüleşen işitme belirttiniz',
 
     // ── Case history ──────────────────────────────────────────────────────
     'history.title': 'Öykü',
@@ -287,7 +288,7 @@ export const assessStrings = {
     'rec.acute': 'Dört hafta sonra yeniden değerlendirin. Yeni başlayan çınlamada birçok kişi zamanla rahatlar; yeni bir işitme değişikliği olursa 24 saat içinde hekime başvurun.',
     'rec.mentalHealth': 'Bir ruh sağlığı uzmanıyla görüşmeyi değerlendirin. Kaygı ve ruh hali, çınlamanın yükünü belirleyen en güçlü etkenlerdendir.',
     'rec.education': 'Eğitim içeriklerini okuyun. Tinnitusu anlamak, kılavuzların her kullanıcıya önerdiği ilk adımdır.',
-    'rec.avoidSupplements': 'Takviye ve "kesin çözüm" vaat eden ürünlerden uzak durun. Kılavuzlar ginkgo, melatonin ve çinko gibi takviyeleri önermez.',
+    'rec.avoidSupplements': 'Takviye ve hızlı çözüm vaat eden ürünlerden uzak durun. Kılavuzlar ginkgo, melatonin ve çinko gibi takviyeleri önermez.',
   } as Record<string, string>,
 
   en: {
@@ -387,6 +388,7 @@ export const assessStrings = {
     'triage.hearingLoss': 'You reported hearing difficulty or the screen suggested a loss',
     'triage.neverTested': 'Your tinnitus has lasted more than 3 months and no hearing screen has been done yet',
     'triage.selfcare': 'No findings that need urgent review or referral',
+    'triage.rapidWorsening': 'You reported hearing that has worsened rapidly in recent months',
 
     // ── Case history ──────────────────────────────────────────────────────
     'history.title': 'Case history',
