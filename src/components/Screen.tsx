@@ -32,7 +32,7 @@ export function Screen({ children, scroll = true, padded = true, style, contentS
         <View style={{ flex: 1, paddingTop: space[2] }}>{inner}</View>
       )}
       {footer ? (
-        <View style={{ paddingHorizontal: space[4], paddingTop: space[3], paddingBottom: insets.bottom + space[3], backgroundColor: colors.bg, borderTopWidth: 1, borderTopColor: colors.border }}>
+        <View style={{ paddingHorizontal: space[4], paddingTop: space[3], paddingBottom: (tab ? 0 : insets.bottom) + space[3], backgroundColor: colors.bg, borderTopWidth: 1, borderTopColor: colors.border }}>
           {footer}
         </View>
       ) : null}

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Linking, View } from 'react-native';
 import { router } from 'expo-router';
 import Slider from '@react-native-community/slider';
-import { AudioWaveform, BookOpen, Flame, TrendingDown, TrendingUp, Minus } from 'lucide-react-native';
+import { AudioWaveform, BookOpen, Flame, MoonStar, TrendingDown, TrendingUp, Minus } from 'lucide-react-native';
 import { Banner, Button, Card, EvidenceChip, ProgressRing, Screen, Text, useCitation } from '@/components';
 import { MoodCheck, TabHeader, TaskRow, openTask, type Mood } from '@/components/home';
 import { useTheme } from '@/theme';
@@ -151,6 +151,19 @@ export default function HomeScreen() {
             <Text variant="bodySmall" tone="secondary">{t('home.quickSound.body')}</Text>
           </View>
           <Text variant="bodyStrong" tone="primary">{t('home.quickSound.action')}</Text>
+        </View>
+      </Card>
+
+      <Card onPress={() => router.push('/sleep')} accessibilityLabel={t('home.sleep')}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
+          <View style={{ width: 56, height: 56, borderRadius: radius.full, backgroundColor: colors.secondarySoft, alignItems: 'center', justifyContent: 'center' }}>
+            <MoonStar size={26} color={colors.secondaryText} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text variant="h3">{t('home.sleep')}</Text>
+            <Text variant="bodySmall" tone="secondary">{t('home.sleep.body')}</Text>
+          </View>
+          <Text variant="bodyStrong" tone="primary">{t('home.sleep.action')}</Text>
         </View>
       </Card>
 
