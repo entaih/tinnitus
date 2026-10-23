@@ -173,8 +173,14 @@ export default function HearingScreen() {
             <EvidenceChip level="rct" onPress={() => open('chen2021')} />
             <Text variant="caption" tone="secondary" style={{ flex: 1 }}>{t('psy.hear.evidence')}</Text>
           </View>
-          <Button title={t('common.continue')} onPress={() => setPhase('mode')} />
-          {!ambientOk ? <Button variant="ghost" title={t('psy.hp.title')} onPress={() => router.replace('/assess/headphone-check?next=/assess/hearing')} /> : null}
+          {ambientOk ? (
+            <Button title={t('common.continue')} onPress={() => setPhase('mode')} />
+          ) : (
+            <>
+              <Button title={t('psy.hp.title')} onPress={() => router.replace('/assess/headphone-check?next=/assess/hearing')} />
+              <Button variant="ghost" title={t('psy.hear.skipCheck')} onPress={() => setPhase('mode')} />
+            </>
+          )}
         </>
       )}
 

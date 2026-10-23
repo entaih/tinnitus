@@ -87,6 +87,7 @@ export const psychoStrings = {
     'psy.hear.continuePitch': 'Perde eşlemeye geç',
     'psy.hear.backHub': 'Değerlendirmelere dön',
     'psy.hear.redo': 'Taramayı tekrarla',
+    'psy.hear.skipCheck': 'Kontrol yapmadan devam et',
     'psy.hear.evidence': 'Akıllı telefon odyometrisi, klinik odyometriye kıyasla yaklaşık yüzde 89 duyarlılık ve yüzde 93 özgüllük gösterir (meta-analiz).',
 
     // pitch match
@@ -302,6 +303,7 @@ export const psychoStrings = {
     'psy.hear.continuePitch': 'Go to pitch matching',
     'psy.hear.backHub': 'Back to assessments',
     'psy.hear.redo': 'Repeat screening',
+    'psy.hear.skipCheck': 'Continue without the check',
     'psy.hear.evidence': 'Smartphone audiometry shows about 89% sensitivity and 93% specificity against clinical audiometry (meta-analysis).',
 
     'psy.pitch.title': 'Pitch match',
