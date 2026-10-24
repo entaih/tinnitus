@@ -20,7 +20,7 @@ export function DinginMark({ size = 28, color }: { size?: number; color: string 
  * The shareable progress card. Rendered on-screen and captured as an image with react-native-view-shot.
  * Shows only the user's own numbers (first vs latest THI, programme week, active days) and a "not a diagnosis" footer.
  */
-export const ProgressCardView = forwardRef<View, { stats: ProgressStats }>(function ProgressCardView({ stats }, ref) {
+export const ProgressCardView = forwardRef<React.ComponentRef<typeof View>, { stats: ProgressStats }>(function ProgressCardView({ stats }, ref) {
   const { colors, space, radius, shadow } = useTheme();
   const t = useT();
   const band = (total: number) => t(`severity.${thiBandKey(total)}`);

@@ -27,7 +27,7 @@ export default function ShareScreen() {
   const { assessments, program, diary, sessions } = useClinical();
   const track = useGrowth((s) => s.track);
   const inviteCode = useGrowth((s) => s.inviteCode);
-  const cardRef = useRef<View>(null);
+  const cardRef = useRef<React.ComponentRef<typeof View>>(null);
   const [busy, setBusy] = useState<'image' | 'pdf' | 'text' | null>(null);
 
   useEffect(() => { track('shareOpened'); }, [track]);
