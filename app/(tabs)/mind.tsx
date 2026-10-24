@@ -75,7 +75,8 @@ export default function MindScreen() {
 
   return (
     <Screen tab>
-      <TabHeader title={t('mind.title')} subtitle={t('mind.subtitle')} />
+      <TabHeader title={t('mind.title')} />
+      <Text variant="bodySmall" tone="secondary">{t('mind.subtitle')}</Text>
 
       <Card onPress={() => router.push(thoughts.length ? '/mind/thoughts' : '/mind/thought-record')} title={t('mind.thoughts.title')} overline={t('mind.thoughts.count', { n: thoughts.length })} right={<PenLine size={22} color={colors.primary} />}
         accessibilityLabel={`${t('mind.thoughts.title')}: ${t('mind.thoughts.count', { n: thoughts.length })}`}>
