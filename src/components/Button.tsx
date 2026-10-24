@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { Text } from './Text';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'inverse';
 
 interface Props {
   title: string;
@@ -21,8 +21,8 @@ interface Props {
 export function Button({ title, onPress, variant = 'primary', disabled, loading, icon, style, size = 'md', accessibilityLabel }: Props) {
   const { colors, radius, space } = useTheme();
   const isDisabled = disabled || loading;
-  const bg = { primary: colors.primary, secondary: 'transparent', ghost: 'transparent', danger: 'transparent' }[variant];
-  const fg = { primary: colors.onPrimary, secondary: colors.primaryPressed, ghost: colors.primary, danger: colors.danger }[variant];
+  const bg = { primary: colors.primary, secondary: 'transparent', ghost: 'transparent', danger: 'transparent', inverse: '#FFFFFF' }[variant];
+  const fg = { primary: colors.onPrimary, secondary: colors.primaryPressed, ghost: colors.primary, danger: colors.danger, inverse: colors.primaryPressed }[variant];
   return (
     <Pressable
       accessibilityRole="button"

@@ -5,3 +5,4 @@ export * from './WeekTimeline';
 export * from './Segmented';
 export * from './openTask';
 export * from './RationaleList';
+export * from './JourneyCard';

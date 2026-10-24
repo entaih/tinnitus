@@ -1,7 +1,7 @@
 export const tr = {
   'app.name': 'Dingin',
   'app.tagline': 'Tinnitus değerlendirme ve rehabilitasyon',
-  'tab.home': 'Ana sayfa', 'tab.assess': 'Değerlendir', 'tab.sound': 'Sesler', 'tab.mind': 'Zihin', 'tab.progress': 'İlerleme',
+  'tab.home': 'Ana sayfa', 'tab.assess': 'Ölçümler', 'tab.sound': 'Sesler', 'tab.mind': 'Zihin', 'tab.progress': 'İlerleme',
   'common.continue': 'Devam et', 'common.back': 'Geri', 'common.start': 'Başla', 'common.save': 'Kaydet', 'common.done': 'Tamam', 'common.skip': 'Atla', 'common.cancel': 'Vazgeç',
   'common.yes': 'Evet', 'common.no': 'Hayır', 'common.sometimes': 'Bazen', 'common.minutes': '{n} dk', 'common.later': 'Daha sonra', 'common.close': 'Kapat', 'common.next': 'İleri',
   'common.understood': 'Anladım', 'common.whatToDo': 'Ne yapmalıyım?', 'common.loadingAudio': 'Ses hazırlanıyor…', 'common.stop': 'Durdur', 'common.pause': 'Duraklat', 'common.play': 'Oynat',

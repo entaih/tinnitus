@@ -3,7 +3,8 @@ import { Linking, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Phone, ShieldAlert } from 'lucide-react-native';
 import { Screen, Text, Card, Button, OptionCard, Banner, EvidenceChip, useCitation, Disclaimer } from '@/components';
-import { QuestionStep } from '@/components/assess';
+import { QuestionStep, ReferralList } from '@/components/assess';
+import { useJourney } from '@/hooks/useJourney';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical, mergedLatest } from '@/store/clinical';
@@ -38,6 +39,7 @@ export default function TriageScreen() {
   const saveRedFlags = useClinical((s) => s.saveRedFlags);
   const saveHistory = useClinical((s) => s.saveHistory);
   const { open, sheet } = useCitation();
+  const { finish: finishJourney } = useJourney();
 
   const [phase, setPhase] = useState<'intro' | 'items' | 'result'>('intro');
   const [step, setStep] = useState(0);
@@ -87,7 +89,7 @@ export default function TriageScreen() {
     if (step === 0) setPhase('intro'); else setStep(step - 1);
   };
 
-  const goHub = () => { if (router.canGoBack()) router.back(); else router.replace('/(tabs)/assess'); };
+  const goHub = () => finishJourney('/(tabs)/assess');
 
   const call = (num: string) => { void Linking.openURL(`tel:${num}`); };
 
@@ -151,14 +153,10 @@ export default function TriageScreen() {
             <Banner tone="success" title={t('triage.result.tier5.title')} body={t('triage.result.tier5.body')} />
           )}
 
-          {result.reasons.length ? (
-            <Card variant="tinted" title={t('triage.result.reasons')}>
-              {result.reasons.map((r) => (
-                <View key={r} style={{ flexDirection: 'row', gap: space[2] }}>
-                  <Text variant="body" tone="secondary">·</Text>
-                  <Text variant="body" style={{ flex: 1 }}>{t(r)}</Text>
-                </View>
-              ))}
+          {result.reasons.some((r) => r !== 'triage.selfcare') ? (
+            <Card variant="tinted" title={t('triage.result.whoToSee')}>
+              <ReferralList reasons={result.reasons} />
+              <Text variant="bodySmall" tone="secondary">{t('triage.result.continueNote')}</Text>
             </Card>
           ) : null}
 

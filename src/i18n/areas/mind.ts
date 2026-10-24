@@ -3,6 +3,7 @@
  *  and adaptation advice keys used by the Home/Program screens. Keys are flat, dot-separated. */
 export const mindStrings = {
   tr: {
+    'unit.assess.pitch': 'Perde eşleme (çınlamanın tizliği)',
     // --- Mind hub ---
     'mind.title': 'Zihin',
     'mind.subtitle': 'Sesle ilişkinizi değiştiren beceriler: BDT, kabul, farkındalık, uyku ve ses hassasiyeti programları.',
@@ -272,6 +273,7 @@ export const mindStrings = {
     'adapt.changeStrategy': 'Sekizinci haftada THI 7 puandan az değişti. Strateji değişikliği öneririz: ACT ya da farkındalık yolunu deneyin, işitme ve ses hassasiyeti taramalarını yineleyin ve klinisyen eşliğinde BDT için başvurun.',
   } as Record<string, string>,
   en: {
+    'unit.assess.pitch': 'Pitch match (tinnitus frequency)',
     'mind.title': 'Mind',
     'mind.subtitle': 'Skills that change your relationship with the sound: CBT, acceptance, mindfulness, sleep and sound sensitivity programmes.',
     'mind.track.cbt': 'Core CBT',

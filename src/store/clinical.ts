@@ -38,7 +38,11 @@ interface ClinicalState {
 export const newId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 export const today = () => new Date().toISOString().slice(0, 10);
 
-const update = (list: Assessment[], id: string, fn: (a: Assessment) => Assessment) => list.map((a) => (a.id === id ? fn(a) : a));
+/** Apply fn to the assessment with this id, creating the record first if it does not exist yet. */
+const update = (list: Assessment[], id: string, fn: (a: Assessment) => Assessment) => {
+  if (!list.some((a) => a.id === id)) list = [...list, { id, date: new Date().toISOString(), questionnaires: [] }];
+  return list.map((a) => (a.id === id ? fn(a) : a));
+};
 
 export const useClinical = create<ClinicalState>()(
   persist(

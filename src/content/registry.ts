@@ -97,6 +97,7 @@ export const UNITS: Record<string, Unit> = Object.fromEntries([
   u('assess.anxiety', 'assessment', 3, '/assess/questionnaire/GAD7', 'core', 'spitzer2006', 'guideline'),
   u('assess.sleep', 'assessment', 2, '/assess/questionnaire/SCI', 'core', 'espie2014'),
   u('assess.hearing', 'assessment', 6, '/assess/hearing', 'hearing', 'chen2021'),
+  u('assess.pitch', 'assessment', 6, '/assess/pitch', 'sound', 'vielsmeier2020'),
   u('assess.redflags', 'assessment', 2, '/assess/triage', 'core', 'nice2020', 'guideline'),
   u('hearing.referral', 'education', 3, '/education/hearing-aids', 'hearing', 'tunkel2014', 'guideline'),
 ].map((x) => [x.id, x]));

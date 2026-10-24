@@ -8,10 +8,13 @@ import { useTheme } from '@/theme';
 import { useLocale, useT, pick } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { useAssessmentId } from '@/hooks/useProfile';
+import { useJourney } from '@/hooks/useJourney';
 import { QUESTIONNAIRES, scoreQuestionnaire, type QuestionnaireId } from '@/clinical/questionnaires';
 import type { QuestionnaireResult } from '@/clinical/types';
 
 const AUTO_ADVANCE_MS = 350;
+/** Two-item screeners (PHQ-2 / GAD-2): the full scale opens only when the first two items sum to >= 3. */
+const GATE: Partial<Record<QuestionnaireId, { items: number; cutoff: number }>> = { PHQ9: { items: 2, cutoff: 3 }, GAD7: { items: 2, cutoff: 3 } };
 
 export default function QuestionnaireScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -21,7 +24,9 @@ export default function QuestionnaireScreen() {
   const { colors, space, radius } = useTheme();
   const assessmentId = useAssessmentId();
   const saveQuestionnaire = useClinical((s) => s.saveQuestionnaire);
+  const completeTask = useClinical((s) => s.completeTask);
   const { open, sheet } = useCitation();
+  const { finish, inJourney, taskKey } = useJourney();
 
   const qid = (typeof id === 'string' ? id.toUpperCase() : '') as QuestionnaireId;
   const q = QUESTIONNAIRES[qid];
@@ -52,6 +57,11 @@ export default function QuestionnaireScreen() {
     setAnswers(next);
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => {
+      const gate = GATE[q.id];
+      if (gate && step + 1 === gate.items) {
+        const screen = next.slice(0, gate.items).reduce<number>((acc, b) => acc + (b ?? 0), 0);
+        if (screen < gate.cutoff) { submit(next.map((a) => a ?? 0), true); return; }
+      }
       if (step + 1 >= total) setPhase('review'); else setStep(step + 1);
     }, AUTO_ADVANCE_MS);
   };
@@ -61,8 +71,8 @@ export default function QuestionnaireScreen() {
     if (step === 0) setPhase('intro'); else setStep(step - 1);
   };
 
-  const submit = () => {
-    const filled = answers.map((a) => a ?? 0);
+  const submit = (given: number[] = answers.map((a) => a ?? 0), screenedOut = false) => {
+    const filled = given;
     const scored = scoreQuestionnaire(q, filled);
     const rec: QuestionnaireResult = {
       // The store's result union predates SCI/RaSST; the engine reads them back by id, so the cast is safe.
@@ -70,9 +80,10 @@ export default function QuestionnaireScreen() {
       date: new Date().toISOString(),
       answers: filled,
       total: scored.total,
-      subscales: Object.keys(scored.subscales).length ? scored.subscales : undefined,
+      subscales: Object.keys(scored.subscales).length ? scored.subscales : screenedOut ? { screen: 2 } : undefined,
     };
     saveQuestionnaire(assessmentId, rec);
+    if (taskKey) completeTask(taskKey);
     setResult(scored);
     setPhase('done');
   };
@@ -90,7 +101,7 @@ export default function QuestionnaireScreen() {
           <Text variant="h2">{name}</Text>
           <Text variant="body" tone="secondary">{pick(q.description, locale)}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], flexWrap: 'wrap' }}>
-            <Text variant="caption" tone="muted">{t('q.intro.items', { n: total, min: q.minutes })}</Text>
+            <Text variant="caption" tone="muted">{GATE[q.id] ? t('q.intro.gated', { n: GATE[q.id]!.items, total }) : t('q.intro.items', { n: total, min: q.minutes })}</Text>
             <EvidenceChip level={q.evidence} onPress={() => open(q.citation)} />
           </View>
           <Text variant="bodySmall" tone="secondary">{t('q.intro.hint')}</Text>
@@ -99,7 +110,7 @@ export default function QuestionnaireScreen() {
       ) : null}
 
       {phase === 'items' ? (
-        <QuestionStep index={step} total={total} stem={pick(q.items[step], locale)} onBack={back}>
+        <QuestionStep index={step} total={GATE[q.id] && step < GATE[q.id]!.items ? GATE[q.id]!.items : total} stem={pick(q.items[step], locale)} onBack={back}>
           {q.options.map((o) => (
             <OptionCard
               key={o.value}
@@ -137,7 +148,7 @@ export default function QuestionnaireScreen() {
               );
             })}
           </View>
-          <Button title={t('q.review.submit')} onPress={submit} disabled={!allAnswered} />
+          <Button title={t('q.review.submit')} onPress={() => submit()} disabled={!allAnswered} />
         </View>
       ) : null}
 
@@ -177,8 +188,14 @@ export default function QuestionnaireScreen() {
           {crisis ? (
             <Button variant="secondary" title={t('triage.call183')} icon={<Phone size={18} color={colors.primaryPressed} />} onPress={() => call('183')} />
           ) : null}
-          <Button title={t('q.done.toResults')} onPress={() => router.replace('/assess/results')} />
-          <Button variant="ghost" title={t('q.done.backToHub')} onPress={() => { if (router.canGoBack()) router.back(); else router.replace('/(tabs)/assess'); }} />
+          {inJourney ? (
+            <Button title={t('common.continue')} onPress={() => finish()} />
+          ) : (
+            <>
+              <Button title={t('q.done.toResults')} onPress={() => router.replace('/assess/results')} />
+              <Button variant="ghost" title={t('q.done.backToHub')} onPress={() => finish('/(tabs)/assess')} />
+            </>
+          )}
           <Disclaimer />
         </View>
       ) : null}

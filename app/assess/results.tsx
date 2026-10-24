@@ -7,6 +7,8 @@ import { Share2, FileText, Sparkles, Stethoscope, ArrowRight, Info } from 'lucid
 import { Screen, Text, Card, Button, Chip, EvidenceChip, SeverityBadge, Banner, Disclaimer, useCitation } from '@/components';
 import { Gauge, useInfoSheet } from '@/components/assess';
 import { useTheme } from '@/theme';
+import { ReferralList } from '@/components/assess';
+import { generateProgram } from '@/clinical/program';
 import { useLocale, useT, formatDate } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
 import { useClinical } from '@/store/clinical';
@@ -26,6 +28,15 @@ export default function ResultsScreen() {
   const { colors, space } = useTheme();
   const { assessment, profile } = useProfile();
   const assessments = useClinical((s) => s.assessments);
+  const program = useClinical((s) => s.program);
+  const setProgram = useClinical((s) => s.setProgram);
+  const hardBlocked = !!profile && profile.triage === 'urgent' && (profile.triageReasons.includes('triage.selfHarm') || profile.triageReasons.includes('triage.neuro') || profile.triageReasons.includes('triage.vertigo') || profile.triageReasons.includes('triage.suddenHL'));
+  const startProgram = () => {
+    if (!profile) return;
+    const ps = assessment?.psycho;
+    setProgram(generateProgram(profile, { minutesPerDay: 30, style: 'cbt', pitchHz: ps?.pitchHz, riPositive: ps?.riCategory ? ps.riCategory !== 'none' : undefined, hearingDone: !!assessment?.hearing }));
+    router.replace('/(tabs)');
+  };
   const { open, sheet } = useCitation();
   const info = useInfoSheet();
   const [pdfBusy, setPdfBusy] = useState(false);
@@ -130,8 +141,13 @@ export default function ResultsScreen() {
       <Banner
         tone={triageTone}
         title={t(`results.triage.${profile.triage}`)}
-        body={profile.triageReasons.map((r) => t(r)).join(' · ')}
+        body={profile.triage === 'selfcare' ? t('triage.selfcare') : t('results.triage.whoBelow')}
       />
+      {profile.triage !== 'selfcare' ? (
+        <Card variant="tinted" title={t('triage.result.whoToSee')}>
+          <ReferralList reasons={profile.triageReasons} />
+        </Card>
+      ) : null}
 
       {/* Probable profile */}
       {profile.subtypes.length || profile.drivers.length ? (
@@ -202,7 +218,16 @@ export default function ResultsScreen() {
         </Card>
       ) : null}
 
-      <Button title={t('results.program.cta')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={() => router.push('/program/setup')} />
+      {program ? (
+        <Button title={t('results.program.goToday')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={() => router.replace('/(tabs)')} />
+      ) : (
+        <Card variant="tinted" title={t('results.program.autoTitle')}>
+          <Text variant="body" tone="secondary">{t('results.program.autoBody')}</Text>
+          <Button title={t('results.program.start')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={startProgram} disabled={hardBlocked} />
+          {hardBlocked ? <Text variant="bodySmall" tone="danger">{t('results.program.blocked')}</Text> : null}
+          <Button variant="ghost" size="sm" title={t('results.program.customize')} onPress={() => router.push('/program/setup')} />
+        </Card>
+      )}
       <Disclaimer />
       {sheet}
       {info.sheet}

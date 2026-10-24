@@ -12,6 +12,8 @@ export interface ProgramPrefs {
   style: 'cbt' | 'act' | 'mindfulness';
   pitchHz?: number;
   riPositive?: boolean;
+  /** hearing screen already done */
+  hearingDone?: boolean;
 }
 
 const task = (id: string, overrides: Partial<ProgramTask> = {}): ProgramTask => {
@@ -136,6 +138,14 @@ export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate
       if (activeAddOns.includes('somatic') && w <= 9) {
         tasks.push(task(ph.includes('somatosensory') && profile.subtypes.includes('phenotype.somatosensory') && day % 2 === 0 ? 'somatic.orofacial' : 'somatic.cervical'));
         if (day === 1) tasks.push(task('somatic.posture'));
+      }
+      // 5b. Measurements that change the plan, scheduled once in week 1 only when missing:
+      //     pitch match (tonal tinnitus → notched / narrow-band sound), residual inhibition (sound-first vs CBT-first),
+      //     hearing screen (referral decision) when hearing difficulty or noise exposure is reported.
+      if (!acute && w === 1) {
+        if (day === 2 && ph.includes('tonal') && !prefs.pitchHz) tasks.push(task('assess.pitch'));
+        if (day === 3 && prefs.riPositive === undefined) tasks.push(task('sound.ri'));
+        if (day === 4 && !prefs.hearingDone && (hearing || ph.includes('noiseInduced'))) tasks.push(task('assess.hearing'));
       }
       // 6. Hearing pathway: referral task in week 1, hearing tactics in week 5.
       if (hearing && w === 1 && day === 2) tasks.push(task('hearing.referral'));

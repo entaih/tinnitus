@@ -6,6 +6,7 @@ import {
   Lock, ChevronRight, CircleCheck, ArrowRight,
 } from 'lucide-react-native';
 import { Screen, Text, Card, Button, EvidenceChip, useCitation } from '@/components';
+import { JourneyCard } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical, mergedLatest } from '@/store/clinical';
@@ -86,6 +87,7 @@ export default function AssessScreen() {
         <Text variant="body" tone="secondary">{t('assess.intro')}</Text>
       </View>
 
+      <JourneyCard />
       {canSeeResults ? (
         <Button title={t('assess.seeResults')} onPress={() => router.push('/assess/results')} icon={<ArrowRight size={18} color={colors.onPrimary} />} />
       ) : null}
