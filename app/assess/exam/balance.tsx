@@ -5,7 +5,7 @@ import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import { Accelerometer } from 'expo-sensors';
-import { Banner, Button, Card, Chip, Disclaimer, Screen, Text } from '@/components';
+import { Banner, Button, Card, Chip, Disclaimer, OptionCard, Screen, Text } from '@/components';
 import { CountdownRing } from '@/components/psycho';
 import { EstimateNote, useExamFinish } from '@/components/exam';
 import { useTheme } from '@/theme';
@@ -15,11 +15,11 @@ import { useAssessmentId } from '@/hooks/useProfile';
 import { soundEngine } from '@/audio/engine';
 import { stopAllOneShots } from '@/audio/psychoPlayer';
 import {
-  SWAY_BASELINE_IGNORE_SECONDS, SWAY_BASELINE_SECONDS, SWAY_IGNORE_SECONDS, SWAY_TEST_SECONDS, swayAbnormal, swayRatio, swayStats,
+  SWAY_BASELINE_IGNORE_SECONDS, SWAY_BASELINE_SECONDS, SWAY_IGNORE_SECONDS, SWAY_TEST_SECONDS, swayRatio, swayStats,
   type SwaySample, type SwayStats,
 } from '@/audio/examTests';
 
-type Phase = 'intro' | 'unavailable' | 'open' | 'transition' | 'closed' | 'result';
+type Phase = 'falls' | 'intro' | 'unavailable' | 'open' | 'transition' | 'closed' | 'result';
 const UPDATE_MS = 50;
 const TRANSITION_SECONDS = 3;
 /** Fewer usable samples than this (≈5 s at 20 Hz) means the sensor did not deliver; ask for a repeat. */
@@ -27,7 +27,11 @@ const MIN_SAMPLES = 100;
 
 type Sub = ReturnType<typeof Accelerometer.addListener>;
 
-/** Accelerometer sway test: 10 s eyes open (baseline) then 30 s eyes closed, phone held against the chest. */
+/**
+ * Accelerometer sway test: 10 s eyes open (baseline) then 30 s eyes closed, phone held against the chest, feet
+ * shoulder-width apart with a hand's reach of a wall. Disabled for vertigo, Ménière pattern, age ≥ 65 or a
+ * self-reported fall (asked inline). The score is recorded for the clinician; it is never labelled.
+ */
 export default function BalanceScreen() {
   useKeepAwake();
   const t = useT();
@@ -35,9 +39,10 @@ export default function BalanceScreen() {
   const { space } = useTheme();
   const saveExam = useClinical((s) => s.saveExam);
   const assessmentId = useAssessmentId();
-  const { finish, inSequence } = useExamFinish('balance');
+  const { finish, inSequence, eligibility } = useExamFinish('balance');
 
-  const [phase, setPhase] = useState<Phase>('intro');
+  const [phase, setPhase] = useState<Phase>('falls');
+  const [falls, setFalls] = useState<boolean | null>(null);
   const [remaining, setRemaining] = useState(0);
   const [openStats, setOpenStats] = useState<SwayStats | null>(null);
   const [closedStats, setClosedStats] = useState<SwayStats | null>(null);
@@ -135,18 +140,51 @@ export default function BalanceScreen() {
 
   const tooFew = closedStats != null && closedStats.n < MIN_SAMPLES;
   const score = closedStats?.score ?? 0;
-  const abnormal = swayAbnormal(score);
   const ratio = openStats && closedStats ? swayRatio(closedStats.score, openStats.score) : null;
 
   const save = () => {
     if (saved || !closedStats || tooFew) return;
-    saveExam(assessmentId, { swayScore: score, swayAbnormal: abnormal });
+    // Recorded for the clinician only; the arbitrary "abnormal" cut-off is no longer applied (physician B8).
+    saveExam(assessmentId, { swayScore: score, swayAbnormal: undefined });
     setSaved(true);
   };
+
+  const blocked = !eligibility.balance || falls === true;
+  const reasons = [...eligibility.balanceReasons, ...(falls === true ? ['exam.gate.falls'] : [])];
+
+  if (blocked) {
+    return (
+      <Screen>
+        <Stack.Screen options={{ title: t('exam.balance.title') }} />
+        <Text variant="h1">{t('exam.balance.title')}</Text>
+        <Banner tone="warning" title={t('exam.gate.disabled')} body={t('exam.gate.balance.body')} />
+        <Card>
+          <Text variant="overline" tone="secondary">{t('exam.gate.reasons')}</Text>
+          {reasons.map((r) => <Text key={r} variant="body">• {t(r)}</Text>)}
+        </Card>
+        <Button title={t('exam.skip')} onPress={finish} />
+        {falls === true && eligibility.balance ? <Button variant="ghost" title={t('exam.gate.falls.change')} onPress={() => setFalls(null)} /> : null}
+        <Disclaimer textKey="disclaimer.short" />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
       <Stack.Screen options={{ title: t('exam.balance.title') }} />
+
+      {phase === 'falls' && (
+        <>
+          <Text variant="h1">{t('exam.balance.title')}</Text>
+          <Text variant="body" tone="secondary">{t('exam.gate.falls.intro')}</Text>
+          <Text variant="h2">{t('exam.gate.falls.q')}</Text>
+          <View style={{ gap: space[2] }}>
+            <OptionCard label={t('common.yes')} selected={falls === true} onPress={() => setFalls(true)} />
+            <OptionCard label={t('common.no')} selected={falls === false} onPress={() => { setFalls(false); setPhase('intro'); }} />
+          </View>
+          <Button variant="ghost" title={t('exam.skip')} onPress={finish} />
+        </>
+      )}
 
       {phase === 'intro' && (
         <>
@@ -187,7 +225,7 @@ export default function BalanceScreen() {
             <Card>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3], flexWrap: 'wrap' }}>
                 <Text variant="numeric">{t('exam.balance.result.value', { s: score })}</Text>
-                <Chip tone={abnormal ? 'warning' : 'success'} label={abnormal ? t('exam.balance.result.abnormal') : t('exam.balance.result.normal')} />
+                <Chip tone="info" label={t('exam.result.recorded')} />
               </View>
               {openStats ? <Text variant="bodySmall" tone="secondary">{t('exam.balance.result.baseline', { s: openStats.score })}</Text> : null}
               {ratio != null ? <Text variant="bodySmall" tone="secondary">{t('exam.balance.result.ratio', { r: ratio })}</Text> : null}

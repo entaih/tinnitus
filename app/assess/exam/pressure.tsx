@@ -14,14 +14,18 @@ type StepId = 'toynbee' | 'valsalva' | 'yawn';
 const STEPS: StepId[] = ['toynbee', 'valsalva', 'yawn'];
 const HOLD_SECONDS = 10;
 
-/** Guided Eustachian-tube manoeuvres (Toynbee, gentle Valsalva, yawning) + two yes/no questions. */
+/**
+ * Guided Eustachian-tube manoeuvres (Toynbee, gentle Valsalva, yawning) + two yes/no questions. Hidden by the
+ * eligibility gate (head trauma, barotrauma, sudden hearing loss, vertigo, sound-induced dizziness, discharge or
+ * pain): those users see "performed at the ENT examination" instead (physician review A3).
+ */
 export default function PressureManoeuvresScreen() {
   useKeepAwake();
   const t = useT();
   const { space } = useTheme();
   const saveExam = useClinical((s) => s.saveExam);
   const assessmentId = useAssessmentId();
-  const { finish, inSequence } = useExamFinish('pressure');
+  const { finish, inSequence, eligibility } = useExamFinish('pressure');
 
   const [phase, setPhase] = useState<Phase>('intro');
   const [index, setIndex] = useState(0);
@@ -48,6 +52,22 @@ export default function PressureManoeuvresScreen() {
       <OptionCard label={t('common.no')} selected={value === false} onPress={() => onChange(false)} />
     </View>
   );
+
+  if (!eligibility.pressure) {
+    return (
+      <Screen>
+        <Stack.Screen options={{ title: t('exam.pressure.title') }} />
+        <Text variant="h1">{t('exam.pressure.title')}</Text>
+        <Banner tone="warning" title={t('exam.gate.clinic')} body={t('exam.gate.pressure.body')} />
+        <Card>
+          <Text variant="overline" tone="secondary">{t('exam.gate.reasons')}</Text>
+          {eligibility.pressureReasons.map((r) => <Text key={r} variant="body">• {t(r)}</Text>)}
+        </Card>
+        <Button title={t('exam.skip')} onPress={finish} />
+        <Disclaimer textKey="disclaimer.short" />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
