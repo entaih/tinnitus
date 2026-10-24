@@ -4,7 +4,7 @@
  */
 import type { Assessment, Program } from './types';
 
-export type JourneyStepId = 'safety' | 'history' | 'thi' | 'hq' | 'rasst' | 'sci' | 'phq' | 'gad' | 'results' | 'today';
+export type JourneyStepId = 'safety' | 'history' | 'causes' | 'exam' | 'thi' | 'hq' | 'rasst' | 'sci' | 'phq' | 'gad' | 'results' | 'today';
 
 export interface JourneyStep {
   id: JourneyStepId;
@@ -32,6 +32,8 @@ export function computeJourney(a: Assessment | null, program: Program | null): J
   const steps: JourneyStep[] = [
     { id: 'safety', route: '/assess/triage', minutes: 2, done: !!a?.redFlags, whyKey: 'journey.why.safety' },
     { id: 'history', route: '/assess/history', minutes: 2, done: !!h, whyKey: 'journey.why.history' },
+    { id: 'causes', route: '/assess/causes', minutes: 2, done: !!a?.causeAnswers, whyKey: 'journey.why.causes' },
+    { id: 'exam', route: '/assess/exam', minutes: 8, done: !!a?.exam, whyKey: 'journey.why.exam' },
     { id: 'thi', route: '/assess/questionnaire/THI', minutes: 4, done: has(a, 'THI'), whyKey: 'journey.why.thi' },
   ];
   if (h?.soundSensitivity) steps.push({ id: 'hq', route: '/assess/questionnaire/HQ', minutes: 2, done: has(a, 'HQ'), whyKey: 'journey.why.hq' });

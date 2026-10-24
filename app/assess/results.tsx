@@ -7,7 +7,8 @@ import { Share2, FileText, Sparkles, Stethoscope, ArrowRight, Info } from 'lucid
 import { Screen, Text, Card, Button, Chip, EvidenceChip, SeverityBadge, Banner, Disclaimer, useCitation } from '@/components';
 import { Gauge, useInfoSheet } from '@/components/assess';
 import { useTheme } from '@/theme';
-import { ReferralList } from '@/components/assess';
+import { ReferralList, CauseList } from '@/components/assess';
+import { rankCauses, confirmatoryTests } from '@/clinical/causes';
 import { generateProgram } from '@/clinical/program';
 import { useLocale, useT, formatDate } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
@@ -149,6 +150,31 @@ export default function ResultsScreen() {
         </Card>
       ) : null}
 
+      {/* Cause analysis */}
+      {assessment ? (() => {
+        const ranked = rankCauses(assessment);
+        const tests = confirmatoryTests(ranked, 3);
+        const needsMore = !assessment.causeAnswers || !assessment.exam;
+        return (
+          <Card title={t('causes.result.title')} overline={t('causes.result.overline')}>
+            <Text variant="bodySmall" tone="secondary">{t('causes.result.body')}</Text>
+            {needsMore ? (
+              <Banner tone="info" title={t('causes.result.moreData')} primary={{ title: t('causes.result.moreData.action'), onPress: () => router.push(!assessment.causeAnswers ? '/assess/causes' : '/assess/exam') }} />
+            ) : null}
+            <CauseList ranked={ranked} />
+            <View style={{ gap: space[1] }}>
+              <Text variant="h3">{t('causes.result.tests')}</Text>
+              {tests.map((k) => (
+                <View key={k} style={{ flexDirection: 'row', gap: space[2] }}>
+                  <Text variant="body" tone="secondary">·</Text>
+                  <Text variant="body" style={{ flex: 1 }}>{t(k)}</Text>
+                </View>
+              ))}
+            </View>
+          </Card>
+        );
+      })() : null}
+
       {/* Probable profile */}
       {profile.subtypes.length || profile.drivers.length ? (
         <Card title={t('results.profile.title')} overline={t('results.profile.hint')}>
@@ -268,6 +294,21 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
     const flags = FLAG_KEYS.filter((k) => a.redFlags?.[k]).map((k) => t(`results.flag.${k}`));
     lines.push(flags.length ? t('results.summary.flags', { v: flags.join(', ') }) : t('results.summary.noFlags'));
   }
+  const ex = a.exam;
+  if (ex) {
+    const bits: string[] = [];
+    if (ex.dinSrtDb != null) bits.push(t('results.summary.exam.din', { v: ex.dinSrtDb.toFixed(1), r: ex.dinPassed ? t('results.summary.exam.pass') : t('results.summary.exam.refer') }));
+    if (ex.ldlLow != null) bits.push(ex.ldlLow ? t('results.summary.exam.ldlLow') : t('results.summary.exam.ldlOk'));
+    if (ex.valsalvaPop != null || ex.fullnessRelief != null) bits.push(ex.valsalvaPop || ex.fullnessRelief ? t('results.summary.exam.pressureRelief') : t('results.summary.exam.pressureNone'));
+    if (ex.jugularChange && ex.jugularChange !== 'same') bits.push(t('results.summary.exam.jugular'));
+    if (ex.swayAbnormal != null) bits.push(ex.swayAbnormal ? t('results.summary.exam.swayAbnormal') : t('results.summary.exam.swayOk'));
+    if (ex.somaticPositive != null) bits.push(ex.somaticPositive ? t('results.summary.exam.somaticPos') : t('results.summary.exam.somaticNeg'));
+    if (bits.length) lines.push(t('results.summary.exam', { v: bits.join('; ') }));
+  }
+  const ranked = rankCauses(a).slice(0, 3).filter((r, i) => i === 0 || r.pct >= 8);
+  if (ranked.length) lines.push(t('results.summary.causes', { v: ranked.map((r) => `${t(`cause.${r.id}.name`)} (%${r.pct})`).join(', ') }));
+  const tests = confirmatoryTests(rankCauses(a), 3);
+  if (tests.length) lines.push(t('results.summary.tests', { v: tests.map((k) => t(k)).join(', ') }));
   if (!lines.length) lines.push(locale === 'tr' ? 'Henüz kayıt yok.' : 'Nothing recorded yet.');
   return lines;
 }

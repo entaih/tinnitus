@@ -123,8 +123,8 @@ export function buildProfile(a: Assessment): Profile {
   }
   const p = pta4(a);
   if ((p != null && p > 25) || h?.hearingDifficulty) phenotypes.push('hearingLossAssociated');
-  if ((rasst && rasst.total >= 2) || h?.somaticModulation) phenotypes.push('somatosensory');
-  if ((hq && hq.total >= 16) || (!hq && h?.soundSensitivity)) phenotypes.push('hyperacusis');
+  if ((rasst && rasst.total >= 2) || h?.somaticModulation || a.exam?.somaticPositive) phenotypes.push('somatosensory');
+  if ((hq && hq.total >= 16) || (!hq && h?.soundSensitivity) || a.exam?.ldlLow) phenotypes.push('hyperacusis');
 
   const drivers: Driver[] = [];
   if (thi && thi.total >= 38) drivers.push('distress');

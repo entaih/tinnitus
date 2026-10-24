@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { Assessment, CaseHistory, DiaryEntry, HearingScreenResult, Program, PsychoacousticResult, QuestionnaireResult, RedFlags } from '@/clinical/types';
+import type { Assessment, CaseHistory, DiaryEntry, ExamResult, HearingScreenResult, Program, PsychoacousticResult, QuestionnaireResult, RedFlags } from '@/clinical/types';
 
 export interface ThoughtRecord {
   id: string; date: string; situation: string; thought: string; emotion: string; intensity: number;
@@ -25,6 +25,8 @@ interface ClinicalState {
   saveQuestionnaire: (id: string, q: QuestionnaireResult) => void;
   saveHearing: (id: string, h: HearingScreenResult) => void;
   savePsycho: (id: string, p: Partial<PsychoacousticResult>) => void;
+  saveCauseAnswers: (id: string, answers: Record<string, boolean>) => void;
+  saveExam: (id: string, e: Partial<ExamResult>) => void;
   upsertDiary: (e: DiaryEntry) => void;
   addThought: (t: ThoughtRecord) => void;
   logSession: (s: Omit<SessionLog, 'id' | 'date'>) => void;
@@ -66,6 +68,8 @@ export const useClinical = create<ClinicalState>()(
       savePsycho: (id, p) => set((s) => ({
         assessments: update(s.assessments, id, (a) => ({ ...a, psycho: { ...(a.psycho ?? { date: new Date().toISOString() }), ...p, date: new Date().toISOString() } })),
       })),
+      saveExam: (id, e) => set((s) => ({ assessments: update(s.assessments, id, (a) => ({ ...a, exam: { ...(a.exam ?? { date: new Date().toISOString() }), ...e, date: new Date().toISOString() } })) })),
+      saveCauseAnswers: (id, answers) => set((s) => ({ assessments: update(s.assessments, id, (a) => ({ ...a, causeAnswers: { ...(a.causeAnswers ?? {}), ...answers } })) })),
       upsertDiary: (e) => set((s) => ({ diary: [...s.diary.filter((d) => d.date !== e.date), e].sort((a, b) => a.date.localeCompare(b.date)) })),
       addThought: (t) => set((s) => ({ thoughts: [t, ...s.thoughts] })),
       logSession: (x) => set((s) => ({ sessions: [...s.sessions, { ...x, id: newId(), date: new Date().toISOString() }].slice(-2000) })),
@@ -100,6 +104,8 @@ export function mergedLatest(assessments: Assessment[]): Assessment | null {
     if (a.redFlags) merged.redFlags = a.redFlags;
     if (a.hearing) merged.hearing = a.hearing;
     if (a.psycho) merged.psycho = { ...(merged.psycho ?? { date: a.psycho.date }), ...a.psycho };
+    if (a.causeAnswers) merged.causeAnswers = { ...(merged.causeAnswers ?? {}), ...a.causeAnswers };
+    if (a.exam) merged.exam = { ...(merged.exam ?? { date: a.exam.date }), ...a.exam };
     for (const q of a.questionnaires) merged.questionnaires = [...merged.questionnaires.filter((x) => x.id !== q.id), q];
   }
   return merged;

@@ -60,6 +60,28 @@ export interface PsychoacousticResult {
   riCategory?: 'complete' | 'partial' | 'none';
 }
 
+/** Results of the guided self-examination battery (phone only, no extra hardware). All fields optional. */
+export interface ExamResult {
+  date: string;
+  /** digits-in-noise speech reception threshold estimate (dB SNR, lower = better); null if not done */
+  dinSrtDb?: number | null;
+  dinPassed?: boolean;
+  /** loudness discomfort level estimate (dB relative to the app's full scale; higher magnitude = more tolerant) */
+  ldlDb?: number | null;
+  ldlLow?: boolean;              // discomfort reached early → hyperacusis pattern
+  /** Eustachian-tube manoeuvres */
+  valsalvaPop?: boolean;         // ear "pops"/opens on Valsalva or Toynbee
+  fullnessRelief?: boolean;      // fullness eases after the manoeuvre
+  /** vascular manoeuvres (pulsatile tinnitus only) */
+  jugularChange?: 'quieter' | 'louder' | 'same' | null;
+  headTurnChange?: 'quieter' | 'louder' | 'same' | null;
+  /** balance (accelerometer sway, eyes closed, 30 s) */
+  swayScore?: number | null;     // RMS acceleration in m/s² (×100), normalised; higher = more sway
+  swayAbnormal?: boolean;
+  /** somatic modulation self-test summary */
+  somaticPositive?: boolean;
+}
+
 export interface DiaryEntry {
   date: string;            // YYYY-MM-DD
   loudness: number;        // 0-10
@@ -77,6 +99,10 @@ export interface Assessment {
   questionnaires: QuestionnaireResult[];
   hearing?: HearingScreenResult;
   psycho?: PsychoacousticResult;
+  /** answers to the adaptive cause-analysis questions (src/clinical/causes.ts) */
+  causeAnswers?: Record<string, boolean>;
+  /** guided self-examination results */
+  exam?: ExamResult;
 }
 
 export type Triage = 'urgent' | 'audiology' | 'selfcare';
