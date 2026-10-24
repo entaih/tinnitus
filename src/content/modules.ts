@@ -442,7 +442,7 @@ The "mixing point" tool in the Sounds section helps you find this level. Once fo
         body: {
           tr: `- Tam sessizlik: kulak tıkacı ile uyumak ya da sessiz odada uzun süre kalmak tinnitusu öne çıkarır ve ses hassasiyetini artırabilir.
 - Sesi gün boyu yüksek düzeyde açık tutmak: işitme için risk oluşturur ve alışmayı geciktirir.
-- "Tinnitusu tedavi eden ses" vaadiyle satılan uygulamalar ve kayıtlar: ses zenginleştirme bir rahatlatma aracıdır; tek başına sesi azalttığına dair güvenilir kanıt yoktur.`,
+- "Tinnitusu geçiren ses" vaadiyle satılan uygulamalar ve kayıtlar: ses zenginleştirme bir rahatlatma aracıdır; tek başına sesi azalttığına dair güvenilir kanıt yoktur.`,
           en: `- Complete silence: sleeping with earplugs or spending long periods in a silent room brings tinnitus forward and can increase sound sensitivity.
 - Keeping sound on loud all day: it risks hearing and delays habituation.
 - Apps and recordings sold as "sounds that cure tinnitus": sound enrichment is a comfort tool; there is no reliable evidence that it reduces the sound on its own.`,
