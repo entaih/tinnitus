@@ -5,6 +5,9 @@ import {
   startThresholdSearch, respondThreshold, HEARING_SEARCH, TONE_THRESHOLD_SEARCH,
   startMml, mmlStep, mmlHeardNoise, mmlMasked, mmlNotMaskable, mmlAtCap, riMaskerLevel,
   scoreResidualInhibition, applyLevelCap, capDbFor, dbToVolume, loudnessMatch, octavesBetween, median, randomGapMs, pta4FromThresholds,
+  PITCH_START_PAIRS, SCREENING_FREQS, CATCH_BLOCK, RI_FIRST_RATING_SEC, RI_RATING_INTERVAL_SEC, RI_MAX_TRIALS_PER_SESSION, RI_MAX_TRIALS_HYPERACUSIS,
+  makeCatchScheduler, screenReliability, warbleFor, pitchBandwidthOctaves, nbnLevelCompensationDb, notchedPresetEligible, maskerSpec,
+  riHyperacusisGate, riMaxTrials, riRatingSchedule,
   type RiRating,
 } from '../src/audio/psychoacoustics.ts';
 
@@ -171,9 +174,39 @@ test('MML ramp: noise threshold then masking level; not maskable at cap', () => 
   assert.equal(mmlMasked(startMml()).phase, 'toThreshold');
 });
 
-test('RI masker level = MML + 10 dB, capped', () => {
-  assert.deepEqual(riMaskerLevel(-30, 0), { levelDb: -20, capped: false });
-  assert.deepEqual(riMaskerLevel(-5, -6), { levelDb: -6, capped: true });
+test('RI masker level = MML + 10 dB (MML + 5 dB under the hyperacusis gate), capped', () => {
+  assert.deepEqual(riMaskerLevel(-30, 0), { levelDb: -20, capped: false, aboveMmlDb: 10 });
+  assert.deepEqual(riMaskerLevel(-5, -6), { levelDb: -6, capped: true, aboveMmlDb: 10 });
+  assert.deepEqual(riMaskerLevel(-30, 0, { hyperacusis: true }), { levelDb: -25, capped: false, aboveMmlDb: 5 });
+  assert.equal(riHyperacusisGate(28, false), true);
+  assert.equal(riHyperacusisGate(27, false), false);
+  assert.equal(riHyperacusisGate(null, true), true);
+  assert.equal(riHyperacusisGate(undefined, undefined), false);
+  assert.equal(riMaxTrials(true), RI_MAX_TRIALS_HYPERACUSIS);
+  assert.equal(riMaxTrials(false), RI_MAX_TRIALS_PER_SESSION);
+});
+
+test('RI rating schedule: 2 s then every 5 s', () => {
+  assert.deepEqual(riRatingSchedule(20), [2, 5, 10, 15, 20]);
+  assert.equal(riRatingSchedule()[0], RI_FIRST_RATING_SEC);
+  assert.equal(riRatingSchedule()[1], RI_RATING_INTERVAL_SEC);
+  assert.deepEqual(riRatingSchedule(12, 0, 5), [5, 10]);
+});
+
+test('RI scoring with the 2 s first sample and a missed (unconfirmed) sample', () => {
+  // Short complete RI caught by the 2 s sample: 0 at 2 s and 5 s, back by 10 s → zero span 2→10 = 8 s.
+  const short = scoreResidualInhibition(6, r([[2, 0], [5, 0], [10, 6]]));
+  assert.equal(short.category, 'complete');
+  assert.ok(short.positive);
+  assert.equal(short.durationSec, 10);
+  // A rating holds at most one interval: a missed sample at 10 s censors instead of extending the suppression.
+  const gap = scoreResidualInhibition(6, r([[2, 2], [5, 2], [15, 6]]));
+  assert.equal(gap.positive, true);          // 2→10 s at ≤ 50 % (5 s sample holds until 10 s)
+  assert.equal(gap.durationSec, 15);
+  const gapOnly = scoreResidualInhibition(6, r([[2, 2], [15, 6]]));
+  assert.equal(gapOnly.positive, true);      // 2 s sample holds until 7 s → exactly 5 s
+  const tiny = scoreResidualInhibition(6, r([[2, 2], [4, 6]]));
+  assert.equal(tiny.positive, false);
 });
 
 const r = (pairs: Array<[number, number]>): RiRating[] => pairs.map(([t, value]) => ({ t, value }));
@@ -217,9 +250,162 @@ test('RI scoring: complete, partial, none, censored, rebound', () => {
   assert.equal(scoreResidualInhibition(5, []).category, 'none');
 });
 
+test('pitch start pairs vary per run and bandwidth follows the percept', () => {
+  assert.equal(PITCH_START_PAIRS.length, 3);
+  const s = startPitchRun({ startPair: [500, 6000] });
+  assert.equal(s.a, 500); assert.equal(s.b, 6000);
+  assert.ok(Math.abs(s.intervalOctaves - octavesBetween(500, 6000)) < 1e-9);
+  for (const pair of PITCH_START_PAIRS) {
+    const n = pitchRunLength(octavesBetween(pair[0], pair[1]));
+    assert.ok(n >= 5 && n <= 6, `${pair} → ${n} steps`);
+    const done = runListener(3000, { startPair: pair });
+    assert.ok(done.done && octavesBetween(done.estimateHz!, 3000) <= 1 / 12 + 1e-9, `${pair} → ${done.estimateHz}`);
+  }
+  const shuffled = shuffleCandidates([...PITCH_START_PAIRS], 7);
+  assert.deepEqual([...shuffled].sort((x, y) => x[0] - y[0]), [...PITCH_START_PAIRS].sort((x, y) => x[0] - y[0]));
+  assert.equal(pitchBandwidthOctaves('tonal'), 0.33);
+  assert.equal(pitchBandwidthOctaves('multiple'), 0.33);
+  assert.equal(pitchBandwidthOctaves('hiss'), 0.5);
+  assert.equal(pitchBandwidthOctaves('buzz'), 0.5);
+});
+
+test('narrowband RMS compensation is small, zero at the reference and interpolated', () => {
+  assert.equal(nbnLevelCompensationDb(1000), 0);
+  for (const hz of [125, 250, 500, 1414, 3000, 8000, 12000, 16000, 20000]) {
+    const c = nbnLevelCompensationDb(hz);
+    assert.ok(Math.abs(c) <= 3, `${hz} → ${c}`);
+    assert.equal(c, Math.round(c * 10) / 10);
+  }
+  // between 500 (−0.4) and 1000 (0): monotone interpolation
+  const mid = nbnLevelCompensationDb(707);
+  assert.ok(mid <= 0 && mid >= nbnLevelCompensationDb(500));
+});
+
+test('notched preset lock: pitch > 8 kHz or low confidence', () => {
+  assert.equal(notchedPresetEligible(4000, 'high'), true);
+  assert.equal(notchedPresetEligible(8000, 'medium'), true);
+  assert.equal(notchedPresetEligible(8001, 'high'), false);
+  assert.equal(notchedPresetEligible(4000, 'low'), false);
+  assert.equal(notchedPresetEligible(undefined, 'high'), false);
+});
+
+test('hearing screen: 3 kHz included, warble from 3 kHz, catch trials 1 in 6, reliability flag', () => {
+  assert.deepEqual([...SCREENING_FREQS], [500, 1000, 2000, 3000, 4000, 6000, 8000]);
+  assert.equal(warbleFor(2000), false);
+  assert.equal(warbleFor(3000), true);
+  assert.equal(warbleFor(8000), true);
+  let x = 0.37;
+  const rnd = () => { x = (x * 9301 + 49297) % 233280; return x / 233280; };
+  const isCatch = makeCatchScheduler(rnd);
+  const flags: boolean[] = [];
+  for (let i = 0; i < 10 * CATCH_BLOCK; i++) flags.push(isCatch());
+  for (let b = 0; b < 10; b++) {
+    const block = flags.slice(b * CATCH_BLOCK, (b + 1) * CATCH_BLOCK);
+    assert.equal(block.filter(Boolean).length, 1, `block ${b}`);
+  }
+  // the slot moves around (not always the same position)
+  const positions = new Set<number>();
+  for (let b = 0; b < 10; b++) positions.add(flags.slice(b * CATCH_BLOCK, (b + 1) * CATCH_BLOCK).indexOf(true));
+  assert.ok(positions.size > 1);
+  assert.equal(screenReliability(0), 'ok');
+  assert.equal(screenReliability(1), 'ok');
+  assert.equal(screenReliability(2), 'low');
+});
+
+test('MML/RI share one stimulus: NBN at the pitch, broadband otherwise', () => {
+  const nbn = maskerSpec(4120);
+  assert.equal(nbn.stimulus, 'nbn');
+  assert.equal(nbn.centerHz, 4120);
+  assert.deepEqual(nbn.spec, { kind: 'narrowband', color: 'white', centerHz: 4120, octaves: 0.33, seconds: 8 });
+  const bbn = maskerSpec(undefined);
+  assert.equal(bbn.stimulus, 'bbn');
+  assert.equal(bbn.centerHz, undefined);
+  assert.deepEqual(bbn.spec, { kind: 'noise', color: 'white', seconds: 8 });
+  assert.equal(maskerSpec(NaN).stimulus, 'bbn');
+  assert.equal(maskerSpec(20000).centerHz, 16000);
+});
+
 test('utility helpers', () => {
   assert.equal(randomGapMs(1000, 3000, () => 0), 1000);
   assert.equal(randomGapMs(1000, 3000, () => 1), 3000);
   assert.equal(pta4FromThresholds([{ freq: 500, levelDb: -40 }, { freq: 1000, levelDb: -40 }, { freq: 2000, levelDb: -30 }, { freq: 4000, levelDb: -10 }, { freq: 8000, levelDb: 0 }]), -30);
   assert.equal(pta4FromThresholds([]), null);
+});
+
+// --- doctor summary audio lines ------------------------------------------------------------------
+
+import { audioReportLines, AUDIO_PROTOCOL_VERSION } from '../src/clinical/reportAudio.ts';
+import type { Assessment } from '../src/clinical/types.ts';
+
+/** Key + params stub so the structure (which lines, which values) is asserted without the real dictionaries. */
+const tStub = (k: string, p?: Record<string, string | number>) => (p ? `${k} ${JSON.stringify(p)}` : k);
+
+test('audio report: nothing without audio data; header + hearing table in dBFS with method lines', () => {
+  assert.deepEqual(audioReportLines({ id: 'a', date: 'd', questionnaires: [] }, tStub), []);
+  const a: Assessment = {
+    id: 'a', date: 'd', questionnaires: [],
+    hearing: {
+      date: 'd', ambientOk: true, calibrated: false, mode: 'separate', headphonesVerified: true, reliability: 'ok',
+      thresholds: [
+        // right: full set with a 4 kHz notch (−35 vs −60 at 2 and 8 kHz); left: 8 kHz missing, 6 kHz 15 dB different from the right
+        ...[500, 1000, 2000, 3000, 4000, 6000, 8000].map((freq) => ({ ear: 'right' as const, freq, levelDb: freq === 4000 ? -35 : -60 })),
+        ...[500, 1000, 2000, 3000, 4000, 6000].map((freq) => ({ ear: 'left' as const, freq, levelDb: freq === 4000 ? -30 : freq === 6000 ? -45 : -60 })),
+      ],
+    },
+  };
+  const lines = audioReportLines(a, tStub);
+  assert.ok(lines[0].startsWith('psy.rep.header'));
+  assert.ok(lines[0].includes(AUDIO_PROTOCOL_VERSION));
+  const right = lines.find((l) => l.startsWith('psy.rep.hear.ear') && l.includes('psy.hear.ear.right'))!;
+  assert.ok(right.includes('500/1k/2k/3k/4k/6k/8k Hz: -60/-60/-60/-60/-35/-60/-60'));
+  const left = lines.find((l) => l.startsWith('psy.rep.hear.ear') && l.includes('psy.hear.ear.left'))!;
+  assert.ok(left.includes('-60/-60/-60/-60/-30/-45/—'));
+  const pta = lines.find((l) => l.startsWith('psy.rep.hear.pta'))!;
+  assert.ok(pta.includes('"raw":"-52"'));           // worse ear: left (−60,−60,−60,−30 → −52.5; JS rounds half up)
+  assert.ok(pta.includes('"hl":18'));
+  const meta = lines.find((l) => l.startsWith('psy.rep.hear.meta'))!;
+  assert.ok(meta.includes('psy.rep.yes') && meta.includes('psy.rep.hear.rel.ok') && meta.includes('psy.rep.hear.amb.ok'));
+  const asym = lines.find((l) => l.startsWith('psy.rep.hear.asym'))!;
+  assert.ok(asym.includes('6000 Hz: 15 dB') && !asym.includes('4000'));
+  assert.ok(lines.some((l) => l.startsWith('psy.rep.hear.notch')));
+  assert.ok(lines.find((l) => l.startsWith('psy.rep.hear.notHeard'))!.includes('8000'));
+});
+
+test('audio report: psychoacoustics with stimulus and exam records without pass/fail labels', () => {
+  const a: Assessment = {
+    id: 'a', date: 'd', questionnaires: [],
+    hearing: { date: 'd', ambientOk: false, calibrated: false, mode: 'both', thresholds: [{ ear: 'right', freq: 1000, levelDb: -62 }, { ear: 'left', freq: 1000, levelDb: -62 }] },
+    psycho: { date: 'd', pitchHz: 4120, pitchConfidence: 'medium', loudnessDbSl: 12, mmlDb: 14, mmlStimulus: 'nbn', mmlCenterHz: 4120, riPositive: true, riDepth: 0.25, riCategory: 'partial', residualInhibitionSec: 20 },
+    exam: { date: 'd', dinSrtDb: -7.1, ldlDb: -20, ldlLow: false, valsalvaPop: true, fullnessRelief: false, headTurnChange: 'quieter', positionalChange: true, swayScore: 9.5, somaticPositive: false },
+  };
+  const lines = audioReportLines(a, tStub);
+  const ear = lines.filter((l) => l.startsWith('psy.rep.hear.ear'));
+  assert.equal(ear.length, 1);                      // 'both' mode → one row, not a copied left/right pair
+  assert.ok(ear[0].includes('psy.hear.ear.both'));
+  assert.ok(!lines.some((l) => l.startsWith('psy.rep.hear.asym')));
+  assert.ok(lines.find((l) => l.startsWith('psy.rep.pitch'))!.includes('"hz":4120'));
+  assert.ok(lines.find((l) => l.startsWith('psy.rep.loud'))!.includes('"db":12'));
+  const mml = lines.find((l) => l.startsWith('psy.rep.mml '))!;
+  assert.ok(mml.includes('"db":14') && mml.includes('psy.rep.stim.nbn'));
+  const ri = lines.find((l) => l.startsWith('psy.rep.ri '))!;
+  assert.ok(ri.includes('psy.rep.ri.positive') && ri.includes('"depth":25') && ri.includes('"dur":20'));
+  const din = lines.find((l) => l.startsWith('psy.rep.exam.din'))!;
+  assert.ok(din.includes('"db":"-7.1"') && din.includes('"n":24') && din.includes('"from":5'));
+  const ldl = lines.find((l) => l.startsWith('psy.rep.exam.ldl '))!;
+  assert.ok(ldl.includes('"db":"-20"') && ldl.includes('psy.rep.exam.ldl.dr') && /db\\?":42/.test(ldl));
+  assert.ok(lines.some((l) => l.startsWith('psy.rep.exam.pressure')));
+  assert.ok(lines.find((l) => l.startsWith('psy.rep.exam.vascular'))!.includes('exam.vascular.quieter'));
+  assert.ok(lines.some((l) => l === 'psy.rep.exam.jugularClinic'));
+  assert.ok(lines.find((l) => l.startsWith('psy.rep.exam.sway'))!.includes('9.5'));
+  assert.ok(lines.some((l) => l.startsWith('psy.rep.exam.somatic')));
+  assert.ok(!lines.some((l) => /pass|fail|normal/i.test(l)));
+});
+
+test('audio report: not-maskable MML is a flag, not a number', () => {
+  const a: Assessment = { id: 'a', date: 'd', questionnaires: [], psycho: { date: 'd', mmlDb: 48, mmlNotMaskable: true, mmlStimulus: 'bbn', riPositive: false, riCategory: 'none', riDepth: 1, residualInhibitionSec: 0 } };
+  const lines = audioReportLines(a, tStub);
+  assert.ok(!lines.some((l) => l.startsWith('psy.rep.mml ')));
+  const nm = lines.find((l) => l.startsWith('psy.rep.mml.notMaskable'))!;
+  assert.ok(nm.includes('psy.rep.stim.bbn') && nm.includes('"db":48'));
+  assert.ok(lines.find((l) => l.startsWith('psy.rep.ri '))!.includes('psy.rep.ri.negative'));
 });

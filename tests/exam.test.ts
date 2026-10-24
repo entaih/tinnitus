@@ -1,10 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  DIN_PASS_SRT_DB, DIN_TRIALS, LDL_LOW_MARGIN_DB, SWAY_ABNORMAL_SCORE, applicableExamSteps, dinNoiseVolume, dinPassed, dinSnrFloor,
+  DIN_PASS_SRT_DB, DIN_SCORED_FROM_TRIAL, DIN_SCORED_TRIALS, DIN_TRIALS, LDL_LOW_MARGIN_DB, LDL_MAX_PRESENTATIONS, LDL_STEP_DB, LDL_FREQS, SWAY_ABNORMAL_SCORE,
+  applicableExamSteps, dinNoiseVolume, dinPassed, dinSnrFloor, examEligibility, gatedExamSteps, hyperacusisCeilingDb, ldlCeilingDb, ldlDynamicRangeDb,
   nextExamRoute, randomTriplet, respondDin, respondLdl, startDin, startLdl, summariseLdl, swayAbnormal, swayRatio, swayStats, tripletCorrect, tripletUtterance,
   type SwaySample,
 } from '../src/audio/examTests.ts';
+import type { Assessment } from '../src/clinical/types.ts';
+
+const base = (over: Partial<Assessment> = {}): Assessment => ({ id: 'a', date: '2026-10-24', questionnaires: [], ...over });
+const rf = (over: Partial<NonNullable<Assessment['redFlags']>>) => ({
+  suddenHearingLoss: false, unilateralSymptoms: false, pulsatile: false, vertigo: false, neuroSigns: false, otorrhoeaOrPain: false, headTrauma: false, selfHarm: false, ...over,
+});
 
 // --- battery order -------------------------------------------------------------------------------
 
@@ -15,6 +22,66 @@ test('vascular step only for pulsatile tinnitus; sequence skips the external som
   assert.equal(nextExamRoute('pressure', { pulsatile: false }), '/assess/exam/balance');
   assert.equal(nextExamRoute('pressure', { pulsatile: true }), '/assess/exam/vascular');
   assert.equal(nextExamRoute('balance', { pulsatile: true }), null);
+});
+
+// --- eligibility gate (physician A3) --------------------------------------------------------------
+
+test('eligibility: everything allowed on an empty assessment', () => {
+  const e = examEligibility(base());
+  assert.equal(e.pressure, true); assert.equal(e.balance, true); assert.equal(e.ldl, true);
+  assert.equal(e.vascular, false); assert.equal(e.hyperacusisGate, false); assert.equal(e.hqTotal, null);
+  assert.deepEqual(gatedExamSteps(e), []);
+  assert.equal(examEligibility(null).pressure, true);
+});
+
+test('eligibility: pressure manoeuvres hidden for trauma / sudden loss / vertigo / discharge / barotrauma / Tullio', () => {
+  for (const flag of ['headTrauma', 'suddenHearingLoss', 'vertigo', 'otorrhoeaOrPain'] as const) {
+    const e = examEligibility(base({ redFlags: rf({ [flag]: true }) }));
+    assert.equal(e.pressure, false, flag);
+    assert.equal(e.pressureReasons.length, 1);
+  }
+  assert.equal(examEligibility(base({ causeAnswers: { barotrauma: true } })).pressure, false);
+  assert.equal(examEligibility(base({ causeAnswers: { soundInducedDizzy: true } })).pressureReasons[0], 'exam.gate.soundDizzy');
+  const e = examEligibility(base({ redFlags: rf({ headTrauma: true, vertigo: true }) }));
+  assert.deepEqual(e.pressureReasons, ['exam.gate.headTrauma', 'exam.gate.vertigo']);
+  assert.ok(!applicableExamSteps({ eligibility: e }).some((s) => s.id === 'pressure'));
+  assert.deepEqual(gatedExamSteps(e).map((g) => g.id), ['pressure', 'balance']);
+  assert.equal(nextExamRoute('ldl', { eligibility: e }), null); // pressure and balance gated, not pulsatile
+});
+
+test('eligibility: balance disabled for vertigo, Ménière pattern or age ≥ 65', () => {
+  assert.equal(examEligibility(base({ redFlags: rf({ vertigo: true }) })).balance, false);
+  assert.equal(examEligibility(base({ redFlags: rf({ menierePattern: true }) })).balanceReasons[0], 'exam.gate.meniere');
+  const old = base({ history: { side: 'both', onset: 'gt5y', pattern: 'constant', character: 'tonal', noiseExposure: false, hearingDifficulty: false, soundSensitivity: false, somaticModulation: false, neckOrJawPain: false, ototoxicMeds: false, earFullness: false, sleepProblem: false, stressWorsens: false, age: 65 } });
+  assert.equal(examEligibility(old).balance, false);
+  assert.equal(examEligibility({ ...old, history: { ...old.history!, age: 64 } }).balance, true);
+});
+
+test('eligibility: LDL disabled and RI gated at HQ ≥ 28; ldlLow also gates RI', () => {
+  const hq = (total: number) => base({ questionnaires: [{ id: 'HQ', date: '2026-10-24', answers: [], total }] });
+  assert.equal(examEligibility(hq(28)).ldl, false);
+  assert.equal(examEligibility(hq(28)).hyperacusisGate, true);
+  assert.equal(examEligibility(hq(28)).hqTotal, 28);
+  assert.equal(examEligibility(hq(27)).ldl, true);
+  assert.equal(examEligibility(hq(27)).hyperacusisGate, false);
+  assert.equal(examEligibility(base({ exam: { date: 'x', ldlLow: true } })).hyperacusisGate, true);
+  assert.equal(examEligibility(base({ exam: { date: 'x', ldlLow: true } })).ldl, true);
+  const e = examEligibility(hq(30));
+  assert.ok(!applicableExamSteps({ eligibility: e }).some((s) => s.id === 'ldl'));
+  assert.equal(nextExamRoute('din', { eligibility: e }), '/assess/exam/pressure');
+});
+
+test('eligibility: vascular step from red flag or pulsatile history', () => {
+  assert.equal(examEligibility(base({ redFlags: rf({ pulsatile: true }) })).vascular, true);
+  assert.ok(applicableExamSteps({ eligibility: examEligibility(base({ redFlags: rf({ pulsatile: true }) })) }).some((s) => s.id === 'vascular'));
+});
+
+test('hyperacusis ceiling = min(−8, LDL − 15)', () => {
+  assert.equal(hyperacusisCeilingDb(null), -8);
+  assert.equal(hyperacusisCeilingDb({ ldlDb: null }), -8);
+  assert.equal(hyperacusisCeilingDb({ ldlDb: -10 }), -25);
+  assert.equal(hyperacusisCeilingDb({ ldlDb: 10 }), -8);
+  assert.equal(hyperacusisCeilingDb({ ldlDb: -40 }), -55);
 });
 
 // --- digits in noise -----------------------------------------------------------------------------
@@ -33,14 +100,18 @@ test('DIN steps 4 dB before the first reversal and 2 dB after', () => {
   assert.equal(s.snrDb, 2);
 });
 
-test('DIN finishes after 20 trials with SRT = mean of the last 10 SNRs', () => {
+test('DIN finishes after 24 trials with SRT = mean SNR of trials 5–24', () => {
+  assert.equal(DIN_TRIALS, 24);
+  assert.equal(DIN_SCORED_FROM_TRIAL, 5);
+  assert.equal(DIN_SCORED_TRIALS, 20);
   let s = startDin();
   // Simulated listener with a true SRT of −6 dB: correct when SNR ≥ −6.
   while (!s.done) s = respondDin(s, s.snrDb >= -6);
   assert.equal(s.trials.length, DIN_TRIALS);
   assert.ok(s.srtDb != null);
-  const tail = s.trials.slice(-10);
-  const mean = tail.reduce((a, t) => a + t.snrDb, 0) / 10;
+  const tail = s.trials.slice(DIN_SCORED_FROM_TRIAL - 1);
+  assert.equal(tail.length, DIN_SCORED_TRIALS);
+  const mean = tail.reduce((a, t) => a + t.snrDb, 0) / tail.length;
   assert.equal(s.srtDb, Math.round(mean * 10) / 10);
   assert.ok(Math.abs(s.srtDb! - -6) <= 2, `SRT ${s.srtDb} should converge near −6`);
   assert.equal(respondDin(s, true), s); // no change once done
@@ -83,30 +154,58 @@ test('triplets are three distinct digits and scoring requires all three in order
 
 // --- loudness discomfort -------------------------------------------------------------------------
 
-test('LDL ascends 5 dB from −50 and stops at the first uncomfortable response', () => {
+test('LDL self-report: 1 kHz only, ascends 3 dB from −50, three-level response, first "uncomfortable" is the record', () => {
+  assert.deepEqual([...LDL_FREQS], [1000]);
+  assert.equal(LDL_STEP_DB, 3);
   let s = startLdl(1000, 0);
   assert.equal(s.level, -50);
-  s = respondLdl(s, false);
-  assert.equal(s.level, -45);
-  for (let i = 0; i < 4; i++) s = respondLdl(s, false);
-  assert.equal(s.level, -25);
-  s = respondLdl(s, true);
+  s = respondLdl(s, 'comfortable');
+  assert.equal(s.level, -47);
+  for (let i = 0; i < 4; i++) s = respondLdl(s, 'comfortable');
+  assert.equal(s.level, -35);
+  s = respondLdl(s, 'loudOk');            // loud but tolerable → keep ascending, remember the level
+  assert.equal(s.level, -32);
+  assert.equal(s.loudOkDb, -35);
+  assert.equal(s.done, false);
+  s = respondLdl(s, 'uncomfortable');
   assert.equal(s.done, true);
-  assert.equal(s.discomfortDb, -25);
+  assert.equal(s.discomfortDb, -32);
+  assert.equal(s.loudOkDb, -35);
+  // boolean form kept for compatibility
+  let b = startLdl(1000, 0);
+  b = respondLdl(b, false); assert.equal(b.level, -47);
+  b = respondLdl(b, true); assert.equal(b.discomfortDb, -47);
 });
 
-test('LDL stops at the cap without discomfort and the summary uses the cap value', () => {
-  const cap = -10;
-  let s = startLdl(4000, cap);
+test('LDL ceiling is 10 dB under the user cap; the run stops there (or after the presentation limit) without discomfort', () => {
+  assert.equal(ldlCeilingDb(0), -10);
+  assert.equal(ldlCeilingDb(-6), -16);
+  assert.equal(ldlCeilingDb(5), -10);
+  const ceiling = ldlCeilingDb(-6);
+  let s = startLdl(1000, ceiling);
   let guard = 0;
-  while (!s.done && guard++ < 30) s = respondLdl(s, false);
+  while (!s.done && guard++ < 40) s = respondLdl(s, 'comfortable');
   assert.equal(s.done, true);
   assert.equal(s.reachedCap, true);
   assert.equal(s.discomfortDb, undefined);
-  const sum = summariseLdl([s], cap);
-  assert.equal(sum.ldlDb, cap);
+  assert.ok(s.level <= ceiling);
+  assert.ok(s.presentations <= LDL_MAX_PRESENTATIONS);
+  const sum = summariseLdl([s], ceiling);
+  assert.equal(sum.ldlDb, ceiling);
   assert.equal(sum.anyAtCap, true);
   assert.equal(sum.ldlLow, false);
+  // presentation limit guards a very low ceiling configuration
+  let lim = startLdl(1000, 0, { startDb: -90, stepDb: 1 });
+  guard = 0;
+  while (!lim.done && guard++ < 100) lim = respondLdl(lim, 'comfortable');
+  assert.equal(lim.presentations, LDL_MAX_PRESENTATIONS);
+  assert.equal(lim.reachedCap, true);
+});
+
+test('LDL dynamic range (dB SL) against the hearing-screen threshold', () => {
+  assert.equal(ldlDynamicRangeDb(-20, -60), 40);
+  assert.equal(ldlDynamicRangeDb(null, -60), null);
+  assert.equal(ldlDynamicRangeDb(-20, undefined), null);
 });
 
 test('LDL summary averages frequencies and flags a low tolerance pattern', () => {

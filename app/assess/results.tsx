@@ -10,13 +10,13 @@ import { programGate } from '@/components/assess/programGate';
 import { CheckRow, Collapsible, GlossaryTerm, useGlossary } from '@/components/home';
 import { useTheme } from '@/theme';
 import { rankCauses, confirmatoryTests } from '@/clinical/causes';
-import { toHlEstimate, computeTriage } from '@/clinical/engine';
+import { computeTriage } from '@/clinical/engine';
 import { generateProgram } from '@/clinical/program';
 import { useLocale, useT, formatDate } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
 import { useClinical } from '@/store/clinical';
 import { QUESTIONNAIRES, scoreQuestionnaire } from '@/clinical/questionnaires';
-import { pta4 } from '@/clinical/engine';
+import { audioReportLines } from '@/clinical/reportAudio';
 import type { Assessment, RedFlags } from '@/clinical/types';
 import { fmtHz } from '@/utils/format';
 
@@ -326,30 +326,17 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
   const sci = get('SCI'); if (sci) lines.push(t('results.summary.sci', { total: sci.total }));
   const rasst = get('RASST'); if (rasst) lines.push(t('results.summary.rasst', { total: rasst.total }));
   if (h?.sleepProblem) lines.push(t('results.summary.sleep'));
-  const ps = a.psycho;
-  if (ps?.pitchHz != null) lines.push(t('results.summary.pitch', { v: fmtHz(ps.pitchHz) }));
-  if (ps?.loudnessDbSl != null) lines.push(t('results.summary.loudness', { v: Math.round(ps.loudnessDbSl) }));
-  if (ps?.mmlDb != null) lines.push(t('results.summary.mml', { v: Math.round(ps.mmlDb) }));
-  if (ps?.riCategory) lines.push(t('results.summary.ri', { v: `${t(`results.summary.ri.${ps.riCategory}`)}${ps.residualInhibitionSec != null ? ` (${Math.round(ps.residualInhibitionSec)} s)` : ''}` }));
-  const p = pta4(a);
-  if (p != null) lines.push(t('results.summary.pta', { raw: Math.round(p), v: toHlEstimate(p) }));
+  // Hearing screen, psychoacoustics and phone-test records with units, methods and caveats (audiology review).
+  lines.push(...audioReportLines(a, t));
   if (a.redFlags) {
     const flags = FLAG_KEYS.filter((k) => a.redFlags?.[k]).map((k) => t(`results.flag.${k}`));
     lines.push(flags.length ? t('results.summary.flags', { v: flags.join(', ') }) : t('results.summary.noFlags'));
   }
-  const ex = a.exam;
-  if (ex) {
-    const bits: string[] = [];
-    if (ex.dinSrtDb != null) bits.push(t('results.summary.exam.din', { v: ex.dinSrtDb.toFixed(1), r: ex.dinPassed ? t('results.summary.exam.pass') : t('results.summary.exam.refer') }));
-    if (ex.ldlLow != null) bits.push(ex.ldlLow ? t('results.summary.exam.ldlLow') : t('results.summary.exam.ldlOk'));
-    if (ex.valsalvaPop != null || ex.fullnessRelief != null) bits.push(ex.valsalvaPop || ex.fullnessRelief ? t('results.summary.exam.pressureRelief') : t('results.summary.exam.pressureNone'));
-    if (ex.jugularChange && ex.jugularChange !== 'same') bits.push(t('results.summary.exam.jugular'));
-    if (ex.swayAbnormal != null) bits.push(ex.swayAbnormal ? t('results.summary.exam.swayAbnormal') : t('results.summary.exam.swayOk'));
-    if (ex.somaticPositive != null) bits.push(ex.somaticPositive ? t('results.summary.exam.somaticPos') : t('results.summary.exam.somaticNeg'));
-    if (bits.length) lines.push(t('results.summary.exam', { v: bits.join('; ') }));
-  }
-  const ranked = rankCauses(a).slice(0, 3).filter((r, i) => i === 0 || r.pct >= 8);
-  if (ranked.length) lines.push(t('results.summary.causes', { v: ranked.map((r) => `${t(`cause.${r.id}.name`)} (%${r.pct})`).join(', ') }));
+  const all = rankCauses(a);
+  const excl = all.filter((r) => r.tier === 'exclude');
+  if (excl.length) lines.push(t('results.summary.exclude', { v: excl.map((r) => t(`cause.${r.id}.name`)).join(', ') }));
+  const mech = all.filter((r) => r.tier === 'mechanism').slice(0, 3).filter((r, i) => i === 0 || r.pct >= 8);
+  if (mech.length) lines.push(t('results.summary.causes', { v: mech.map((r) => `${t(`cause.${r.id}.name`)} (${t(`causes.confidence.${r.confidence}`)})`).join(', ') }));
   const tests = confirmatoryTests(rankCauses(a), 3);
   if (tests.length) lines.push(t('results.summary.tests', { v: tests.map((k) => t(k)).join(', ') }));
   if (!lines.length) lines.push(locale === 'tr' ? 'Henüz kayıt yok.' : 'Nothing recorded yet.');

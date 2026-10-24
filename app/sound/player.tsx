@@ -16,6 +16,8 @@ import { programPosition } from '@/clinical/program';
 import { describeSpec, type SoundSpec } from '@/audio/sounds';
 import { PRESETS, hyperacusisWeekVolume, presetById, resolveNamedPreset, resolveSpec, type NamedPreset } from '@/audio/presets';
 import { useMixingPoint, useOnceFlag } from '@/audio/mixingPoint';
+import { hyperacusisCeilingDb } from '@/audio/examTests';
+import { dbToGain } from '@/audio/dsp';
 
 type Params = { preset?: string; spec?: string; id?: string; octaves?: string };
 const NAMED: NamedPreset[] = ['enrichment', 'sleep', 'hyperacusis', 'notched', 'ri', 'custom'];
@@ -96,7 +98,8 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   const remaining = eng.timerEndsAt ? Math.max(0, (eng.timerEndsAt - now) / 1000) : null;
   const clock = remaining != null ? formatClock(remaining) : formatClock(mixer.elapsedSec());
   const week = program ? programPosition(program).week : 1;
-  const hyperTarget = Math.min(hyperacusisWeekVolume(week), maxVolume);
+  // Graded exposure never exceeds the user's output cap or the LDL-derived ceiling (min(−8 dBFS, LDL − 15 dB)).
+  const hyperTarget = Math.min(hyperacusisWeekVolume(week), maxVolume, dbToGain(hyperacusisCeilingDb(assessment?.exam)));
   const layerName = (id: string, spec: SoundSpec) => { const p = presetById(id); return p ? t(p.nameKey) : describeSpec(spec, t); };
   const mainPreset = eng.presetId ? presetById(eng.presetId) : undefined;
 

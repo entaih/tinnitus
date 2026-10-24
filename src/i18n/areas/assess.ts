@@ -1,6 +1,8 @@
 /** i18n strings for the "assess" area. Keys are flat, dot-separated. */
 export const assessStrings = {
   tr: {
+    'results.summary.exclude': 'Hekimin dışlaması önerilen durumlar (en az bir ipucu var): {v}',
+    'results.summary.causes': 'Olası mekanizmalar (uygulama sentezi, tanı değildir): {v}',
     'results.flag.rapidWorsening': 'hızla kötüleşen işitme',
     'results.flag.pulsatileHeadacheVisual': 'pulsatil + baş ağrısı/görme kararması',
     'results.flag.pulsatileNewUnilateral': 'pulsatil, yeni ve tek taraflı',
@@ -44,7 +46,6 @@ export const assessStrings = {
     'results.summary.exam.swayOk': 'denge testi olağan',
     'results.summary.exam.somaticPos': 'somatik manevra testi pozitif',
     'results.summary.exam.somaticNeg': 'somatik manevra testi negatif',
-    'results.summary.causes': 'Uygulamanın olası neden sıralaması: {v}',
     'results.summary.tests': 'Kesinleştirmek için önerilen testler: {v}',
     'cause.noiseCochlear.name': 'Gürültüye bağlı koklea hasarı',
     'cause.noiseCochlear.site': 'İç kulak (koklea) dış tüy hücreleri ve sinaps bağlantıları',
@@ -598,6 +599,8 @@ export const assessStrings = {
   } as Record<string, string>,
 
   en: {
+    'results.summary.exclude': 'Conditions suggested for clinical exclusion (at least one clue): {v}',
+    'results.summary.causes': 'Possible mechanisms (app synthesis, not a diagnosis): {v}',
     'results.flag.rapidWorsening': 'rapidly worsening hearing',
     'results.flag.pulsatileHeadacheVisual': 'pulsatile + headache/visual blackouts',
     'results.flag.pulsatileNewUnilateral': 'pulsatile, new and one-sided',
@@ -641,7 +644,6 @@ export const assessStrings = {
     'results.summary.exam.swayOk': 'balance test unremarkable',
     'results.summary.exam.somaticPos': 'somatic manoeuvre test positive',
     'results.summary.exam.somaticNeg': 'somatic manoeuvre test negative',
-    'results.summary.causes': 'App ranking of probable causes: {v}',
     'results.summary.tests': 'Suggested confirmatory tests: {v}',
     'cause.noiseCochlear.name': 'Noise-related cochlear damage',
     'cause.noiseCochlear.site': 'Inner ear (cochlea): outer hair cells and their synapses',

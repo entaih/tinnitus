@@ -15,7 +15,7 @@ import { soundEngine } from '@/audio/engine';
 import { sleep, stopAllOneShots } from '@/audio/psychoPlayer';
 import type { SoundSpec } from '@/audio/sounds';
 import {
-  DIN_MIN_SNR_DB, DIN_START_SNR_DB, DIN_TRIALS, dinNoiseVolume, dinPassed, dinSnrFloor, randomTriplet, respondDin, startDin, tripletCorrect, tripletUtterance,
+  DIN_MIN_SNR_DB, DIN_SCORED_FROM_TRIAL, DIN_START_SNR_DB, DIN_TRIALS, dinNoiseVolume, dinSnrFloor, randomTriplet, respondDin, startDin, tripletCorrect, tripletUtterance,
   type DinState,
 } from '@/audio/examTests';
 
@@ -26,6 +26,11 @@ const NOISE_SPEC: SoundSpec = { kind: 'narrowband', color: 'white', centerHz: 11
 const SPEECH_WATCHDOG_MS = 10_000;
 const FEEDBACK_MS = 900;
 
+/**
+ * "Gürültüde dinleme alıştırması" (digits-in-noise practice): 24 adaptive triplets, SRT = mean SNR of trials 5–24.
+ * The TTS output level is not fixed and no Turkish triplet norm exists, so the result is a personal record
+ * ("SRT ≈ x dB, not calibrated"), never a pass/fail label (physician B8, audiologist B6).
+ */
 export default function DigitsInNoiseScreen() {
   useKeepAwake();
   const t = useT();
@@ -126,12 +131,12 @@ export default function DigitsInNoiseScreen() {
   const abort = () => { gen.current += 1; stopEverything(); setPhase('intro'); };
 
   const srt = din.srtDb;
-  const passed = srt != null ? dinPassed(srt) : false;
   const boundedByCap = srt != null && snrFloor > DIN_MIN_SNR_DB && srt <= snrFloor + 1;
 
   const save = () => {
     if (saved || srt == null) return;
-    saveExam(assessmentId, { dinSrtDb: srt, dinPassed: passed });
+    // Record only: no pass/fail flag is stored (no Turkish norm, uncalibrated TTS level).
+    saveExam(assessmentId, { dinSrtDb: srt, dinPassed: undefined });
     setSaved(true);
   };
 
@@ -145,8 +150,9 @@ export default function DigitsInNoiseScreen() {
         <>
           <Text variant="h1">{t('exam.din.title')}</Text>
           <Banner tone="info" title={t('exam.headphones')} body={t('exam.volumeHint')} />
-          <Text variant="body" tone="secondary">{t('exam.din.intro.body')}</Text>
+          <Text variant="body" tone="secondary">{t('exam.din.intro.body', { n: DIN_TRIALS })}</Text>
           <Card><Text variant="body">{t('exam.din.intro.how')}</Text></Card>
+          <Text variant="bodySmall" tone="secondary">{t('exam.din.noNorm')}</Text>
           <Card variant="tinted">
             <Text variant="bodyStrong">{t('exam.din.practice')}</Text>
             <Text variant="bodySmall" tone="secondary">{t('exam.din.practice.body')}</Text>
@@ -192,12 +198,13 @@ export default function DigitsInNoiseScreen() {
           <Text variant="h1">{t('exam.din.result.title')}</Text>
           <Card>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3], flexWrap: 'wrap' }}>
-              <Text variant="numeric">{t('exam.din.result.value', { db: srt })}</Text>
-              <Chip tone={passed ? 'success' : 'warning'} label={passed ? t('exam.din.result.pass') : t('exam.din.result.fail')} />
+              <Text variant="numeric">{t('exam.din.result.record', { db: srt })}</Text>
+              <Chip tone="info" label={t('exam.result.recorded')} />
             </View>
+            <Text variant="bodySmall" tone="secondary">{t('exam.din.result.method', { n: DIN_TRIALS, from: DIN_SCORED_FROM_TRIAL })}</Text>
             <Text variant="bodySmall" tone="secondary">{t('exam.din.result.hint')}</Text>
           </Card>
-          <Banner tone={passed ? 'success' : 'info'} title={passed ? t('exam.din.result.pass') : t('exam.din.result.fail')} body={passed ? t('exam.din.result.passHint') : t('exam.din.result.failHint')} />
+          <Banner tone="info" title={t('exam.din.noNorm.title')} body={t('exam.din.noNorm')} />
           {boundedByCap ? <Banner tone="info" title={t('exam.din.capped')} /> : null}
           <EstimateNote />
           <Button title={inSequence ? t('exam.saveNext') : t('exam.saveFinish')} onPress={() => { save(); finish(); }} />

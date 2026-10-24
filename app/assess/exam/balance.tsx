@@ -179,7 +179,7 @@ export default function BalanceScreen() {
           <Text variant="body" tone="secondary">{t('exam.gate.falls.intro')}</Text>
           <Text variant="h2">{t('exam.gate.falls.q')}</Text>
           <View style={{ gap: space[2] }}>
-            <OptionCard label={t('common.yes')} selected={falls === true} onPress={() => setFalls(true)} />
+            <OptionCard label={t('common.yes')} selected={false} onPress={() => setFalls(true)} />
             <OptionCard label={t('common.no')} selected={falls === false} onPress={() => { setFalls(false); setPhase('intro'); }} />
           </View>
           <Button variant="ghost" title={t('exam.skip')} onPress={finish} />

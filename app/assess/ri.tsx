@@ -23,6 +23,8 @@ const LAYER_ID = 'ri-masker';
 /** Used when the absolute masking level is unknown (e.g. opened from the hub without the MML route param). */
 const FALLBACK_MASK_DB = -24;
 const TICK_MS = 250;
+/** Rating times after masker offset: 2 s, then 5, 10, 15 … up to the rating window. */
+const SCHEDULE = riRatingSchedule(RI_MAX_RATING_SECONDS);
 
 /**
  * Residual inhibition with the same stimulus as the MML (NBN at the pitch or broadband), masker at MML + 10 dB
@@ -57,7 +59,6 @@ export default function ResidualInhibitionScreen() {
   const hyperacusis = riHyperacusisGate(hqTotal, assessment?.exam?.ldlLow);
   const level = riMaskerLevel(maskDb, capDb, { hyperacusis });
   const maxTrials = riMaxTrials(hyperacusis);
-  const schedule = riRatingSchedule(RI_MAX_RATING_SECONDS);
 
   const [phase, setPhase] = useState<Phase>('intro');
   const [baseline, setBaseline] = useState(5);
@@ -112,7 +113,7 @@ export default function ResidualInhibitionScreen() {
         missedRef.current += 1; setMissed(missedRef.current);
       }
       // Open the next scheduled prompt.
-      const nextT = schedule[scheduleIndex.current];
+      const nextT = SCHEDULE[scheduleIndex.current];
       if (nextT != null && e >= nextT && !promptRef.current) {
         scheduleIndex.current += 1;
         promptRef.current = { t: nextT, until: now + RI_CONFIRM_WINDOW_SEC * 1000 };
@@ -121,7 +122,7 @@ export default function ResidualInhibitionScreen() {
       }
       if (e >= RI_MAX_RATING_SECONDS) finishRating(ratingsRef.current, base);
     }, TICK_MS);
-  }, [finishRating, schedule]);
+  }, [finishRating]);
 
   const startMasker = async () => {
     if (baseline <= 0 || trials >= maxTrials) return;
@@ -198,7 +199,7 @@ export default function ResidualInhibitionScreen() {
 
   const stimulusLabel = stimulus === 'nbn' ? t('psy.ri.stimulus.nbn', { hz: masker.centerHz ?? 0 }) : t('psy.ri.stimulus.bbn');
   const levelLabel = t('psy.ri.masker.level', { db: level.aboveMmlDb });
-  const nextT = schedule[scheduleIndex.current];
+  const nextT = SCHEDULE[scheduleIndex.current];
   const trialsLabel = t('psy.ri.trials', { n: trials, max: maxTrials });
 
   return (
