@@ -5,6 +5,7 @@ import { FlaskConical, Moon, Star, Volume1 } from 'lucide-react-native';
 import { Screen, Text, Card, Chip, EvidenceChip, useCitation } from '@/components';
 import { MiniPlayer, useSoundEngine } from '@/components/sound';
 import { useTheme } from '@/theme';
+import { TabHeader } from '@/components/home';
 import { useT } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
 import { presetsByCategory, resolveSpec, type PresetCategory, type SoundPreset } from '@/audio/presets';
@@ -114,7 +115,7 @@ export default function SoundScreen() {
 
   return (
     <Screen tab footer={eng.hasLayers ? <MiniPlayer /> : undefined}>
-      <Text variant="h1">{t('lab.title')}</Text>
+      <TabHeader title={t('lab.title')} />
       <Text variant="bodySmall" tone="secondary">{t('lab.subtitle')}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space[2] }} accessibilityRole="tablist">
         {CATEGORIES.map((c) => {
