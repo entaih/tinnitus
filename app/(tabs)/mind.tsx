@@ -5,7 +5,7 @@ import { Activity, BookOpenText, Check, ChevronRight, Dumbbell, PenLine, Wind } 
 import { Screen, Text, Card, Row, SectionHeader, EvidenceChip, useCitation } from '@/components';
 import { TabHeader } from '@/components/home';
 import { useTheme } from '@/theme';
-import { useLocale, useT } from '@/i18n';
+import { formatDate, useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { MODULES_BY_TRACK, TRACK_CITATION, TRACK_ORDER, type ModuleTrack } from '@/content/modules';
 import { ARTICLES } from '@/content/articles';
@@ -80,7 +80,7 @@ export default function MindScreen() {
 
       <Card onPress={() => router.push(thoughts.length ? '/mind/thoughts' : '/mind/thought-record')} title={t('mind.thoughts.title')} overline={t('mind.thoughts.count', { n: thoughts.length })} right={<PenLine size={22} color={colors.primary} />}
         accessibilityLabel={`${t('mind.thoughts.title')}: ${t('mind.thoughts.count', { n: thoughts.length })}`}>
-        <Text variant="bodySmall" tone="secondary">{thoughts.length ? thoughts[0].thought : t('mind.thoughts.empty')}</Text>
+        <Text variant="bodySmall" tone="secondary">{thoughts.length ? formatDate(thoughts[0].date, locale) : t('mind.thoughts.empty')}</Text>
         <View style={{ flexDirection: 'row', gap: space[2] }}>
           <Pressable accessibilityRole="button" onPress={() => router.push('/mind/thought-record')} style={({ pressed }) => ({ minHeight: 44, paddingHorizontal: space[4], borderRadius: radius.full, backgroundColor: colors.primary, justifyContent: 'center', opacity: pressed ? 0.85 : 1 })}>
             <Text variant="caption" style={{ color: colors.onPrimary, fontWeight: '600' }}>{t('mind.thoughts.new')}</Text>

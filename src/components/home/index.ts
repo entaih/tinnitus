@@ -6,3 +6,7 @@ export * from './Segmented';
 export * from './openTask';
 export * from './RationaleList';
 export * from './JourneyCard';
+export * from './Glossary';
+export * from './Collapsible';
+export * from './taskBudget';
+export * from './CheckRow';

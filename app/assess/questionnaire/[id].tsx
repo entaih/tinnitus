@@ -115,7 +115,6 @@ export default function QuestionnaireScreen() {
             <OptionCard
               key={o.value}
               label={pick(o, locale)}
-              hint={q.id === 'THI' ? `(${o.value})` : undefined}
               selected={answers[step] === o.value}
               onPress={() => select(o.value)}
             />

@@ -3,11 +3,12 @@ import { Share, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { Share2, FileText, Sparkles, Stethoscope, ArrowRight, Info } from 'lucide-react-native';
-import { Screen, Text, Card, Button, Chip, EvidenceChip, SeverityBadge, Banner, Disclaimer, useCitation } from '@/components';
-import { Gauge, useInfoSheet } from '@/components/assess';
+import { Share2, FileText, Sparkles, ArrowRight, CheckCircle2, ChevronRight, Compass } from 'lucide-react-native';
+import { Screen, Text, Card, Button, Chip, EvidenceChip, Banner, Disclaimer, useCitation } from '@/components';
+import { Gauge, useInfoSheet, ReferralList, CauseList } from '@/components/assess';
+import { programGate } from '@/components/assess/programGate';
+import { CheckRow, Collapsible, GlossaryTerm, useGlossary } from '@/components/home';
 import { useTheme } from '@/theme';
-import { ReferralList, CauseList } from '@/components/assess';
 import { rankCauses, confirmatoryTests } from '@/clinical/causes';
 import { toHlEstimate, computeTriage } from '@/clinical/engine';
 import { generateProgram } from '@/clinical/program';
@@ -23,6 +24,10 @@ const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', 
 
 const FLAG_KEYS: (keyof RedFlags)[] = ['suddenHearingLoss', 'rapidWorsening', 'unilateralSymptoms', 'pulsatile', 'pulsatileHeadacheVisual', 'pulsatileNewUnilateral', 'vertigo', 'neuroSigns', 'otorrhoeaOrPain', 'objectiveSound', 'headTrauma', 'menierePattern', 'newOtotoxicDrug', 'selfHarm'];
 
+/**
+ * Layered results page: gauge + one-line meaning + triage (layer 1, sticky "Programı başlat" footer),
+ * programme card and suggested path (layer 2), collapsed accordions for causes / profile / doctor summary / comparison (layer 3).
+ */
 export default function ResultsScreen() {
   const t = useT();
   const locale = useLocale();
@@ -32,17 +37,23 @@ export default function ResultsScreen() {
   const assessments = useClinical((s) => s.assessments);
   const program = useClinical((s) => s.program);
   const setProgram = useClinical((s) => s.setProgram);
-  const hardBlocked = !!profile && profile.triage === 'urgent' && (profile.triageReasons.includes('triage.selfHarm') || profile.triageReasons.includes('triage.neuro') || profile.triageReasons.includes('triage.vertigo') || profile.triageReasons.includes('triage.suddenHL'));
+  const { open, sheet } = useCitation();
+  const info = useInfoSheet();
+  const glossary = useGlossary();
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfError, setPdfError] = useState(false);
+  const [acked, setAcked] = useState(false);
+
+  const tier = assessment ? computeTriage(assessment).tier : null;
+  const gate = programGate(profile, tier);
+  const canStart = !gate.blocked && (!gate.needsAck || acked);
+
   const startProgram = () => {
-    if (!profile) return;
+    if (!profile || !canStart) return;
     const ps = assessment?.psycho;
     setProgram(generateProgram(profile, { minutesPerDay: 30, style: 'cbt', pitchHz: ps?.pitchHz, riPositive: ps ? (ps.riPositive ?? (ps.riCategory ? ps.riCategory === 'complete' : undefined)) : undefined, hearingDone: !!assessment?.hearing, causesDone: !!assessment?.causeAnswers, examDone: !!assessment?.exam }));
     router.replace('/(tabs)');
   };
-  const { open, sheet } = useCitation();
-  const info = useInfoSheet();
-  const [pdfBusy, setPdfBusy] = useState(false);
-  const [pdfError, setPdfError] = useState(false);
 
   const thi = useMemo(() => {
     const r = assessment?.questionnaires.find((q) => q.id === 'THI');
@@ -56,6 +67,7 @@ export default function ResultsScreen() {
   }, [assessments]);
 
   const summary = useMemo(() => (assessment ? buildSummary(assessment, t, locale) : []), [assessment, t, locale]);
+  const ranked = useMemo(() => (assessment ? rankCauses(assessment) : []), [assessment]);
 
   if (!assessment || !profile) {
     return (
@@ -88,7 +100,11 @@ export default function ResultsScreen() {
         recsTitle: t('results.path.title'),
         summaryTitle: t('results.doctor.title'),
         disclaimer: t('results.pdf.disclaimer'),
-        accent: colors.primary,
+        accent: colors.primaryPressed,
+        ink: colors.text,
+        muted: colors.textSecondary,
+        line: colors.border,
+        soft: colors.skeleton,
       });
       const { uri } = await Print.printToFileAsync({ html });
       if (await Sharing.isAvailableAsync()) {
@@ -103,16 +119,31 @@ export default function ResultsScreen() {
     }
   };
 
-  const triageTone = profile.triage === 'urgent' ? 'danger' : profile.triage === 'audiology' ? 'warning' : 'success';
+  const selfcare = profile.triage === 'selfcare';
+  const triageTone = profile.triage === 'urgent' ? 'danger' : 'warning';
   const prev = thiHistory.length >= 2 ? thiHistory[thiHistory.length - 2] : null;
   const curr = thiHistory.length >= 2 ? thiHistory[thiHistory.length - 1] : null;
   const delta = prev && curr ? curr.total - prev.total : 0;
+  const needsMore = !assessment.causeAnswers || !assessment.exam;
+  const tests = confirmatoryTests(ranked, 3);
+  const topCause = ranked.find((r) => r.tier === 'mechanism') ?? ranked[0];
+  const profileSummary = [...profile.subtypes.map((k) => t(k)), ...profile.drivers.map((d) => t(`driver.${d}`))].slice(0, 2).join(' · ');
+
+  const footer = program ? (
+    <Button title={t('results.program.goToday')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={() => router.replace('/(tabs)')} />
+  ) : (
+    <View style={{ gap: space[1] }}>
+      {gate.needsAck ? <CheckRow checked={acked} label={t('results.program.ack')} hint={acked ? undefined : t('setup.ack.hint')} onToggle={() => setAcked((v) => !v)} /> : null}
+      <Button title={t('results.program.start')} icon={<ArrowRight size={18} color={canStart ? colors.onPrimary : colors.textMuted} />} onPress={startProgram} disabled={!canStart} />
+      {gate.blocked ? <Text variant="caption" tone="danger">{t('results.program.blocked')}</Text> : null}
+    </View>
+  );
 
   return (
-    <Screen>
+    <Screen footer={footer}>
       <Stack.Screen options={{ title: t('results.title') }} />
 
-      {/* Hero */}
+      {/* Layer 1 — score shown once, one-line meaning, triage line */}
       <Card style={{ alignItems: 'center', gap: space[3] }}>
         {thi ? (
           <>
@@ -120,11 +151,12 @@ export default function ResultsScreen() {
               value={thi.total}
               band={thi.band}
               label={`${thi.total}`}
-              caption="THI / 100"
               accessibilityLabel={t('results.gauge.a11y', { band: t(`severity.${thi.band}`), score: thi.total })}
             />
-            <SeverityBadge band={thi.band} score={thi.total} source="THI" />
-            <Text variant="bodySmall" tone="secondary" center>{t(thi.key)}</Text>
+            <Text variant="caption" tone="secondary" center style={{ marginTop: -space[2] }}>
+              {t('results.gauge.caption', { band: t(`severity.${thi.band}`) })} · <GlossaryTerm id="thi" variant="caption" tone="primary" open={glossary.open} />
+            </Text>
+            <Text variant="body" center>{t(thi.key)}</Text>
           </>
         ) : (
           <View style={{ alignItems: 'center', gap: space[2] }}>
@@ -133,73 +165,33 @@ export default function ResultsScreen() {
             <Button variant="secondary" size="sm" title={t('results.hero.takeThi')} onPress={() => router.push('/assess/questionnaire/THI')} />
           </View>
         )}
-        <View style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
-          <Info size={16} color={colors.textMuted} style={{ marginTop: 3 }} />
-          <Text variant="caption" tone="secondary" style={{ flex: 1 }}>{t('results.framing')}</Text>
-        </View>
+        {selfcare ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], alignSelf: 'stretch', borderTopWidth: 1, borderTopColor: colors.border, paddingTop: space[3] }}>
+            <CheckCircle2 size={20} color={colors.success} />
+            <Text variant="bodySmall" tone="success" style={{ flex: 1 }}>{t('results.triage.selfcare')}</Text>
+          </View>
+        ) : null}
       </Card>
 
-      {/* Triage */}
-      <Banner
-        tone={triageTone}
-        title={t(`results.triage.${profile.triage}`)}
-        body={profile.triage === 'selfcare' ? t('triage.selfcare') : t('results.triage.whoBelow')}
-      />
-      {profile.triage !== 'selfcare' ? (
-        <Card variant="tinted" title={t('triage.result.whoToSee')}>
-          <ReferralList reasons={profile.triageReasons} />
-        </Card>
-      ) : null}
-
-      {/* Cause analysis */}
-      {assessment ? (() => {
-        const ranked = rankCauses(assessment);
-        const tests = confirmatoryTests(ranked, 3);
-        const needsMore = !assessment.causeAnswers || !assessment.exam;
-        return (
-          <Card title={t('causes.result.title')} overline={t('causes.result.overline')}>
-            <Text variant="bodySmall" tone="secondary">{t('causes.result.body')}</Text>
-            {needsMore ? (
-              <Banner tone="info" title={t('causes.result.moreData')} primary={{ title: t('causes.result.moreData.action'), onPress: () => router.push(!assessment.causeAnswers ? '/assess/causes' : '/assess/exam') }} />
-            ) : null}
-            <CauseList ranked={ranked} />
-            <View style={{ gap: space[1] }}>
-              <Text variant="h3">{t('causes.result.tests')}</Text>
-              {tests.map((k) => (
-                <View key={k} style={{ flexDirection: 'row', gap: space[2] }}>
-                  <Text variant="body" tone="secondary">·</Text>
-                  <Text variant="body" style={{ flex: 1 }}>{t(k)}</Text>
-                </View>
-              ))}
-            </View>
+      {!selfcare ? (
+        <>
+          <Banner tone={triageTone} title={t(`results.triage.${profile.triage}`)} body={t('results.triage.whoBelow')} />
+          <Card variant="tinted" title={t('triage.result.whoToSee')}>
+            <ReferralList reasons={profile.triageReasons} />
+            <Text variant="caption" tone="secondary">{t('results.terms')}: <GlossaryTerm id="referral" variant="caption" tone="primary" open={glossary.open} /></Text>
           </Card>
-        );
-      })() : null}
+        </>
+      ) : null}
 
-      {/* Probable profile */}
-      {profile.subtypes.length || profile.drivers.length ? (
-        <Card title={t('results.profile.title')} overline={t('results.profile.hint')}>
-          {profile.subtypes.length ? (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2] }}>
-              {profile.subtypes.map((k) => (
-                <Chip key={k} tone="primary" label={t(k)} onPress={() => info.open(t(k), t(`${k}.info`))} />
-              ))}
-            </View>
-          ) : null}
-          {profile.drivers.length ? (
-            <View style={{ gap: space[2] }}>
-              <Text variant="overline" tone="secondary">{t('results.drivers.title')}</Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2] }}>
-                {profile.drivers.map((d) => (
-                  <Chip key={d} tone="accent" label={t(`driver.${d}`)} onPress={() => info.open(t(`driver.${d}`), t(`driver.${d}.info`))} />
-                ))}
-              </View>
-            </View>
-          ) : null}
+      {/* Layer 2 — programme */}
+      {!program ? (
+        <Card variant="tinted" title={t('results.program.autoTitle')}>
+          <Text variant="body" tone="secondary">{t('results.program.autoBody')}</Text>
+          {gate.reasonKey ? <Text variant="bodySmall" tone={gate.blocked ? 'danger' : 'warning'}>{t(gate.reasonKey)}</Text> : null}
+          <Button variant="ghost" size="sm" title={t('results.program.customize')} onPress={() => router.push('/program/setup')} />
         </Card>
       ) : null}
 
-      {/* Suggested path */}
       <Card title={t('results.path.title')} right={<Sparkles size={20} color={colors.primary} />}>
         {profile.recommendations.map((r, i) => (
           <View key={`${r.key}-${i}`} style={{ flexDirection: 'row', gap: space[3], alignItems: 'flex-start', borderTopWidth: i ? 1 : 0, borderTopColor: colors.border, paddingTop: i ? space[3] : 0 }}>
@@ -214,8 +206,60 @@ export default function ResultsScreen() {
         ))}
       </Card>
 
-      {/* Doctor summary */}
-      <Card title={t('results.doctor.title')} right={<Stethoscope size={20} color={colors.primary} />}>
+      {needsMore ? (
+        <Card onPress={() => router.push(!assessment.causeAnswers ? '/assess/causes' : '/assess/exam')} accessibilityLabel={t('results.sharpen')}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
+            <Compass size={22} color={colors.primary} />
+            <Text variant="bodyStrong" style={{ flex: 1 }}>{t('results.sharpen')}</Text>
+            <ChevronRight size={20} color={colors.textMuted} />
+          </View>
+        </Card>
+      ) : null}
+
+      {/* Layer 3 — collapsed accordions */}
+      <Collapsible title={t('causes.result.title')} summary={topCause ? t('results.acc.causes.summary', { name: t(`cause.${topCause.id}.name`) }) : t('results.acc.causes.empty')}>
+        <Text variant="bodySmall" tone="secondary">{t('causes.result.body')}</Text>
+        {needsMore ? (
+          <Banner tone="info" title={t('causes.result.moreData')} primary={{ title: t('causes.result.moreData.action'), onPress: () => router.push(!assessment.causeAnswers ? '/assess/causes' : '/assess/exam') }} />
+        ) : null}
+        <CauseList ranked={ranked} />
+        {tests.length ? (
+          <View style={{ gap: space[1] }}>
+            <Text variant="h3">{t('causes.result.tests')}</Text>
+            {tests.map((k) => (
+              <View key={k} style={{ flexDirection: 'row', gap: space[2] }}>
+                <Text variant="body" tone="secondary">·</Text>
+                <Text variant="body" style={{ flex: 1 }}>{t(k)}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
+      </Collapsible>
+
+      {profile.subtypes.length || profile.drivers.length ? (
+        <Collapsible title={t('results.profile.title')} summary={profileSummary}>
+          <Text variant="caption" tone="secondary">{t('results.profile.hint')}</Text>
+          {profile.subtypes.length ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2] }}>
+              {profile.subtypes.map((k) => (
+                <Chip key={k} tone="primary" label={t(k)} onPress={() => info.open(t(k), t(`${k}.info`))} />
+              ))}
+            </View>
+          ) : null}
+          {profile.drivers.length ? (
+            <View style={{ gap: space[2] }}>
+              <Text variant="caption" tone="secondary">{t('results.drivers.title')}</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2] }}>
+                {profile.drivers.map((d) => (
+                  <Chip key={d} tone="accent" label={t(`driver.${d}`)} onPress={() => info.open(t(`driver.${d}`), t(`driver.${d}.info`))} />
+                ))}
+              </View>
+            </View>
+          ) : null}
+        </Collapsible>
+      ) : null}
+
+      <Collapsible title={t('results.doctor.title')} summary={t('results.acc.doctor.summary', { n: summary.length })}>
         <View style={{ gap: space[1] }}>
           {summary.map((line, i) => (
             <View key={i} style={{ flexDirection: 'row', gap: space[2] }}>
@@ -224,6 +268,9 @@ export default function ResultsScreen() {
             </View>
           ))}
         </View>
+        <Text variant="caption" tone="secondary">
+          {t('results.terms')}: <GlossaryTerm id="thi" variant="caption" tone="primary" open={glossary.open} /> · <GlossaryTerm id="ri" variant="caption" tone="primary" open={glossary.open} /> · <GlossaryTerm id="pitch" variant="caption" tone="primary" open={glossary.open} /> · <GlossaryTerm id="referral" variant="caption" tone="primary" open={glossary.open} />
+        </Text>
         {pdfError ? <Text variant="caption" tone="danger">{t('results.doctor.pdfError')}</Text> : null}
         <View style={{ flexDirection: 'row', gap: space[2] }}>
           <View style={{ flex: 1 }}>
@@ -233,31 +280,21 @@ export default function ResultsScreen() {
             <Button variant="secondary" size="sm" title={t('results.doctor.pdf')} loading={pdfBusy} icon={<FileText size={16} color={colors.primaryPressed} />} onPress={() => { void sharePdf(); }} />
           </View>
         </View>
-      </Card>
+      </Collapsible>
 
-      {/* Compare with previous */}
       {prev && curr ? (
-        <Card variant="tinted" title={t('results.compare.title')}>
+        <Collapsible title={t('results.compare.title')} summary={t('results.acc.compare.summary', { prev: prev.total, curr: curr.total })} variant="tinted">
           <Text variant="body">{t('results.compare.body', { prev: prev.total, curr: curr.total, date: formatDate(prev.date, locale) })}</Text>
           <Text variant="bodySmall" tone={delta <= -7 ? 'success' : delta >= 7 ? 'warning' : 'secondary'}>
             {delta <= -7 ? t('results.compare.better') : delta >= 7 ? t('results.compare.worse') : t('results.compare.same')}
           </Text>
-        </Card>
+        </Collapsible>
       ) : null}
 
-      {program ? (
-        <Button title={t('results.program.goToday')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={() => router.replace('/(tabs)')} />
-      ) : (
-        <Card variant="tinted" title={t('results.program.autoTitle')}>
-          <Text variant="body" tone="secondary">{t('results.program.autoBody')}</Text>
-          <Button title={t('results.program.start')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={startProgram} disabled={hardBlocked} />
-          {hardBlocked ? <Text variant="bodySmall" tone="danger">{t('results.program.blocked')}</Text> : null}
-          <Button variant="ghost" size="sm" title={t('results.program.customize')} onPress={() => router.push('/program/setup')} />
-        </Card>
-      )}
       <Disclaimer />
       {sheet}
       {info.sheet}
+      {glossary.sheet}
     </Screen>
   );
 }
@@ -319,16 +356,16 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
   return lines;
 }
 
-function buildHtml(p: { title: string; dateLabel: string; date: string; lines: string[]; recs: string[]; recsTitle: string; summaryTitle: string; disclaimer: string; accent: string }) {
+function buildHtml(p: { title: string; dateLabel: string; date: string; lines: string[]; recs: string[]; recsTitle: string; summaryTitle: string; disclaimer: string; accent: string; ink: string; muted: string; line: string; soft: string }) {
   const li = (s: string) => `<li>${escapeHtml(s)}</li>`;
   return `<!doctype html><html><head><meta charset="utf-8"/>
 <style>
-  body { font-family: -apple-system, Helvetica, Arial, sans-serif; color: #0F2A33; padding: 32px; line-height: 1.5; }
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; color: ${escapeHtml(p.ink)}; padding: 32px; line-height: 1.5; }
   h1 { font-size: 22px; margin: 0 0 4px; color: ${escapeHtml(p.accent)}; }
-  h2 { font-size: 16px; margin: 24px 0 8px; border-bottom: 1px solid #D5E0E4; padding-bottom: 4px; }
-  .meta { color: #4F6B75; font-size: 13px; }
+  h2 { font-size: 16px; margin: 24px 0 8px; border-bottom: 1px solid ${escapeHtml(p.line)}; padding-bottom: 4px; }
+  .meta { color: ${escapeHtml(p.muted)}; font-size: 13px; }
   ul { padding-left: 20px; } li { margin: 4px 0; font-size: 14px; }
-  .disc { margin-top: 32px; font-size: 12px; color: #4F6B75; background: #EEF2F3; padding: 12px; border-radius: 8px; }
+  .disc { margin-top: 32px; font-size: 12px; color: ${escapeHtml(p.muted)}; background: ${escapeHtml(p.soft)}; padding: 12px; border-radius: 8px; }
 </style></head><body>
 <h1>${escapeHtml(p.title)}</h1>
 <div class="meta">${escapeHtml(p.dateLabel)}: ${escapeHtml(p.date)}</div>

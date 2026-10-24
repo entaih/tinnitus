@@ -2,7 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Banner, Button, Card, Chip, Disclaimer, EvidenceChip, OptionCard, Screen, SectionHeader, SeverityBadge, Text, useCitation } from '@/components';
-import { RationaleList } from '@/components/home';
+import { CheckRow, RationaleList } from '@/components/home';
+import { programGate } from '@/components/assess/programGate';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
@@ -25,10 +26,8 @@ export default function ProgramSetup() {
   const [preview, setPreview] = useState<Program | null>(null);
 
   const tier = assessment ? computeTriage(assessment).tier : null;
-  const urgent = profile?.triage === 'urgent';
-  const hardBlocked = urgent && (tier === 0 || tier === 1);
-  const needsAck = urgent && !hardBlocked;
-  const canGenerate = !!profile && !hardBlocked && (!needsAck || acked);
+  const gate = programGate(profile, tier);
+  const canGenerate = !!profile && !gate.blocked && (!gate.needsAck || acked);
 
   const psycho = assessment?.psycho;
   const prefs = useMemo<ProgramPrefs>(() => ({
@@ -64,13 +63,12 @@ export default function ProgramSetup() {
     <>
       <Stack.Screen options={{ title: t('setup.title') }} />
       <Screen footer={preview ? <Button title={t('setup.save')} onPress={save} /> : <Button title={t('setup.generate')} onPress={generate} disabled={!canGenerate} />}>
-        {urgent ? (
-          <Banner
-            tone="danger"
-            title={t('setup.urgent.title')}
-            body={hardBlocked ? t('setup.urgent.blocked') : acked ? t('setup.urgent.acked') : t('setup.urgent.body')}
-            primary={needsAck && !acked ? { title: t('setup.urgent.ack'), onPress: () => setAcked(true) } : undefined}
-          />
+        {gate.blocked ? <Banner tone="danger" title={t('setup.urgent.title')} body={t('setup.urgent.blocked')} /> : null}
+        {gate.needsAck ? (
+          <Card variant="tinted" title={t('setup.ack.title')}>
+            <Text variant="body" tone="secondary">{profile.triage === 'urgent' ? t('setup.urgent.body') : t('setup.ack.body')}</Text>
+            <CheckRow checked={acked} label={t('setup.ack.check')} hint={acked ? t('setup.urgent.acked') : t('setup.ack.hint')} onToggle={() => setAcked((v) => !v)} />
+          </Card>
         ) : null}
         {existing && !preview ? <Banner tone="info" title={t('setup.existing')} /> : null}
 

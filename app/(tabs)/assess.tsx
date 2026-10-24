@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import {
   ShieldAlert, ClipboardList, Activity, Ear, HeartPulse, Brain, Moon, Stethoscope, Headphones, AudioWaveform, Volume2, Timer, Gauge as GaugeIcon,
-  Lock, ChevronRight, CircleCheck, ArrowRight,
+  Lock, ChevronRight, CircleCheck, ArrowRight, CalendarCheck,
 } from 'lucide-react-native';
-import { Screen, Text, Card, Button, EvidenceChip, useCitation } from '@/components';
-import { JourneyCard } from '@/components/home';
+import { Screen, Text, Card, Button, EvidenceChip, Row, useCitation } from '@/components';
+import { JourneyCard, TabHeader } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical, mergedLatest } from '@/store/clinical';
@@ -66,6 +66,7 @@ export default function AssessScreen() {
   const router = useRouter();
   const { colors, space, radius } = useTheme();
   const assessments = useClinical((s) => s.assessments);
+  const program = useClinical((s) => s.program);
   const { open, sheet } = useCitation();
 
   const merged = useMemo(() => mergedLatest(assessments), [assessments]);
@@ -83,12 +84,14 @@ export default function AssessScreen() {
 
   return (
     <Screen tab>
-      <Stack.Screen options={{ title: t('assess.title') }} />
-      <View style={{ gap: space[1] }}>
-        <Text variant="h1">{t('assess.title')}</Text>
-        <Text variant="body" tone="secondary">{t('assess.intro')}</Text>
-      </View>
+      <TabHeader title={t('assess.title')} />
+      <Text variant="body" tone="secondary">{t('assess.intro')}</Text>
 
+      {program ? (
+        <Card>
+          <Row icon={<CalendarCheck size={20} color={colors.primary} />} title={t('assess.program.row')} subtitle={t('assess.program.rowSub')} onPress={() => router.push('/program')} />
+        </Card>
+      ) : null}
       <JourneyCard />
       {canSeeResults ? (
         <Button title={t('assess.seeResults')} onPress={() => router.push('/assess/results')} icon={<ArrowRight size={18} color={colors.onPrimary} />} />

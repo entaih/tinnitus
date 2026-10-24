@@ -3,7 +3,7 @@ import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
 import { Button, Card, Screen, Text, useCitation } from '@/components';
-import { RationaleList, TaskRow, WeekTimeline, openTask, type DayState, type TimelineDay } from '@/components/home';
+import { RationaleList, TaskRow, WeekTimeline, activeMinutes, hasBackgroundSound, openTask, splitByBudget, type DayState, type TimelineDay } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
@@ -23,6 +23,7 @@ export default function ProgramScreen() {
   const [day, setDay] = useState(pos?.day ?? 1);
   const [showWhy, setShowWhy] = useState(false);
   const [showDone, setShowDone] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   const thi = useMemo(() => {
     const all: QuestionnaireResult[] = [];
@@ -62,11 +63,14 @@ export default function ProgramScreen() {
   });
 
   const tasks = tasksForDay(program, week, day);
-  const pending = tasks.filter((x) => !program.completed[taskKey(week, day, x.id)]);
-  const done = tasks.filter((x) => !!program.completed[taskKey(week, day, x.id)]);
-  const totalMin = tasks.reduce((s, x) => s + x.minutes, 0);
+  const isDone = (id: string) => !!program.completed[taskKey(week, day, id)];
+  const { shown, more } = splitByBudget(tasks);
+  const pending = shown.filter((x) => !isDone(x.id));
+  const morePending = more.filter((x) => !isDone(x.id));
+  const done = tasks.filter((x) => isDone(x.id));
   const dayIdx = (week - 1) * 7 + (day - 1);
   const isFuture = dayIdx > pos.dayIndex;
+  const minutesLabel = `${t('prog.minutesActive', { n: activeMinutes(shown) })}${hasBackgroundSound(tasks) ? ` ${t('prog.plusSound')}` : ''}`;
 
   const toggle = (key: string) => {
     if (program.completed[key]) { const completed = { ...program.completed }; delete completed[key]; setProgram({ ...program, completed }); }
@@ -123,7 +127,7 @@ export default function ProgramScreen() {
           </Card>
         ) : null}
 
-        <Card title={t('prog.dayTasks')} overline={`${t('prog.day', { n: day })} · ${t('prog.minutesTotal', { n: totalMin })}`}>
+        <Card title={t('prog.dayTasks')} overline={`${t('prog.day', { n: day })} · ${minutesLabel}`}>
           {isFuture ? <Text variant="bodySmall" tone="secondary">{t('prog.futureDay')}</Text> : null}
           <View>
             {pending.map((task) => {
@@ -131,7 +135,24 @@ export default function ProgramScreen() {
               return <TaskRow key={key} task={task} done={false} onStart={isFuture ? undefined : () => openTask(task, key)} onToggleDone={isFuture ? undefined : () => toggle(key)} />;
             })}
           </View>
-          {pending.length === 0 && tasks.length > 0 ? <Text variant="bodySmall" tone="secondary">{t('home.today.allDone')}</Text> : null}
+          {pending.length === 0 && morePending.length === 0 && tasks.length > 0 ? <Text variant="bodySmall" tone="secondary">{t('home.today.allDone')}</Text> : null}
+          {morePending.length ? (
+            <View>
+              <Pressable accessibilityRole="button" accessibilityState={{ expanded: showMore }} onPress={() => setShowMore((v) => !v)} style={{ minHeight: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text variant="bodySmall" tone="primary">{showMore ? t('prog.less') : t('prog.more', { n: morePending.length })}</Text>
+                {showMore ? <ChevronUp size={18} color={colors.textMuted} /> : <ChevronDown size={18} color={colors.textMuted} />}
+              </Pressable>
+              {showMore ? (
+                <View>
+                  <Text variant="caption" tone="secondary">{t('task.optionalExtra')}</Text>
+                  {morePending.map((task) => {
+                    const key = taskKey(week, day, task.id);
+                    return <TaskRow key={key} task={task} done={false} onStart={isFuture ? undefined : () => openTask(task, key)} onToggleDone={isFuture ? undefined : () => toggle(key)} />;
+                  })}
+                </View>
+              ) : null}
+            </View>
+          ) : null}
           {done.length ? (
             <View>
               <Pressable accessibilityRole="button" accessibilityState={{ expanded: showDone }} onPress={() => setShowDone((v) => !v)} style={{ minHeight: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -167,7 +188,7 @@ export default function ProgramScreen() {
         <View style={{ backgroundColor: colors.elevated, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: space[5], gap: space[3], maxHeight: '75%' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text variant="h3">{t('prog.why.title')}</Text>
-            <Pressable onPress={() => setShowWhy(false)} accessibilityRole="button" accessibilityLabel={t('common.close')} hitSlop={12}><X size={22} color={colors.textSecondary} /></Pressable>
+            <Pressable onPress={() => setShowWhy(false)} accessibilityRole="button" accessibilityLabel={t('common.close')} hitSlop={12} style={{ minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}><X size={22} color={colors.textSecondary} /></Pressable>
           </View>
           <ScrollView contentContainerStyle={{ gap: space[3], paddingBottom: space[6] }}>
             <Text variant="bodyStrong">{t(w.themeKey)}</Text>

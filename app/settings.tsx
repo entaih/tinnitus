@@ -12,6 +12,7 @@ import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
 import { cancelReminders, scheduleDailyReminder } from '@/notifications';
 import { exportCsv, hasExportableData } from '@/utils/exportCsv';
+import { AboutGrowthRows, GrowthSettingsRows, WeeklyReviewRow } from '@/components/growth';
 
 export default function SettingsScreen() {
   const { colors, space, radius } = useTheme();
@@ -68,6 +69,7 @@ export default function SettingsScreen() {
           </View>
           <Stepper label={t('settings.reminder.hour')} value={hour} min={0} max={23} format={fmtHour} onChange={(h) => { setHour(h); if (reminderOn) void applyReminder(true, h); }} />
           <Text variant="bodySmall" tone="secondary">{t('settings.reminder.body')}</Text>
+          <WeeklyReviewRow />
         </Card>
 
         <SectionHeader title={t('settings.appearance')} />
@@ -102,13 +104,16 @@ export default function SettingsScreen() {
           <Button variant="danger" title={t('settings.data.wipe')} onPress={confirmWipe} />
         </Card>
 
+        <GrowthSettingsRows />
+
         <SectionHeader title={t('settings.privacy')} />
         <Card><Text variant="body" tone="secondary">{t('settings.privacy.body')}</Text></Card>
 
         <SectionHeader title={t('settings.about')} />
         <Card>
           <Row title={t('settings.about.version')} right={<Text variant="bodySmall" tone="secondary">{version}</Text>} />
-          <Row icon={<BookOpen size={20} color={colors.primary} />} title={t('settings.about.evidence')} onPress={() => router.push('/education')} />
+          <Row icon={<BookOpen size={20} color={colors.primary} />} title={t('settings.about.evidence')} onPress={() => router.push('/education/digital-therapeutics-evidence')} />
+          <AboutGrowthRows />
           <Text variant="bodySmall" tone="secondary">{t('settings.about.regulatory')}</Text>
         </Card>
         <Disclaimer textKey="disclaimer.short" />

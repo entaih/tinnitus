@@ -13,19 +13,22 @@ import { useClinical } from '@/store/clinical';
 import { useAssessmentId } from '@/hooks/useProfile';
 import type { Side } from '@/clinical/types';
 import { soundEngine } from '@/audio/engine';
-import { playNarrowbandOnce, playToneOnce, sleep, stopAllOneShots } from '@/audio/psychoPlayer';
+import { playSpecOnce, playToneOnce, sleep, stopAllOneShots } from '@/audio/psychoPlayer';
+import type { SoundSpec } from '@/audio/sounds';
 import {
-  applyLevelCap, choosePitch, octaveCandidates, pitchRunLength, resolveOctaveChoice, roundHz, shuffleCandidates, startPitchRun,
-  summarisePitchRuns, type OctaveCandidate, type PitchRunState, type PitchSummary,
+  PITCH_START_PAIRS, applyLevelCap, choosePitch, dbToVolume, nbnLevelCompensationDb, notchedPresetEligible, octaveCandidates, octavesBetween,
+  pitchBandwidthOctaves, pitchRunLength, resolveOctaveChoice, roundHz, shuffleCandidates, startPitchRun, summarisePitchRuns,
+  type OctaveCandidate, type PitchPercept, type PitchRunState, type PitchSummary,
 } from '@/audio/psychoacoustics';
 
 type Phase = 'intro' | 'setup' | 'afc' | 'octave' | 'adjust' | 'result';
-type SoundType = 'tonal' | 'hiss' | 'buzz' | 'multiple';
+type SoundType = PitchPercept;
 const RUNS = 3;
 const STIM_MS = 1500;
 const INTER_MS = 400;
 /** Comfortable presentation level for the NBN pair (dB re full scale, before the user cap). */
 const AFC_LEVEL_DB = -12;
+type StartPair = readonly [number, number];
 
 export default function PitchScreen() {
   useKeepAwake();
@@ -39,7 +42,9 @@ export default function PitchScreen() {
   const [phase, setPhase] = useState<Phase>('intro');
   const [side, setSide] = useState<Side>('both');
   const [soundType, setSoundType] = useState<SoundType>('tonal');
-  const [run, setRun] = useState<PitchRunState>(() => startPitchRun());
+  /** Start pairs for the three runs, in random order (one pair per run: 1k/8k, 500/6k, 2k/10k). */
+  const [pairs, setPairs] = useState<StartPair[]>(() => shuffleCandidates([...PITCH_START_PAIRS]));
+  const [run, setRun] = useState<PitchRunState>(() => startPitchRun({ startPair: PITCH_START_PAIRS[0] }));
   const [runIndex, setRunIndex] = useState(0);
   const [runResults, setRunResults] = useState<number[]>([]);
   const [anchor, setAnchor] = useState<number | undefined>(undefined);
@@ -61,8 +66,21 @@ export default function PitchScreen() {
   const stopAll = useCallback(() => { seq.current++; stopAllOneShots(); void soundEngine.stopAll(); }, []);
   useEffect(() => () => stopAll(), [stopAll]);
 
-  const runOpts = anchor != null ? { anchorHz: anchor } : {};
-  const stepsPerRun = pitchRunLength(anchor != null ? 1 : undefined);
+  const pairFor = (i: number): StartPair => pairs[i % pairs.length];
+  const runOptsFor = (i: number, anchorHz = anchor) => (anchorHz != null ? { anchorHz } : { startPair: pairFor(i) });
+  const runOpts = runOptsFor(runIndex);
+  const stepsPerRun = pitchRunLength(anchor != null ? 1 : octavesBetween(...pairFor(runIndex)));
+  const octaves = pitchBandwidthOctaves(soundType);
+
+  /**
+   * Narrowband burst at `hz`: bandwidth follows the percept (1/3 oct tonal, 1/2 oct noise-like) and the level
+   * is RMS-compensated per centre frequency because the renderer normalises to peak, not RMS.
+   */
+  const playNbn = useCallback((hz: number) => {
+    const spec: SoundSpec = { kind: 'narrowband', color: 'white', centerHz: Math.round(hz), octaves, seconds: Math.ceil(STIM_MS / 1000) + 0.5 };
+    const presented = applyLevelCap(level.levelDb + nbnLevelCompensationDb(hz), maxVolume).levelDb;
+    return playSpecOnce(spec, STIM_MS, dbToVolume(presented));
+  }, [level.levelDb, maxVolume, octaves]);
 
   /** Play A then B; enable the buttons afterwards. */
   const playPair = useCallback(async (state: PitchRunState) => {
@@ -71,25 +89,27 @@ export default function PitchScreen() {
     setCanChoose(false);
     try {
       setPlaying('a');
-      const ha = await playNarrowbandOnce(state.a, { ms: STIM_MS, levelDb: level.levelDb });
+      const ha = await playNbn(state.a);
       await ha.finished;
       if (my !== seq.current) return;
       await sleep(INTER_MS);
       if (my !== seq.current) return;
       setPlaying('b');
-      const hb = await playNarrowbandOnce(state.b, { ms: STIM_MS, levelDb: level.levelDb });
+      const hb = await playNbn(state.b);
       await hb.finished;
     } catch (e) { console.warn(e); }
     if (my !== seq.current) return;
     setPlaying(null);
     setCanChoose(true);
-  }, [level.levelDb]);
+  }, [playNbn]);
 
   const beginRuns = (anchorHz?: number) => {
     setAnchor(anchorHz);
     setRunIndex(0);
     setRunResults([]);
-    const s = startPitchRun(anchorHz != null ? { anchorHz } : {});
+    const nextPairs = shuffleCandidates([...PITCH_START_PAIRS]);
+    setPairs(nextPairs);
+    const s = startPitchRun(anchorHz != null ? { anchorHz } : { startPair: nextPairs[0] });
     setRun(s);
     setPhase('afc');
     void playPair(s);
@@ -103,7 +123,7 @@ export default function PitchScreen() {
     const results = [...runResults, next.estimateHz!];
     setRunResults(results);
     if (runIndex + 1 < RUNS) {
-      const s = startPitchRun(anchor != null ? { anchorHz: anchor } : {});
+      const s = startPitchRun(runOptsFor(runIndex + 1));
       setRunIndex(runIndex + 1);
       setRun(s);
       void playPair(s);
@@ -128,7 +148,7 @@ export default function PitchScreen() {
     try {
       for (let i = 0; i < list.length; i++) {
         setPlaying(i);
-        const h = await playNarrowbandOnce(list[i].hz, { ms: STIM_MS, levelDb: level.levelDb });
+        const h = await playNbn(list[i].hz);
         await h.finished;
         if (my !== seq.current) return;
         await sleep(INTER_MS);
@@ -138,7 +158,7 @@ export default function PitchScreen() {
     if (my !== seq.current) return;
     setPlaying(null);
     setCanChoose(true);
-  }, [level.levelDb]);
+  }, [playNbn]);
 
   useEffect(() => { if (phase === 'octave' && candidates.length) void playCandidates(candidates); }, [phase, candidates, playCandidates]);
 
@@ -209,8 +229,9 @@ export default function PitchScreen() {
           ))}
           <Text variant="h2" style={{ marginTop: space[2] }}>{t('psy.pitch.type.title')}</Text>
           {(['tonal', 'hiss', 'buzz', 'multiple'] as SoundType[]).map((s) => (
-            <OptionCard key={s} label={t(`psy.pitch.type.${s}`)} selected={soundType === s} onPress={() => setSoundType(s)} />
+            <OptionCard key={s} label={t(`psy.pitch.type.${s}`)} hint={s === 'multiple' ? t('psy.pitch.type.multiple.hint') : undefined} selected={soundType === s} onPress={() => setSoundType(s)} />
           ))}
+          <Text variant="caption" tone="muted">{t(octaves < 0.4 ? 'psy.pitch.bw.third' : 'psy.pitch.bw.half')}</Text>
           <Button title={t('common.start')} onPress={() => beginRuns(undefined)} />
         </>
       )}
@@ -273,8 +294,11 @@ export default function PitchScreen() {
               <Chip label={t(`psy.pitch.side.${side}`)} />
             </View>
             {summary.confidence === 'low' ? <Text variant="bodySmall" tone="warning">{t('psy.pitch.result.lowHint')}</Text> : null}
-            <Text variant="bodySmall" tone="secondary">{t('psy.pitch.result.use')}</Text>
+            <Text variant="bodySmall" tone="secondary">{t('psy.pitch.result.protocol', { oct: octaves < 0.4 ? '1/3' : '1/2' })}</Text>
           </Card>
+          {notchedPresetEligible(finalHz, summary.confidence)
+            ? <Text variant="bodySmall" tone="secondary">{t('psy.pitch.result.use')}</Text>
+            : <Banner tone="info" title={t('psy.pitch.result.notchedLocked')} body={t(finalHz > 8000 ? 'psy.pitch.result.notchedLocked.high' : 'psy.pitch.result.notchedLocked.low')} />}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}>
             <EvidenceChip level="rct" onPress={() => open('wunderlich2015')} />
             <Text variant="caption" tone="secondary" style={{ flex: 1 }}>{t('psy.pitch.evidence')}</Text>

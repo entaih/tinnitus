@@ -58,6 +58,8 @@ export interface HearingScreenResult {
   /** 'separate' = monaural presentation per ear; 'both' = one binaural run stored under both ears */
   mode?: 'separate' | 'both';
   headphonesVerified?: boolean;
+  /** Catch-trial quality flag: 'low' when ≥ 2 false positives on silent presentations. */
+  reliability?: 'ok' | 'low';
 }
 
 export interface PsychoacousticResult {
@@ -90,6 +92,8 @@ export interface ExamResult {
   /** vascular manoeuvres (pulsatile tinnitus only) */
   jugularChange?: 'quieter' | 'louder' | 'same' | null;
   headTurnChange?: 'quieter' | 'louder' | 'same' | null;
+  /** self-report: the pulsatile sound changes when lying down / changing head position */
+  positionalChange?: boolean;
   /** balance (accelerometer sway, eyes closed, 30 s) */
   swayScore?: number | null;     // RMS acceleration in m/s² (×100), normalised; higher = more sway
   swayAbnormal?: boolean;

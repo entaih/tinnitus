@@ -7,9 +7,10 @@ import { psychoStrings } from './areas/psycho';
 import { soundStrings } from './areas/sound';
 import { mindStrings } from './areas/mind';
 import { examStrings } from './areas/exam';
+import { growthStrings } from './areas/growth';
 
 type Dict = Record<string, string>;
-const areas = [coreStrings, assessStrings, psychoStrings, soundStrings, mindStrings, examStrings];
+const areas = [coreStrings, assessStrings, psychoStrings, soundStrings, mindStrings, examStrings, growthStrings];
 const dicts: Record<Locale, Dict> = {
   tr: Object.assign({}, tr as Dict, ...areas.map((a) => a.tr)),
   en: Object.assign({}, en as Dict, ...areas.map((a) => a.en)),

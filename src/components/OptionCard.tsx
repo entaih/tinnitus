@@ -14,9 +14,9 @@ export function OptionCard({ label, hint, selected, onPress }: { label: string; 
       accessibilityState={{ selected }}
       onPress={() => { void Haptics.selectionAsync(); onPress(); }}
       style={({ pressed }) => ({
-        minHeight: 56, borderRadius: radius.md, paddingHorizontal: space[4], paddingVertical: space[3],
+        minHeight: 64, borderRadius: radius.md, paddingHorizontal: space[4], paddingVertical: space[3],
         backgroundColor: selected ? colors.primarySoft : colors.card,
-        borderWidth: selected ? 2 : 1, borderColor: selected ? colors.primary : colors.border,
+        borderWidth: selected ? 2 : 1.5, borderColor: selected ? colors.primary : colors.borderStrong,
         flexDirection: 'row', alignItems: 'center', gap: space[3], opacity: pressed ? 0.9 : 1,
       })}
     >

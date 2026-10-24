@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { FlaskConical, Moon, Plus, Square, X } from 'lucide-react-native';
 import { Screen, Text, Button, Card, Chip, EvidenceChip, PlayControl, Banner, useCitation, SectionHeader } from '@/components';
+import { Collapsible } from '@/components/home';
 import { LayerRow, TimerChips, VolumeSlider, formatClock, mixer, useSoundEngine, useTicker } from '@/components/sound';
 import { ThemeProvider, useTheme } from '@/theme';
 import { useT } from '@/i18n';
@@ -140,13 +141,18 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
           <Banner tone="info" title={t('player.androidNote.title')} body={t('player.androidNote.body')} primary={{ title: t('common.understood'), onPress: androidNote.dismiss }} />
         ) : null}
 
+        {/* Timer */}
+        <SectionHeader title={t('player.timer.title')} />
+        <TimerChips value={eng.timerMinutes} onChange={(m) => mixer.setTimer(m)} />
+        <Text variant="caption" tone="secondary">{t('player.timer.hint')}</Text>
+
         {/* Volume */}
         <Card>
           <VolumeSlider label={t('player.volume')} value={eng.master} onChange={(v) => mixer.setMaster(v)} cap={maxVolume} />
           {presetName === 'enrichment' || presetName === 'notched' ? (
             <Text variant="bodySmall" tone="secondary">{mp.value != null ? t('player.mixingHint', { pct: Math.round(mp.value * 100) }) : t('player.mixingMissing')}</Text>
           ) : null}
-          <Pressable accessibilityRole="link" onPress={() => router.push('/sound/mixing-point')}><Text variant="bodySmall" tone="primary">{t('player.mixingLink')}</Text></Pressable>
+          <Pressable accessibilityRole="link" onPress={() => router.push('/sound/mixing-point')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="bodySmall" tone="primary">{t('player.mixingLink')}</Text></Pressable>
         </Card>
 
         {/* Preset-specific guidance */}
@@ -184,9 +190,9 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
         ) : null}
         {mainPreset?.id === 'binaural.6' || mainPreset?.id === 'am.40' ? <Text variant="caption" tone="secondary">{t(`preset.note.${mainPreset.id === 'binaural.6' ? 'binaural' : 'am'}`)}</Text> : null}
 
-        {/* Mixer */}
-        <SectionHeader title={t('player.mixer')} />
-        <Card>
+        {/* Advanced: mixer and layers, collapsed by default */}
+        <Collapsible title={t('player.advanced')} summary={t('player.advanced.sub')}>
+          <Text variant="bodyStrong">{t('player.mixer')}</Text>
           {eng.layers.length === 0 ? <Text variant="bodySmall" tone="secondary">{t('player.noLayers')}</Text> : null}
           {eng.layers.map((l) => (
             <LayerRow key={l.id} name={layerName(l.id, l.spec)} level={mixer.level(l.id)} muted={mixer.isMuted(l.id)}
@@ -194,12 +200,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
           ))}
           <Button variant="secondary" title={t('player.addLayer')} icon={<Plus size={18} color={colors.primary} />} disabled={eng.layers.length >= 3} onPress={() => setSheetOpen(true)} />
           {eng.layers.length >= 3 ? <Text variant="caption" tone="secondary">{t('player.maxLayers')}</Text> : null}
-        </Card>
-
-        {/* Timer */}
-        <SectionHeader title={t('player.timer.title')} />
-        <TimerChips value={eng.timerMinutes} onChange={(m) => mixer.setTimer(m)} />
-        <Text variant="caption" tone="secondary">{t('player.timer.hint')}</Text>
+        </Collapsible>
 
         {/* Sleep mode */}
         <Card>

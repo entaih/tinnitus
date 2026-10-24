@@ -2,15 +2,15 @@ import React, { useMemo } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowRight, AudioWaveform, Flame, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2 } from 'lucide-react-native';
+import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2 } from 'lucide-react-native';
 import { Banner, Button, Card, Screen, Text } from '@/components';
-import { JourneyCard, TabHeader, taskIcon } from '@/components/home';
+import { JourneyCard, TabHeader, activeDaysOf, activeMinutes, hasBackgroundSound, planForToday, taskIcon, taskMeta, taskTitle } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
 import { useProfile } from '@/hooks/useProfile';
-import { adherence, dayCompletion, programPosition, taskKey, tasksForDay } from '@/clinical/program';
+import { programPosition } from '@/clinical/program';
 import type { QuestionnaireResult } from '@/clinical/types';
 
 function greetingKey(h: number) {
@@ -36,13 +36,17 @@ export default function HomeScreen() {
   const showUrgent = !!profile && profile.triage === 'urgent' && !redFlagAcknowledgedAt;
   const selfHarm = !!profile?.triageReasons.includes('triage.selfHarm');
 
+  // Today's plan: budgeted (or reduced to the two shortest steps after missed days); sound tasks do not count as active minutes.
   const pos = program ? programPosition(program, now) : null;
-  const todayTasks = program && pos ? tasksForDay(program, pos.week, pos.day) : [];
-  const completion = program && pos ? dayCompletion(program, pos.week, pos.day) : { done: 0, total: 0 };
-  const nextTask = program && pos ? todayTasks.find((task) => !program.completed[taskKey(pos.week, pos.day, task.id)]) : undefined;
-  const minutesLeft = program && pos ? todayTasks.filter((task) => !program.completed[taskKey(pos.week, pos.day, task.id)]).reduce((m, x) => m + Math.min(x.minutes, 30), 0) : 0;
+  const plan = program && pos ? planForToday(program, pos) : null;
+  const shown = plan?.shown ?? [];
+  const pendingShown = plan ? shown.filter((x) => !plan.isDone(x)) : [];
+  const nextTask = pendingShown[0] ?? (plan ? plan.more.find((x) => !plan.isDone(x)) : undefined);
+  const minutesLeft = activeMinutes(pendingShown);
+  const completion = plan ? { done: shown.filter((x) => plan.isDone(x)).length, total: shown.length } : { done: 0, total: 0 };
+  const reentry = !!plan?.reentry;
+  const weekDays = program && pos ? activeDaysOf(program, pos.dayIndex, 7) : null;
 
-  const weekAdherence = program ? Math.round(adherence(program, now, 7) * 100) : null;
   const thiResults = useMemo(() => {
     const all: QuestionnaireResult[] = [];
     for (const a of assessments) for (const q of a.questionnaires) if (q.id === 'THI') all.push(q);
@@ -71,9 +75,27 @@ export default function HomeScreen() {
     </Pressable>
   );
 
+  const heroBody = reentry
+    ? t('home.reentry.body', { min: minutesLeft })
+    : t(hasBackgroundSound(pendingShown) ? 'session.hero.bodySound' : 'session.hero.body', { n: pendingShown.length, min: minutesLeft });
+
   return (
     <Screen tab>
-      <TabHeader title={greeting} subtitle={dateLabel} />
+      <TabHeader
+        title={greeting}
+        subtitle={dateLabel}
+        right={program ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('home.program')}
+            accessibilityHint={t('home.program.sub')}
+            onPress={() => router.push('/program')}
+            style={({ pressed }) => ({ width: 44, height: 44, borderRadius: radius.full, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.7 : 1 })}
+          >
+            <CalendarCheck size={22} color={colors.primary} />
+          </Pressable>
+        ) : undefined}
+      />
 
       {showUrgent ? (
         <Banner
@@ -88,18 +110,18 @@ export default function HomeScreen() {
       {program && pos ? (
         <View style={[{ borderRadius: radius.xl, overflow: 'hidden' }, shadow.e2]}>
           <LinearGradient colors={colors.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: space[5], gap: space[3] }}>
-            <Text variant="overline" style={{ color: 'rgba(255,255,255,0.8)' }}>{t('home.today.sub', { week: pos.week, day: pos.day })} · {t(program.weeks[pos.week - 1]?.themeKey ?? '')}</Text>
+            <Text variant="overline" style={{ color: 'rgba(255,255,255,0.85)' }}>{t('home.today.sub', { week: pos.week, day: pos.day })} · {t(program.weeks[pos.week - 1]?.themeKey ?? '')}</Text>
             {nextTask ? (
               <>
-                <Text variant="h1" style={{ color: '#FFFFFF' }}>{t('session.hero.title')}</Text>
-                <Text variant="body" style={{ color: 'rgba(255,255,255,0.88)' }}>{t('session.hero.body', { n: completion.total - completion.done, min: minutesLeft })}</Text>
+                <Text variant="h1" style={{ color: '#FFFFFF' }}>{reentry ? t('home.reentry.title') : t('session.hero.title')}</Text>
+                <Text variant="body" style={{ color: 'rgba(255,255,255,0.9)' }}>{heroBody}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3], backgroundColor: 'rgba(255,255,255,0.14)', borderRadius: radius.md, padding: space[3] }}>
                   <View style={{ width: 36, height: 36, borderRadius: radius.sm, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>{taskIcon(nextTask.type, '#FFFFFF')}</View>
                   <View style={{ flex: 1 }}>
-                    <Text variant="caption" style={{ color: 'rgba(255,255,255,0.75)' }}>{t('session.next')}</Text>
-                    <Text variant="bodyStrong" style={{ color: '#FFFFFF' }} numberOfLines={1}>{t(nextTask.titleKey)}</Text>
+                    <Text variant="caption" style={{ color: 'rgba(255,255,255,0.85)' }}>{t('session.next')}</Text>
+                    <Text variant="bodyStrong" style={{ color: '#FFFFFF' }} numberOfLines={1}>{taskTitle(t, nextTask)}</Text>
                   </View>
-                  <Text variant="caption" style={{ color: 'rgba(255,255,255,0.85)' }}>{t('common.minutes', { n: nextTask.minutes })}</Text>
+                  <Text variant="caption" style={{ color: 'rgba(255,255,255,0.85)' }}>{taskMeta(t, nextTask)}</Text>
                 </View>
                 <Button title={t('session.start')} icon={<ArrowRight size={18} color={colors.primary} />} variant="inverse" onPress={() => router.push('/session')} />
               </>
@@ -109,14 +131,14 @@ export default function HomeScreen() {
                   <CheckCircle2 size={24} color="#FFFFFF" />
                   <Text variant="h2" style={{ color: '#FFFFFF' }}>{t('session.allDone.title')}</Text>
                 </View>
-                <Text variant="body" style={{ color: 'rgba(255,255,255,0.88)' }}>{t('home.today.allDone')}</Text>
-                <Button variant="inverse" title={t('home.today.viewProgram')} onPress={() => router.push('/program')} />
+                <Text variant="body" style={{ color: 'rgba(255,255,255,0.9)' }}>{t('home.today.allDone')}</Text>
+                <Button variant="inverse" title={t('home.sleep')} icon={<MoonStar size={18} color={colors.primary} />} onPress={() => router.push('/sleep')} />
               </>
             )}
           </LinearGradient>
           <View style={{ backgroundColor: colors.card, paddingHorizontal: space[4], paddingVertical: space[3], flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text variant="caption" tone="secondary">{t('home.today.tasks', { done: completion.done, total: completion.total })}</Text>
-            <Pressable accessibilityRole="button" onPress={() => router.push('/program')}><Text variant="caption" tone="primary">{t('home.today.viewProgram')}</Text></Pressable>
+            <Pressable accessibilityRole="button" onPress={() => router.push('/program')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="caption" tone="primary">{t('home.today.viewProgram')}</Text></Pressable>
           </View>
         </View>
       ) : (
@@ -128,12 +150,12 @@ export default function HomeScreen() {
         {tile(<MoonStar size={22} color={colors.secondaryText} />, t('home.sleep'), t('home.sleep.short'), () => router.push('/sleep'), colors.secondarySoft)}
       </View>
 
-      {program ? (
+      {program && weekDays ? (
         <Card title={t('home.weekly')}>
           <View style={{ flexDirection: 'row', gap: space[3] }}>
             <View style={{ flex: 1, gap: 2 }}>
               <Text variant="caption" tone="secondary">{t('home.weekly.adherence')}</Text>
-              <Text variant="h2">{weekAdherence == null ? '—' : `%${weekAdherence}`}</Text>
+              <Text variant="h2">{t('home.weekly.daysOf', { done: weekDays.done, total: weekDays.total })}</Text>
             </View>
             <View style={{ flex: 1, gap: 2 }}>
               <Text variant="caption" tone="secondary">{t('home.weekly.thi')}</Text>
@@ -144,11 +166,15 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], backgroundColor: colors.accentSoft, borderRadius: radius.md, padding: space[3] }}>
-            <Flame size={20} color={colors.accentText} />
+            <CalendarCheck size={20} color={colors.accentText} />
             <Text variant="bodyStrong" style={{ color: colors.accentText }}>{t('home.weekly.days', { n: activeDays })}</Text>
           </View>
         </Card>
       ) : null}
+
+      <Pressable accessibilityRole="button" accessibilityLabel={t('growth.crisis.link')} onPress={() => router.push('/crisis')} style={({ pressed }) => ({ alignSelf: 'center', minHeight: 44, justifyContent: 'center', paddingHorizontal: space[4], opacity: pressed ? 0.7 : 1 })}>
+        <Text variant="bodySmall" tone="secondary" style={{ textDecorationLine: 'underline' }}>{t('growth.crisis.link')}</Text>
+      </Pressable>
     </Screen>
   );
 }

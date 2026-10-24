@@ -9,6 +9,77 @@
  * accelerometer sway, RMS of acceleration).
  */
 
+import type { Assessment, ExamResult } from '@/clinical/types';
+
+// ---------------------------------------------------------------------------------------------
+// Eligibility gate (physician review A3): contraindication screen before any manoeuvre is offered
+// ---------------------------------------------------------------------------------------------
+
+export const BALANCE_MAX_AGE = 65;
+/** Khalfa HQ total at or above which sound-exposure tests (LDL) are disabled and RI uses the gentle protocol. */
+export const HQ_EXAM_GATE = 28;
+
+export interface ExamEligibility {
+  /** Pressure manoeuvres (Toynbee / Valsalva): false → "performed at the ENT examination". */
+  pressure: boolean;
+  pressureReasons: string[];   // i18n keys (exam.gate.*)
+  /** Balance (sway) test: false → disabled. The screen additionally asks about falls inline. */
+  balance: boolean;
+  balanceReasons: string[];
+  /** Loudness-comfort self-report: false → disabled. The screen additionally asks "does sound cause pain" inline. */
+  ldl: boolean;
+  ldlReasons: string[];
+  /** Vascular (head-turn) step is only meaningful for pulsatile tinnitus. */
+  vascular: boolean;
+  /** HQ ≥ 28 or an early-discomfort LDL record: gentler RI masker and a single trial. */
+  hyperacusisGate: boolean;
+  hqTotal: number | null;
+}
+
+export function examEligibility(a: Assessment | null | undefined): ExamEligibility {
+  const rf = a?.redFlags;
+  const ca = a?.causeAnswers ?? {};
+  const h = a?.history;
+  const hq = a?.questionnaires?.find((q) => q.id === 'HQ');
+  const hqTotal = hq ? hq.total : null;
+
+  const pressureReasons: string[] = [];
+  if (rf?.headTrauma) pressureReasons.push('exam.gate.headTrauma');
+  if (rf?.suddenHearingLoss) pressureReasons.push('exam.gate.suddenHL');
+  if (rf?.vertigo) pressureReasons.push('exam.gate.vertigo');
+  if (rf?.otorrhoeaOrPain) pressureReasons.push('exam.gate.otorrhoea');
+  if (ca.barotrauma) pressureReasons.push('exam.gate.barotrauma');
+  if (ca.soundInducedDizzy) pressureReasons.push('exam.gate.soundDizzy');
+
+  const balanceReasons: string[] = [];
+  if (rf?.vertigo) balanceReasons.push('exam.gate.vertigo');
+  if (rf?.menierePattern) balanceReasons.push('exam.gate.meniere');
+  if (h?.age != null && h.age >= BALANCE_MAX_AGE) balanceReasons.push('exam.gate.age');
+
+  const ldlReasons: string[] = [];
+  if (hqTotal != null && hqTotal >= HQ_EXAM_GATE) ldlReasons.push('exam.gate.hq');
+
+  return {
+    pressure: pressureReasons.length === 0, pressureReasons,
+    balance: balanceReasons.length === 0, balanceReasons,
+    ldl: ldlReasons.length === 0, ldlReasons,
+    vascular: !!rf?.pulsatile || a?.history?.pattern === 'pulsatile',
+    hyperacusisGate: (hqTotal != null && hqTotal >= HQ_EXAM_GATE) || a?.exam?.ldlLow === true,
+    hqTotal,
+  };
+}
+
+/**
+ * Output ceiling (dB re full scale) for hyperacusis sound-exposure presets: never above −8 dBFS and, when a
+ * loudness-comfort self-report exists, at least 15 dB below the first "uncomfortable" level (audiologist B9).
+ */
+export const HYPERACUSIS_CEILING_DB = -8;
+export function hyperacusisCeilingDb(exam?: Pick<ExamResult, 'ldlDb'> | null): number {
+  const ldl = exam?.ldlDb;
+  if (ldl == null || !Number.isFinite(ldl)) return HYPERACUSIS_CEILING_DB;
+  return Math.min(HYPERACUSIS_CEILING_DB, ldl - 15);
+}
+
 // ---------------------------------------------------------------------------------------------
 // Battery step order
 // ---------------------------------------------------------------------------------------------
@@ -26,16 +97,38 @@ export const EXAM_STEPS: ExamStepDef[] = [
   { id: 'somatic', route: '/exercise/selftest', minutes: 3 },
 ];
 
-/** Steps shown in the hub for this user (vascular only for pulsatile tinnitus). */
-export function applicableExamSteps(opts: { pulsatile?: boolean }): ExamStepDef[] {
-  return EXAM_STEPS.filter((s) => s.id !== 'vascular' || !!opts.pulsatile);
+export interface ExamStepOptions { pulsatile?: boolean; eligibility?: ExamEligibility }
+
+/**
+ * Steps shown in the hub for this user: vascular only for pulsatile tinnitus; pressure, balance and LDL
+ * only when the eligibility gate allows them (the gated ones are listed separately as "done at the ENT exam").
+ */
+export function applicableExamSteps(opts: ExamStepOptions): ExamStepDef[] {
+  const e = opts.eligibility;
+  return EXAM_STEPS.filter((s) => {
+    if (s.id === 'vascular') return !!opts.pulsatile || !!e?.vascular;
+    if (!e) return true;
+    if (s.id === 'pressure') return e.pressure;
+    if (s.id === 'balance') return e.balance;
+    if (s.id === 'ldl') return e.ldl;
+    return true;
+  });
+}
+
+/** Steps hidden by the eligibility gate, with their reasons (i18n keys). */
+export function gatedExamSteps(e: ExamEligibility): Array<{ id: ExamStepId; reasons: string[] }> {
+  const out: Array<{ id: ExamStepId; reasons: string[] }> = [];
+  if (!e.pressure) out.push({ id: 'pressure', reasons: e.pressureReasons });
+  if (!e.ldl) out.push({ id: 'ldl', reasons: e.ldlReasons });
+  if (!e.balance) out.push({ id: 'balance', reasons: e.balanceReasons });
+  return out;
 }
 
 /**
  * Route of the next in-app step after `current` when the battery is run in sequence ("Sırayla başla").
- * The somatic self-test lives outside this folder, so the sequence ends after the balance test.
+ * The somatic self-test lives outside this folder, so the sequence ends after the last in-app step.
  */
-export function nextExamRoute(current: ExamStepId, opts: { pulsatile?: boolean }): string | null {
+export function nextExamRoute(current: ExamStepId, opts: ExamStepOptions): string | null {
   const seq = applicableExamSteps(opts).filter((s) => s.id !== 'somatic');
   const i = seq.findIndex((s) => s.id === current);
   if (i === -1 || i + 1 >= seq.length) return null;
@@ -46,8 +139,10 @@ export function nextExamRoute(current: ExamStepId, opts: { pulsatile?: boolean }
 // Digits-in-noise (DIN)
 // ---------------------------------------------------------------------------------------------
 
-export const DIN_TRIALS = 20;
-export const DIN_SCORED_TRIALS = 10;
+/** 24 triplets; SRT = mean SNR of trials 5–24 (Smits 2013 / De Sousa 2020 adaptive track). */
+export const DIN_TRIALS = 24;
+export const DIN_SCORED_FROM_TRIAL = 5;
+export const DIN_SCORED_TRIALS = DIN_TRIALS - DIN_SCORED_FROM_TRIAL + 1;
 export const DIN_START_SNR_DB = 10;
 export const DIN_STEP_BEFORE_REVERSAL_DB = 4;
 export const DIN_STEP_AFTER_REVERSAL_DB = 2;
@@ -55,7 +150,10 @@ export const DIN_MIN_SNR_DB = -16;
 export const DIN_MAX_SNR_DB = 14;
 /** Linear noise volume at 0 dB SNR (TTS output is fixed, so the noise carries the SNR). */
 export const DIN_BASE_NOISE_VOLUME = 0.12;
-/** Screening pass criterion (uncalibrated, heuristic). */
+/**
+ * @deprecated No Turkish triplet norm exists and the TTS output level is not fixed, so the app no longer
+ * labels a DIN result as pass/fail (physician B8). Kept only for legacy records.
+ */
 export const DIN_PASS_SRT_DB = -8;
 
 export interface DinTrial { snrDb: number; correct: boolean }
@@ -83,7 +181,7 @@ export function startDin(opts: { startSnrDb?: number; minSnrDb?: number; maxSnrD
 
 /**
  * 1-up/1-down track: a correct triplet lowers the SNR (harder), an error raises it. Steps are 4 dB until
- * the first reversal and 2 dB afterwards. After `DIN_TRIALS` the SRT is the mean SNR of the last 10 trials.
+ * the first reversal and 2 dB afterwards. After `DIN_TRIALS` the SRT is the mean SNR of the last `scored` trials.
  */
 export function respondDin(state: DinState, correct: boolean, trialsTotal = DIN_TRIALS, scored = DIN_SCORED_TRIALS): DinState {
   if (state.done) return state;
@@ -129,6 +227,7 @@ export function randomTriplet(rnd: () => number = Math.random): number[] {
 export const tripletCorrect = (target: number[], answer: number[]) =>
   target.length === 3 && answer.length === 3 && target.every((d, i) => d === answer[i]);
 
+/** @deprecated see DIN_PASS_SRT_DB — results are recorded, not labelled. */
 export const dinPassed = (srtDb: number) => srtDb <= DIN_PASS_SRT_DB;
 
 /** Spoken form of a triplet: digits separated by commas so the TTS engine inserts a short pause. */
@@ -138,38 +237,66 @@ export const tripletUtterance = (digits: number[]) => digits.join(', ');
 // Loudness discomfort level (LDL)
 // ---------------------------------------------------------------------------------------------
 
+/**
+ * "Ses rahatlık öz-bildirimi" (loudness-comfort self-report): −50 dBFS start, 3 dB steps, 1 kHz only,
+ * ceiling 10 dB below the user's output cap, three-level response (Cox 1997 contour / Sherlock & Formby
+ * 2005: the record is the first "uncomfortable", not "loud but tolerable"). Not a clinical LDL.
+ */
 export const LDL_START_DB = -50;
-export const LDL_STEP_DB = 5;
-export const LDL_FREQS = [1000, 4000] as const;
-/** Discomfort at least this far below the cap is flagged as a low tolerance pattern (heuristic). */
+export const LDL_STEP_DB = 3;
+export const LDL_FREQS = [1000] as const;
+export const LDL_CEILING_BELOW_CAP_DB = 10;
+export const LDL_MAX_PRESENTATIONS = 16;
+/** Discomfort at least this far below the ceiling is recorded as an early-discomfort pattern (heuristic, uncalibrated). */
 export const LDL_LOW_MARGIN_DB = 20;
+/** Dynamic range (LDL − threshold at the same frequency) below this is the audiologist's "reduced tolerance" pattern. */
+export const LDL_DYNAMIC_RANGE_LOW_DB = 55;
+
+export type LdlResponse = 'comfortable' | 'loudOk' | 'uncomfortable';
+
+/** Ceiling for the LDL stimulus: 10 dB under the user's cap, never above −10 dBFS. */
+export const ldlCeilingDb = (capDb: number) => Math.min(0, capDb) - LDL_CEILING_BELOW_CAP_DB;
 
 export interface LdlState {
   freq: number;
   level: number;
   stepDb: number;
+  /** Ceiling of the run (already includes the margin under the user's cap). */
   capDb: number;
   presentations: number;
   done: boolean;
-  /** Level at the first "uncomfortable" response; undefined when the cap was reached without discomfort. */
+  /** Level at the first "uncomfortable" response; undefined when the ceiling was reached without discomfort. */
   discomfortDb?: number;
+  /** Level at the first "loud but tolerable" response (informational). */
+  loudOkDb?: number;
   reachedCap: boolean;
 }
 
-export function startLdl(freq: number, capDb: number, opts: { startDb?: number; stepDb?: number } = {}): LdlState {
-  const cap = Math.min(0, capDb);
+export function startLdl(freq: number, ceilingDb: number, opts: { startDb?: number; stepDb?: number } = {}): LdlState {
+  const cap = Math.min(0, ceilingDb);
   const level = Math.min(cap, opts.startDb ?? LDL_START_DB);
   return { freq, level, stepDb: opts.stepDb ?? LDL_STEP_DB, capDb: cap, presentations: 0, done: false, reachedCap: level >= cap };
 }
 
-/** "Comfortable" → ascend one step (stop at the cap); "uncomfortable" → done at the current level. */
-export function respondLdl(state: LdlState, uncomfortable: boolean): LdlState {
+/**
+ * "Comfortable" / "loud but tolerable" → ascend one step (stop at the ceiling or after LDL_MAX_PRESENTATIONS);
+ * "uncomfortable" → done at the current level. A boolean is accepted for backwards compatibility (true = uncomfortable).
+ */
+export function respondLdl(state: LdlState, response: LdlResponse | boolean): LdlState {
   if (state.done) return state;
+  const r: LdlResponse = typeof response === 'boolean' ? (response ? 'uncomfortable' : 'comfortable') : response;
   const presentations = state.presentations + 1;
-  if (uncomfortable) return { ...state, presentations, done: true, discomfortDb: state.level };
-  if (state.level >= state.capDb) return { ...state, presentations, done: true, reachedCap: true };
+  if (r === 'uncomfortable') return { ...state, presentations, done: true, discomfortDb: state.level };
+  const loudOkDb = state.loudOkDb ?? (r === 'loudOk' ? state.level : undefined);
+  if (state.level >= state.capDb || presentations >= LDL_MAX_PRESENTATIONS) return { ...state, presentations, loudOkDb, done: true, reachedCap: true };
   const level = Math.min(state.capDb, state.level + state.stepDb);
-  return { ...state, presentations, level, reachedCap: level >= state.capDb };
+  return { ...state, presentations, loudOkDb, level, reachedCap: level >= state.capDb };
+}
+
+/** LDL − hearing threshold at the same frequency (dB SL dynamic range); null when either is unknown. */
+export function ldlDynamicRangeDb(ldlDb: number | null | undefined, thresholdDb: number | null | undefined): number | null {
+  if (ldlDb == null || thresholdDb == null || !Number.isFinite(ldlDb) || !Number.isFinite(thresholdDb)) return null;
+  return Math.round(ldlDb - thresholdDb);
 }
 
 export interface LdlSummary {
@@ -198,7 +325,7 @@ export const SWAY_BASELINE_SECONDS = 10;
 export const SWAY_TEST_SECONDS = 30;
 export const SWAY_IGNORE_SECONDS = 3;
 export const SWAY_BASELINE_IGNORE_SECONDS = 2;
-/** swayScore above this is flagged (heuristic, uncalibrated). */
+/** @deprecated The accelerometer RMS cut-off is arbitrary (physician B8); sway is recorded for the clinician, never labelled. */
 export const SWAY_ABNORMAL_SCORE = 12;
 export const G_MS2 = 9.81;
 
@@ -229,6 +356,7 @@ export function swayStats(samples: SwaySample[], ignoreSec = SWAY_IGNORE_SECONDS
   return { rmsMs2: rms, score: Math.round(rms * 100 * 10) / 10, n: mags.length, meanMs2: mean };
 }
 
+/** @deprecated see SWAY_ABNORMAL_SCORE. */
 export const swayAbnormal = (score: number) => score > SWAY_ABNORMAL_SCORE;
 
 /** Eyes-closed / eyes-open ratio (Romberg-like); null when the baseline is too small to divide by. */

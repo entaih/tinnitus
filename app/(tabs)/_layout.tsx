@@ -15,7 +15,6 @@ export default function TabLayout() {
         tabBarInactiveTintColor: colors.tabInactive,
         tabBarStyle: { backgroundColor: colors.card, borderTopColor: colors.border },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-        tabBarAllowFontScaling: false,
       }}
     >
       <Tabs.Screen name="index" options={{ title: t('tab.home'), tabBarIcon: ({ color, size }) => <House color={color} size={size} /> }} />

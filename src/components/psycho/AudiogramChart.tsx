@@ -24,7 +24,7 @@ interface Props {
  * worse threshold sits lower, as on a clinical chart. The ear is encoded by the marker shape (O right,
  * X left) and by the title, never by colour alone. One series per chart, so no legend is needed.
  */
-export function AudiogramChart({ ear, points, width = 320, height = 200, bandDb = SCREENING_UNCERTAINTY_DB, minDb = -70, maxDb = 0 }: Props) {
+export function AudiogramChart({ ear, points, width = 320, height = 200, bandDb = SCREENING_UNCERTAINTY_DB, minDb = -90, maxDb = 0 }: Props) {
   const { colors, space, radius } = useTheme();
   const t = useT();
   const pad = { l: 40, r: 12, t: 12, b: 28 };
@@ -50,7 +50,8 @@ export function AudiogramChart({ ear, points, width = 320, height = 200, bandDb 
   const series = ear === 'left' ? colors.chart.thi : colors.chart.annoyance;
   const earLabel = t(`psy.hear.ear.${ear}`);
   const summary = points.map((p) => `${p.freq} Hz: ${p.levelDb != null ? `${Math.round(p.levelDb)} dB` : t('psy.hear.chart.notHeard')}`).join(', ');
-  const gridDb = [-70, -60, -50, -40, -30, -20, -10, 0];
+  const gridDb: number[] = [];
+  for (let db = Math.ceil(minDb / 10) * 10; db <= maxDb; db += 10) gridDb.push(db);
   const mark = 5;
 
   return (

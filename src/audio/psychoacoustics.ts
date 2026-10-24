@@ -9,6 +9,8 @@
  * Levels are expressed in dB relative to the device's full-scale reference (≤ 0), never dB HL.
  */
 
+import type { SoundSpec } from './sounds';
+
 // ---------------------------------------------------------------------------------------------
 // Frequency helpers
 // ---------------------------------------------------------------------------------------------
@@ -67,9 +69,63 @@ export interface PitchRunOptions {
   minIntervalOctaves?: number;
   /** Hard cap on the number of steps (default 8). */
   maxSteps?: number;
+  /** Start pair (Hz) for an un-anchored run; default 1000/8000 Hz. See PITCH_START_PAIRS. */
+  startPair?: readonly [number, number];
 }
 
 const DEFAULT_START_PAIR: [number, number] = [1000, 8000];
+
+/**
+ * Start pairs for the three matching runs (Vielsmeier 2020: varying the start pair makes the run-to-run
+ * agreement a real reliability estimate instead of an artefact of a shared starting point). Use
+ * `shuffleCandidates(PITCH_START_PAIRS)` to randomise the order per session.
+ */
+export const PITCH_START_PAIRS: ReadonlyArray<readonly [number, number]> = [[1000, 8000], [500, 6000], [2000, 10000]];
+
+/** How the listener describes the percept; drives the stimulus bandwidth. */
+export type PitchPercept = 'tonal' | 'hiss' | 'buzz' | 'multiple';
+export const NBN_OCTAVES_TONAL = 0.33;
+export const NBN_OCTAVES_NOISELIKE = 0.5;
+/** 1/3-octave NBN for tonal percepts (and "multiple": match the dominant component), 1/2 octave for hiss/buzz. */
+export const pitchBandwidthOctaves = (percept: PitchPercept) => (percept === 'hiss' || percept === 'buzz' ? NBN_OCTAVES_NOISELIKE : NBN_OCTAVES_TONAL);
+
+/**
+ * RMS (dBFS) of the rendered narrowband stimuli after the renderer's *peak* normalisation (0.5), measured
+ * from `renderSound({kind:'narrowband', color:'white', octaves:0.33})` with its fixed seed. The spread is
+ * small (≈1.5 dB) but systematic, so stimuli are gain-compensated to equal RMS before the 2AFC comparison.
+ */
+const NBN_RMS_DB: ReadonlyArray<readonly [number, number]> = [
+  [250, -17.3], [500, -18.3], [1000, -18.7], [2000, -18.0], [3000, -18.6], [4000, -17.8],
+  [6000, -17.7], [8000, -17.7], [10000, -17.8], [12000, -17.2], [14000, -18.1], [16000, -17.4],
+];
+export const NBN_REFERENCE_HZ = 1000;
+const NBN_COMP_LIMIT_DB = 3;
+
+/** Gain (dB) to add so a narrowband burst at `centerHz` has the same RMS as the 1 kHz reference (log-frequency interpolation). */
+export function nbnLevelCompensationDb(centerHz: number): number {
+  const rmsAt = (hz: number) => {
+    const lf = Math.log2(Math.max(1, hz));
+    if (lf <= Math.log2(NBN_RMS_DB[0][0])) return NBN_RMS_DB[0][1];
+    for (let i = 1; i < NBN_RMS_DB.length; i++) {
+      const [f1, r1] = NBN_RMS_DB[i];
+      if (lf <= Math.log2(f1)) {
+        const [f0, r0] = NBN_RMS_DB[i - 1];
+        const w = (lf - Math.log2(f0)) / (Math.log2(f1) - Math.log2(f0));
+        return r0 + (r1 - r0) * w;
+      }
+    }
+    return NBN_RMS_DB[NBN_RMS_DB.length - 1][1];
+  };
+  const comp = rmsAt(NBN_REFERENCE_HZ) - rmsAt(centerHz);
+  return Math.round(Math.max(-NBN_COMP_LIMIT_DB, Math.min(NBN_COMP_LIMIT_DB, comp)) * 10) / 10;
+}
+
+/** Notched-noise presets are only defensible for a confident match at or below 8 kHz (Stein 2016, treatment.md §3.2). */
+export const NOTCHED_MAX_PITCH_HZ = 8000;
+export function notchedPresetEligible(pitchHz?: number | null, confidence?: PitchConfidence | null): boolean {
+  if (pitchHz == null || !Number.isFinite(pitchHz)) return false;
+  return pitchHz <= NOTCHED_MAX_PITCH_HZ && confidence !== 'low';
+}
 
 export function startPitchRun(opts: PitchRunOptions = {}): PitchRunState {
   const minInterval = opts.minIntervalOctaves ?? SEMITONE_OCTAVES;
@@ -81,7 +137,7 @@ export function startPitchRun(opts: PitchRunOptions = {}): PitchRunState {
       intervalOctaves: interval, step: 0, history: [], done: false,
     };
   }
-  const [a, b] = DEFAULT_START_PAIR;
+  const [a, b] = opts.startPair ?? DEFAULT_START_PAIR;
   const interval = opts.startIntervalOctaves ?? octavesBetween(a, b);
   const state: PitchRunState = { a, b, intervalOctaves: interval, step: 0, history: [], done: false };
   // Defensive: an absurd configuration (start below the minimum) finishes immediately on the midpoint.
@@ -276,11 +332,38 @@ export const HEARING_SEARCH: ThresholdSearchOptions = { startDb: -60, minDb: -90
 /** Settings for the loudness-match threshold (2 dB resolution). */
 export const TONE_THRESHOLD_SEARCH: ThresholdSearchOptions = { startDb: -60, minDb: -90, maxDb: 0, upStep: 2, downStep: 10, coarseStep: 6, confirmations: 2, maxAscents: 4 };
 
-/** Hearing-screen frequencies in presentation order. */
-export const SCREENING_FREQS = [500, 1000, 2000, 4000, 6000, 8000] as const;
+/** Hearing-screen frequencies in presentation order (3 kHz added: noise notch and "rule 3000" asymmetry). */
+export const SCREENING_FREQS = [500, 1000, 2000, 3000, 4000, 6000, 8000] as const;
 
 /** Uncertainty band for an uncalibrated phone screening (dB). */
 export const SCREENING_UNCERTAINTY_DB = 10;
+
+/** Warble (±5 %) from 3 kHz upwards: standing waves and earbud seating make a fixed tone unreliable in the ear canal. */
+export const WARBLE_FROM_HZ = 3000;
+export const warbleFor = (hz: number) => hz >= WARBLE_FROM_HZ;
+
+// Catch trials (silent presentations) — the only quality control available on an uncalibrated phone.
+export const CATCH_BLOCK = 6;
+export const CATCH_FALSE_POSITIVE_LIMIT = 2;
+export type ScreenReliability = 'ok' | 'low';
+
+/**
+ * Returns a per-presentation decision function: exactly one randomly placed silent presentation in every
+ * block of CATCH_BLOCK presentations (≈1 in 6). Catch presentations do not feed the threshold search.
+ */
+export function makeCatchScheduler(rnd: () => number = Math.random): () => boolean {
+  let index = 0;
+  let slot = -1;
+  return () => {
+    const pos = index % CATCH_BLOCK;
+    if (pos === 0) slot = Math.min(CATCH_BLOCK - 1, Math.max(0, Math.floor(rnd() * CATCH_BLOCK)));
+    index++;
+    return pos === slot;
+  };
+}
+
+/** ≥ 2 responses to silence → the run is flagged 'low' reliability (instructions should be repeated). */
+export const screenReliability = (falsePositives: number): ScreenReliability => (falsePositives >= CATCH_FALSE_POSITIVE_LIMIT ? 'low' : 'ok');
 
 export function pta4FromThresholds(points: { freq: number; levelDb: number }[]): number | null {
   const v = [500, 1000, 2000, 4000].map((f) => points.find((p) => p.freq === f)?.levelDb).filter((x): x is number => x != null);
@@ -365,11 +448,37 @@ export function mmlNotMaskable(state: MmlState): MmlState {
   return { ...state, phase: 'done', notMaskable: true, mmlDb: undefined, maskingLevelDb: undefined };
 }
 
-/** Level for the RI masker: MML + 10 dB, clamped to the cap. */
-export function riMaskerLevel(maskingLevelDb: number, capDb: number): { levelDb: number; capped: boolean } {
-  const wanted = maskingLevelDb + 10;
+export type MmlStimulus = 'nbn' | 'bbn';
+export const MML_NBN_OCTAVES = 0.33;
+
+/**
+ * The single stimulus shared by MML and RI (Fournier & Hébert 2018 MRIL; Vernon & Meikle): 1/3-octave
+ * narrowband noise at the matched pitch when one exists, otherwise broadband white noise.
+ */
+export function maskerSpec(pitchHz: number | null | undefined, seconds = 8): { spec: SoundSpec; stimulus: MmlStimulus; centerHz?: number } {
+  if (pitchHz != null && Number.isFinite(pitchHz) && pitchHz > 0) {
+    const centerHz = Math.round(clampHz(pitchHz));
+    return { spec: { kind: 'narrowband', color: 'white', centerHz, octaves: MML_NBN_OCTAVES, seconds }, stimulus: 'nbn', centerHz };
+  }
+  return { spec: { kind: 'noise', color: 'white', seconds }, stimulus: 'bbn' };
+}
+
+export const RI_MASKER_ABOVE_MML_DB = 10;
+/** Hyperacusis gate (HQ ≥ 28 or an early-discomfort LDL record): gentler masker and a single trial. */
+export const RI_MASKER_ABOVE_MML_HYPERACUSIS_DB = 5;
+export const HQ_HYPERACUSIS_GATE = 28;
+export const RI_MAX_TRIALS_HYPERACUSIS = 1;
+
+export function riHyperacusisGate(hqTotal?: number | null, ldlLow?: boolean | null): boolean {
+  return (hqTotal != null && hqTotal >= HQ_HYPERACUSIS_GATE) || ldlLow === true;
+}
+
+/** Level for the RI masker: MML + 10 dB (MML + 5 dB under the hyperacusis gate), clamped to the cap. */
+export function riMaskerLevel(maskingLevelDb: number, capDb: number, opts: { hyperacusis?: boolean } = {}): { levelDb: number; capped: boolean; aboveMmlDb: number } {
+  const aboveMmlDb = opts.hyperacusis ? RI_MASKER_ABOVE_MML_HYPERACUSIS_DB : RI_MASKER_ABOVE_MML_DB;
+  const wanted = maskingLevelDb + aboveMmlDb;
   const levelDb = Math.min(capDb, wanted);
-  return { levelDb, capped: levelDb < wanted };
+  return { levelDb, capped: levelDb < wanted, aboveMmlDb };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -396,21 +505,36 @@ export interface RiResult {
 
 export const RI_MASKER_SECONDS = 60;
 export const RI_RATING_INTERVAL_SEC = 5;
+/** First rating 2 s after masker offset so a short complete RI is not missed by 5 s sampling. */
+export const RI_FIRST_RATING_SEC = 2;
 export const RI_MAX_RATING_SECONDS = 180;
 export const RI_MAX_TRIALS_PER_SESSION = 3;
+/** The listener must confirm a rating within this window, otherwise the sample is recorded as missing (censored). */
+export const RI_CONFIRM_WINDOW_SEC = 3;
+
+export const riMaxTrials = (hyperacusis: boolean) => (hyperacusis ? RI_MAX_TRIALS_HYPERACUSIS : RI_MAX_TRIALS_PER_SESSION);
+
+/** Scheduled rating times after masker offset: 2 s, then every 5 s (5, 10, 15, …) up to `maxSec`. */
+export function riRatingSchedule(maxSec = RI_MAX_RATING_SECONDS, first = RI_FIRST_RATING_SEC, interval = RI_RATING_INTERVAL_SEC): number[] {
+  const out: number[] = [];
+  if (first > 0 && first < interval) out.push(first);
+  for (let t = interval; t <= maxSec; t += interval) out.push(t);
+  return out;
+}
 
 /**
- * Score a residual-inhibition trial. Each rating is assumed to hold until the next rating (or for one
- * interval after the last one). Operational thresholds (Hu 2021-style synthesis): RI-positive when the
- * rating is ≤ 50 % of baseline for ≥ 5 s, complete when it is 0 for ≥ 5 s; duration runs from offset until
- * the first rating ≥ baseline − 1 after suppression started.
+ * Score a residual-inhibition trial. Each rating holds until the next rating but never longer than one
+ * interval, so a missed (unconfirmed) sample censors rather than extends the suppression. Operational
+ * thresholds (Hu 2021-style synthesis): RI-positive when the rating is ≤ 50 % of baseline for ≥ 5 s,
+ * complete when it is 0 for ≥ 5 s; duration runs from offset until the first rating ≥ baseline − 1 after
+ * suppression started.
  */
 export function scoreResidualInhibition(baseline: number, ratings: RiRating[], intervalSec = RI_RATING_INTERVAL_SEC): RiResult {
   const sorted = [...ratings].filter((r) => Number.isFinite(r.t) && Number.isFinite(r.value)).sort((a, b) => a.t - b.t);
   const none: RiResult = { category: 'none', positive: false, durationSec: 0, censored: false, depth: 1, rebound: false };
   if (!sorted.length || baseline <= 0) return none;
 
-  const holdUntil = (i: number) => (i + 1 < sorted.length ? sorted[i + 1].t : sorted[i].t + intervalSec);
+  const holdUntil = (i: number) => Math.min(sorted[i].t + intervalSec, i + 1 < sorted.length ? sorted[i + 1].t : Infinity);
   const longestSpan = (pred: (v: number) => boolean) => {
     let best = 0; let start: number | null = null;
     for (let i = 0; i < sorted.length; i++) {

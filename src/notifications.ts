@@ -78,3 +78,63 @@ export async function scheduleDailyReminder(hour: number, title: string, body: s
     return null;
   }
 }
+
+// ---------------------------------------------------------------------------------------------------
+// Weekly review (growth): one local notification per week, scheduled separately from the daily reminder.
+// Note: `scheduleDailyReminder` cancels ALL scheduled notifications, so callers that keep a weekly review
+// enabled should re-run `scheduleWeeklyReview` after changing the daily reminder (see WeeklyReviewRow).
+// ---------------------------------------------------------------------------------------------------
+
+export const WEEKLY_REVIEW_KIND = 'weeklyReview';
+
+/** Clamp to expo-notifications' weekday range: 1 = Sunday … 7 = Saturday. */
+export const clampWeekday = (d: number) => Math.max(1, Math.min(7, Math.round(d)));
+
+/** Cancel one scheduled notification by id. Never throws. */
+export async function cancelScheduled(id: string | null | undefined): Promise<void> {
+  if (!id) return;
+  try { await Notifications().cancelScheduledNotificationAsync(id); } catch { /* ignore */ }
+}
+
+/** True when a notification with this id is still scheduled (false on any error). */
+export async function isScheduled(id: string | null | undefined): Promise<boolean> {
+  if (!id) return false;
+  try {
+    const all = await Notifications().getAllScheduledNotificationsAsync();
+    return all.some((n) => n.identifier === id);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Schedule the weekly review notification (WEEKLY trigger: weekday 1–7 with 1 = Sunday, hour 0–23, minute 0).
+ * Replaces a previous weekly review when `previousId` is given; leaves the daily reminder untouched.
+ * Returns the notification id, or null when permission is missing or scheduling failed.
+ */
+export async function scheduleWeeklyReview(weekday: number, hour: number, title: string, body: string, channelName = title, previousId?: string | null): Promise<string | null> {
+  installNotificationHandler();
+  const ok = await requestReminderPermission();
+  if (!ok) return null;
+  await ensureChannel(channelName);
+  await cancelScheduled(previousId);
+  try {
+    return await Notifications().scheduleNotificationAsync({
+      content: { title, body, data: { kind: WEEKLY_REVIEW_KIND } },
+      trigger: {
+        type: Notifications().SchedulableTriggerInputTypes.WEEKLY,
+        weekday: clampWeekday(weekday),
+        hour: Math.max(0, Math.min(23, Math.round(hour))),
+        minute: 0,
+        channelId: REMINDER_CHANNEL,
+      },
+    });
+  } catch {
+    return null;
+  }
+}
+
+/** Cancel the weekly review by id. Never throws. */
+export async function cancelWeeklyReview(id: string | null | undefined): Promise<void> {
+  await cancelScheduled(id);
+}

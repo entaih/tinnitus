@@ -1,42 +1,44 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
 import { Stack, router } from 'expo-router';
-import { ChevronRight, CircleCheck, Circle } from 'lucide-react-native';
+import { ChevronRight, CircleCheck, Circle, Stethoscope } from 'lucide-react-native';
 import { Banner, Button, Card, Disclaimer, Screen, Text } from '@/components';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
-import { applicableExamSteps, type ExamStepId } from '@/audio/examTests';
+import { applicableExamSteps, examEligibility, gatedExamSteps, type ExamStepId } from '@/audio/examTests';
 import type { ExamResult } from '@/clinical/types';
 
-/** Hub of the guided self-examination battery: step list with status, and "start in order". */
+/** Hub of the guided self-examination battery: eligibility-gated step list with status, and "start in order". */
 export default function ExamHubScreen() {
   const t = useT();
   const { colors, space } = useTheme();
   const { assessment } = useProfile();
   const exam: ExamResult | undefined = assessment?.exam;
+  const eligibility = examEligibility(assessment);
   const pulsatile = !!assessment?.redFlags?.pulsatile;
-  const steps = applicableExamSteps({ pulsatile });
+  const steps = applicableExamSteps({ pulsatile, eligibility });
+  const gated = gatedExamSteps(eligibility);
   const total = steps.reduce((s, x) => s + x.minutes, 0);
 
   const yn = (v: boolean | undefined) => (v == null ? '—' : v ? t('common.yes') : t('common.no'));
   const change = (v: 'quieter' | 'louder' | 'same' | null | undefined) => (v ? t(`exam.vascular.${v}`) : '—');
 
-  /** Result line per step, or null when the step has not been done. */
+  /** Result line per step, or null when the step has not been done. Records only; no "normal/abnormal" labels. */
   const resultOf = (id: ExamStepId): string | null => {
     if (!exam) return null;
     switch (id) {
       case 'din': return exam.dinSrtDb != null ? t('exam.hub.result.din', { db: exam.dinSrtDb }) : null;
       case 'ldl': return exam.ldlDb != null ? t('exam.hub.result.ldl', { db: exam.ldlDb }) : null;
       case 'pressure': return exam.valsalvaPop != null || exam.fullnessRelief != null ? t('exam.hub.result.pressure', { pop: yn(exam.valsalvaPop), relief: yn(exam.fullnessRelief) }) : null;
-      case 'vascular': return exam.jugularChange != null || exam.headTurnChange != null ? t('exam.hub.result.vascular', { j: change(exam.jugularChange), h: change(exam.headTurnChange) }) : null;
+      case 'vascular': return exam.headTurnChange != null || exam.positionalChange != null ? t('exam.hub.result.vascular', { h: change(exam.headTurnChange), p: yn(exam.positionalChange) }) : null;
       case 'balance': return exam.swayScore != null ? t('exam.hub.result.balance', { s: exam.swayScore }) : null;
       case 'somatic': return exam.somaticPositive != null ? t(exam.somaticPositive ? 'exam.hub.result.somatic.pos' : 'exam.hub.result.somatic.neg') : null;
       default: return null;
     }
   };
 
-  const firstRoute = `${steps[0].route}?seq=1`;
+  const firstRoute = steps.length ? `${steps[0].route}?seq=1` : null;
 
   return (
     <Screen>
@@ -74,7 +76,27 @@ export default function ExamHubScreen() {
         })}
       </View>
 
-      <Button title={t('exam.hub.startAll')} onPress={() => router.push(firstRoute as never)} />
+      {gated.length ? (
+        <>
+          <Text variant="overline" tone="secondary">{t('exam.hub.gated')}</Text>
+          <View style={{ gap: space[2] }}>
+            {gated.map((g) => (
+              <Card key={g.id} variant="outlined">
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
+                  <Stethoscope size={24} color={colors.textMuted} />
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text variant="bodyStrong">{t(`exam.step.${g.id}`)}</Text>
+                    <Text variant="caption" tone="secondary">{t(g.id === 'pressure' ? 'exam.gate.clinic' : 'exam.gate.disabled')}</Text>
+                    <Text variant="caption" tone="muted">{g.reasons.map((r) => t(r)).join(' · ')}</Text>
+                  </View>
+                </View>
+              </Card>
+            ))}
+          </View>
+        </>
+      ) : null}
+
+      {firstRoute ? <Button title={t('exam.hub.startAll')} onPress={() => router.push(firstRoute as never)} /> : null}
       <Text variant="caption" tone="muted">{t('exam.hub.resultsNote')}</Text>
       <Disclaimer textKey="disclaimer.short" />
     </Screen>

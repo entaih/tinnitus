@@ -5,7 +5,7 @@ import { useTheme, type SeverityBand } from '@/theme';
 import { Text } from './Text';
 import { useT } from '@/i18n';
 
-export function Chip({ label, tone = 'neutral', icon, onPress, small }: { label: string; tone?: 'neutral' | 'primary' | 'info' | 'accent' | 'success' | 'warning' | 'danger'; icon?: React.ReactNode; onPress?: () => void; small?: boolean }) {
+export function Chip({ label, tone = 'neutral', icon, onPress, small, accessibilityHint }: { label: string; tone?: 'neutral' | 'primary' | 'info' | 'accent' | 'success' | 'warning' | 'danger'; icon?: React.ReactNode; onPress?: () => void; small?: boolean; accessibilityHint?: string }) {
   const { colors, radius, space } = useTheme();
   const map = {
     neutral: { bg: colors.skeleton, fg: colors.textSecondary },
@@ -22,7 +22,7 @@ export function Chip({ label, tone = 'neutral', icon, onPress, small }: { label:
       <Text variant="caption" style={{ color: map.fg }}>{label}</Text>
     </View>
   );
-  return onPress ? <Pressable accessibilityRole="button" onPress={onPress}>{body}</Pressable> : body;
+  return onPress ? <Pressable accessibilityRole="button" accessibilityHint={accessibilityHint} onPress={onPress} hitSlop={{ top: 10, bottom: 10, left: 4, right: 4 }} style={{ minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }}>{body}</Pressable> : body;
 }
 
 /** Evidence-level chip; always tappable to a citation sheet. */
@@ -35,6 +35,7 @@ export function EvidenceChip({ level, onPress }: { level: 'guideline' | 'rct' | 
     <Chip
       small
       tone={tone}
+      accessibilityHint={onPress ? t('glossary.a11yHint') : undefined}
       label={t(`evidence.${level}`)}
       icon={level === 'expert' ? <Info size={14} color={fg} /> : <BadgeCheck size={14} color={fg} />}
       onPress={onPress}
