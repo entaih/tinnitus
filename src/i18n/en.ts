@@ -1,7 +1,7 @@
 export const en = {
   'app.name': 'Dingin',
   'app.tagline': 'Tinnitus assessment and rehabilitation',
-  'tab.home': 'Home', 'tab.assess': 'Measures', 'tab.sound': 'Sounds', 'tab.mind': 'Mind', 'tab.progress': 'Progress',
+  'tab.home': 'Home', 'tab.assess': 'Tests', 'tab.sound': 'Sounds', 'tab.mind': 'Mind', 'tab.progress': 'Progress',
   'common.continue': 'Continue', 'common.back': 'Back', 'common.start': 'Start', 'common.save': 'Save', 'common.done': 'Done', 'common.skip': 'Skip', 'common.cancel': 'Cancel',
   'common.yes': 'Yes', 'common.no': 'No', 'common.sometimes': 'Sometimes', 'common.minutes': '{n} min', 'common.later': 'Later', 'common.close': 'Close', 'common.next': 'Next',
   'common.understood': 'Got it', 'common.whatToDo': 'What should I do?', 'common.loadingAudio': 'Preparing sound…', 'common.stop': 'Stop', 'common.pause': 'Pause', 'common.play': 'Play',

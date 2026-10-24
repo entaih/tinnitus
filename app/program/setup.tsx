@@ -35,8 +35,11 @@ export default function ProgramSetup() {
     minutesPerDay: minutes,
     style,
     pitchHz: psycho?.pitchHz,
-    riPositive: psycho?.riCategory ? psycho.riCategory !== 'none' : undefined,
-  }), [minutes, style, psycho?.pitchHz, psycho?.riCategory]);
+    riPositive: psycho ? (psycho.riPositive ?? (psycho.riCategory ? psycho.riCategory === 'complete' : undefined)) : undefined,
+    hearingDone: !!assessment?.hearing,
+    causesDone: !!assessment?.causeAnswers,
+    examDone: !!assessment?.exam,
+  }), [minutes, style, psycho, assessment]);
 
   const generate = () => { if (profile) setPreview(generateProgram(profile, prefs)); };
   const save = () => { if (preview) { setProgram(preview); router.replace('/program'); } };

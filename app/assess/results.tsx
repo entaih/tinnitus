@@ -9,6 +9,7 @@ import { Gauge, useInfoSheet } from '@/components/assess';
 import { useTheme } from '@/theme';
 import { ReferralList, CauseList } from '@/components/assess';
 import { rankCauses, confirmatoryTests } from '@/clinical/causes';
+import { toHlEstimate, computeTriage } from '@/clinical/engine';
 import { generateProgram } from '@/clinical/program';
 import { useLocale, useT, formatDate } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
@@ -20,7 +21,7 @@ import { fmtHz } from '@/utils/format';
 
 const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
-const FLAG_KEYS: (keyof RedFlags)[] = ['suddenHearingLoss', 'unilateralSymptoms', 'pulsatile', 'vertigo', 'neuroSigns', 'otorrhoeaOrPain', 'headTrauma', 'selfHarm'];
+const FLAG_KEYS: (keyof RedFlags)[] = ['suddenHearingLoss', 'rapidWorsening', 'unilateralSymptoms', 'pulsatile', 'pulsatileHeadacheVisual', 'pulsatileNewUnilateral', 'vertigo', 'neuroSigns', 'otorrhoeaOrPain', 'objectiveSound', 'headTrauma', 'menierePattern', 'newOtotoxicDrug', 'selfHarm'];
 
 export default function ResultsScreen() {
   const t = useT();
@@ -35,7 +36,7 @@ export default function ResultsScreen() {
   const startProgram = () => {
     if (!profile) return;
     const ps = assessment?.psycho;
-    setProgram(generateProgram(profile, { minutesPerDay: 30, style: 'cbt', pitchHz: ps?.pitchHz, riPositive: ps?.riCategory ? ps.riCategory !== 'none' : undefined, hearingDone: !!assessment?.hearing }));
+    setProgram(generateProgram(profile, { minutesPerDay: 30, style: 'cbt', pitchHz: ps?.pitchHz, riPositive: ps ? (ps.riPositive ?? (ps.riCategory ? ps.riCategory === 'complete' : undefined)) : undefined, hearingDone: !!assessment?.hearing, causesDone: !!assessment?.causeAnswers, examDone: !!assessment?.exam }));
     router.replace('/(tabs)');
   };
   const { open, sheet } = useCitation();
@@ -275,10 +276,15 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
     const r = a.questionnaires.find((q) => q.id === id);
     return r ? scoreQuestionnaire(QUESTIONNAIRES[id], r.answers) : null;
   };
+  const tri = computeTriage(a);
+  lines.push(t('results.summary.triage', { tier: tri.tier, v: tri.reasons.map((r) => t(r)).join(', ') }));
+  if (h?.age) lines.push(t('results.summary.age', { v: h.age }));
+  if (h?.priorAudiometry != null) lines.push(h.priorAudiometry ? t('results.summary.priorAudiometry.yes') : t('results.summary.priorAudiometry.no'));
   const thi = get('THI');
   if (thi) lines.push(t('results.summary.thi', { total: thi.total, band: t(`severity.${thi.band}`) }));
   const hq = get('HQ'); if (hq) lines.push(t('results.summary.hq', { total: hq.total }));
-  const phq = get('PHQ9'); if (phq) lines.push(t('results.summary.phq', { total: phq.total }));
+  const phqRaw = a.questionnaires.find((x) => x.id === 'PHQ9');
+  const phq = get('PHQ9'); if (phq) lines.push(t('results.summary.phq', { total: phq.total, item9: phqRaw?.answers[8] ?? 0 }));
   const gad = get('GAD7'); if (gad) lines.push(t('results.summary.gad', { total: gad.total }));
   const sci = get('SCI'); if (sci) lines.push(t('results.summary.sci', { total: sci.total }));
   const rasst = get('RASST'); if (rasst) lines.push(t('results.summary.rasst', { total: rasst.total }));
@@ -289,7 +295,7 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
   if (ps?.mmlDb != null) lines.push(t('results.summary.mml', { v: Math.round(ps.mmlDb) }));
   if (ps?.riCategory) lines.push(t('results.summary.ri', { v: `${t(`results.summary.ri.${ps.riCategory}`)}${ps.residualInhibitionSec != null ? ` (${Math.round(ps.residualInhibitionSec)} s)` : ''}` }));
   const p = pta4(a);
-  if (p != null) lines.push(t('results.summary.pta', { v: Math.round(p) }));
+  if (p != null) lines.push(t('results.summary.pta', { raw: Math.round(p), v: toHlEstimate(p) }));
   if (a.redFlags) {
     const flags = FLAG_KEYS.filter((k) => a.redFlags?.[k]).map((k) => t(`results.flag.${k}`));
     lines.push(flags.length ? t('results.summary.flags', { v: flags.join(', ') }) : t('results.summary.noFlags'));

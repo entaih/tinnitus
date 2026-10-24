@@ -32,8 +32,6 @@ export function computeJourney(a: Assessment | null, program: Program | null): J
   const steps: JourneyStep[] = [
     { id: 'safety', route: '/assess/triage', minutes: 2, done: !!a?.redFlags, whyKey: 'journey.why.safety' },
     { id: 'history', route: '/assess/history', minutes: 2, done: !!h, whyKey: 'journey.why.history' },
-    { id: 'causes', route: '/assess/causes', minutes: 2, done: !!a?.causeAnswers, whyKey: 'journey.why.causes' },
-    { id: 'exam', route: '/assess/exam', minutes: 8, done: !!a?.exam, whyKey: 'journey.why.exam' },
     { id: 'thi', route: '/assess/questionnaire/THI', minutes: 4, done: has(a, 'THI'), whyKey: 'journey.why.thi' },
   ];
   if (h?.soundSensitivity) steps.push({ id: 'hq', route: '/assess/questionnaire/HQ', minutes: 2, done: has(a, 'HQ'), whyKey: 'journey.why.hq' });
@@ -70,5 +68,8 @@ export const REFERRAL: Record<string, { who: string; when: 'now' | 'h24' | 'w2' 
   'triage.asymmetry': { who: 'who.entAudiology', when: 'routine' },
   'triage.hearingLoss': { who: 'who.audiology', when: 'routine' },
   'triage.neverTested': { who: 'who.audiology', when: 'routine' },
+  'triage.objective': { who: 'who.ent', when: 'routine' },
+  'triage.pulsatileUrgent': { who: 'who.entImaging', when: 'w2' },
+  'triage.mentalHealth': { who: 'who.psych', when: 'w2' },
   'triage.selfcare': { who: 'who.none', when: 'none' },
 };

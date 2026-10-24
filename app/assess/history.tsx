@@ -13,7 +13,7 @@ import type { CaseHistory, Character, Onset, Pattern, Side } from '@/clinical/ty
 
 const AUTO_ADVANCE_MS = 350;
 
-type BoolKey = 'noiseExposure' | 'hearingDifficulty' | 'soundSensitivity' | 'somaticModulation' | 'neckOrJawPain' | 'ototoxicMeds' | 'earFullness' | 'sleepProblem' | 'stressWorsens';
+type BoolKey = 'noiseExposure' | 'hearingDifficulty' | 'soundSensitivity' | 'somaticModulation' | 'neckOrJawPain' | 'ototoxicMeds' | 'earFullness' | 'sleepProblem' | 'stressWorsens' | 'priorAudiometry';
 
 type Step =
   | { kind: 'choice'; key: 'side'; options: Side[] }
@@ -34,6 +34,7 @@ const STEPS: Step[] = [
   { kind: 'choice', key: 'character', options: ['tonal', 'hissing', 'buzzing', 'roaring', 'clicking', 'multiple'] },
   { kind: 'bool', key: 'noiseExposure' },
   { kind: 'bool', key: 'hearingDifficulty' },
+  { kind: 'bool', key: 'priorAudiometry' },
   { kind: 'bool', key: 'soundSensitivity' },
   { kind: 'bool', key: 'somaticModulation' },
   { kind: 'bool', key: 'sleepProblem' },
@@ -90,6 +91,7 @@ export default function HistoryScreen() {
       earFullness: !!(existing?.earFullness || d.earFullness),
       sleepProblem: !!d.sleepProblem,
       stressWorsens: !!d.stressWorsens,
+      priorAudiometry: !!d.priorAudiometry,
       ...(existing?.age ? { age: existing.age } : {}),
     };
     saveHistory(id, h);

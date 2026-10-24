@@ -136,14 +136,23 @@ function mono(out: Float32Array): RenderedSound {
   return { channels: [normalize(out, 0.5)], sampleRate: SAMPLE_RATE, seconds: out.length / SAMPLE_RATE };
 }
 
-/** A short one-shot tone burst (for audiometry / pitch matching), with click-free 20 ms ramps. */
-export function renderToneBurst(freq: number, ms = 1000, levelDb = 0, warble = false): RenderedSound {
+/** Level at which one-shot test tones are rendered into the file; the presentation level is applied via player volume. */
+export const BURST_FILE_LEVEL_DB = -12;
+
+/**
+ * A short one-shot tone burst (audiometry / pitch matching) with click-free 20 ms ramps.
+ * Rendered at a fixed −12 dBFS so 16-bit quantisation never shapes the stimulus; the presentation level is set by
+ * the player's float gain (see engine.playBurst). `channel` gives monaural presentation through stereo earphones.
+ */
+export function renderToneBurst(freq: number, ms = 1000, levelDb = BURST_FILE_LEVEL_DB, warble = false, channel: 'left' | 'right' | 'both' = 'both'): RenderedSound {
   const n = Math.round((ms / 1000) * SAMPLE_RATE);
   const raw = warble ? warbleTone(freq, n) : sine(freq, n);
   const g = dbToGain(levelDb);
   const out = fadeEdges(raw, Math.round(SAMPLE_RATE * 0.02));
-  for (let i = 0; i < n; i++) out[i] *= 0.5 * g;
-  return { channels: [out], sampleRate: SAMPLE_RATE, seconds: ms / 1000 };
+  for (let i = 0; i < n; i++) out[i] *= g;
+  if (channel === 'both') return { channels: [out], sampleRate: SAMPLE_RATE, seconds: ms / 1000 };
+  const silent = new Float32Array(n);
+  return { channels: channel === 'left' ? [out, silent] : [silent, out], sampleRate: SAMPLE_RATE, seconds: ms / 1000 };
 }
 
 export function toWavBytes(r: RenderedSound): Uint8Array {

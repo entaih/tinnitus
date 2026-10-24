@@ -98,6 +98,8 @@ export const UNITS: Record<string, Unit> = Object.fromEntries([
   u('assess.sleep', 'assessment', 2, '/assess/questionnaire/SCI', 'core', 'espie2014'),
   u('assess.hearing', 'assessment', 6, '/assess/hearing', 'hearing', 'chen2021'),
   u('assess.pitch', 'assessment', 6, '/assess/pitch', 'sound', 'vielsmeier2020'),
+  u('assess.causes', 'assessment', 2, '/assess/causes', 'core', 'adams2026', 'expert'),
+  u('assess.exam', 'assessment', 8, '/assess/exam', 'core', 'chen2021', 'expert'),
   u('assess.redflags', 'assessment', 2, '/assess/triage', 'core', 'nice2020', 'guideline'),
   u('hearing.referral', 'education', 3, '/education/hearing-aids', 'hearing', 'tunkel2014', 'guideline'),
 ].map((x) => [x.id, x]));

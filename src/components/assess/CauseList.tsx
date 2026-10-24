@@ -8,25 +8,26 @@ import { Chip } from '@/components/Chip';
 import { Button } from '@/components/Button';
 import { useT } from '@/i18n';
 import { CAUSES, type CauseScore } from '@/clinical/causes';
+import { ShieldAlert } from 'lucide-react-native';
 
 /** Ranked probable causes with site, mechanism, confirmatory test and treatment path. */
 export function CauseList({ ranked, max = 4 }: { ranked: CauseScore[]; max?: number }) {
   const { colors, space, radius } = useTheme();
   const t = useT();
   const [openId, setOpenId] = useState<string | null>(ranked[0]?.id ?? null);
-  const shown = ranked.filter((r, i) => i < max && (i === 0 || r.pct >= 8));
-  return (
-    <View style={{ gap: space[3] }}>
-      {shown.map((r, i) => {
+  const exclude = ranked.filter((r) => r.tier === 'exclude');
+  const mechanisms = ranked.filter((r) => r.tier === 'mechanism').filter((r, i) => i < max && (i === 0 || r.pct >= 8));
+  const renderGroup = (items: CauseScore[], isExclude: boolean) => items.map((r, i) => {
         const def = CAUSES[r.id];
         const isOpen = openId === r.id;
         const curTone = def.curability === 'curable' ? 'success' : def.curability === 'treatable' ? 'info' : 'neutral';
+        const highlight = isExclude ? colors.warning : i === 0 ? colors.primary : colors.border;
         return (
-          <View key={r.id} style={{ backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: i === 0 ? colors.primary : colors.border, overflow: 'hidden' }}>
+          <View key={r.id} style={{ backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: highlight, overflow: 'hidden' }}>
             <Pressable accessibilityRole="button" accessibilityState={{ expanded: isOpen }} onPress={() => setOpenId(isOpen ? null : r.id)} style={{ padding: space[4], gap: space[2] }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
-                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: i === 0 ? colors.primary : colors.primarySoft, alignItems: 'center', justifyContent: 'center' }}>
-                  <Text variant="caption" style={{ color: i === 0 ? colors.onPrimary : colors.primaryPressed, fontWeight: '700' }}>{i + 1}</Text>
+                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: isExclude ? colors.warningBg : i === 0 ? colors.primary : colors.primarySoft, alignItems: 'center', justifyContent: 'center' }}>
+                  {isExclude ? <ShieldAlert size={16} color={colors.warning} /> : <Text variant="caption" style={{ color: i === 0 ? colors.onPrimary : colors.primaryPressed, fontWeight: '700' }}>{i + 1}</Text>}
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text variant="bodyStrong">{t(`cause.${r.id}.name`)}</Text>
@@ -35,10 +36,7 @@ export function CauseList({ ranked, max = 4 }: { ranked: CauseScore[]; max?: num
                 {isOpen ? <ChevronUp size={20} color={colors.textMuted} /> : <ChevronDown size={20} color={colors.textMuted} />}
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], flexWrap: 'wrap' }}>
-                <View style={{ flex: 1, height: 6, backgroundColor: colors.primaryTrack, borderRadius: 3, overflow: 'hidden', minWidth: 80 }}>
-                  <View style={{ width: `${Math.max(4, r.pct)}%`, height: 6, backgroundColor: colors.primary }} />
-                </View>
-                <Text variant="caption" tone="secondary">{t(`causes.confidence.${r.confidence}`)} · %{r.pct}</Text>
+                <Chip small tone={isExclude ? 'warning' : r.confidence === 'high' ? 'primary' : 'neutral'} label={isExclude ? t('causes.mustExclude') : t(`causes.confidence.${r.confidence}`)} />
                 <Chip small tone={curTone} label={t(`causes.curability.${def.curability}`)} />
               </View>
             </Pressable>
@@ -76,7 +74,18 @@ export function CauseList({ ranked, max = 4 }: { ranked: CauseScore[]; max?: num
             ) : null}
           </View>
         );
-      })}
+      });
+  return (
+    <View style={{ gap: space[3] }}>
+      {exclude.length ? (
+        <>
+          <Text variant="h3">{t('causes.section.exclude')}</Text>
+          <Text variant="bodySmall" tone="secondary">{t('causes.section.exclude.body')}</Text>
+          {renderGroup(exclude, true)}
+        </>
+      ) : null}
+      <Text variant="h3">{t('causes.section.mechanism')}</Text>
+      {renderGroup(mechanisms, false)}
     </View>
   );
 }

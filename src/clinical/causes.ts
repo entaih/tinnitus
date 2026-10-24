@@ -76,7 +76,20 @@ export const CAUSE_QUESTIONS: CauseQuestion[] = [
   { id: 'imbalanceUnilateral', when: (a) => h(a)?.side === 'left' || h(a)?.side === 'right' || !!a.redFlags?.unilateralSymptoms },
 ];
 
-export interface CauseScore { id: CauseId; score: number; confidence: 'high' | 'medium' | 'low'; pct: number; evidence: string[] }
+/** Causes a clinician must actively exclude whenever any clue is present; they are listed first, without a probability. */
+export const MUST_EXCLUDE: CauseId[] = ['ssnhl', 'retrocochlear', 'vascular', 'meniere', 'sscd', 'traumaFistula', 'myoclonus'];
+
+export interface CauseScore {
+  id: CauseId;
+  score: number;
+  /** strength of the clues for this cause (not a diagnostic probability) */
+  confidence: 'high' | 'medium' | 'low';
+  /** relative weight among candidates, 0–100 — for internal ordering only, not shown as a probability */
+  pct: number;
+  evidence: string[];
+  /** 'exclude' = must be ruled out by a clinician (any clue present); 'mechanism' = possible mechanism */
+  tier: 'exclude' | 'mechanism';
+}
 
 /** Rank causes from the merged assessment (+ optional answers to CAUSE_QUESTIONS). */
 export function rankCauses(a: Assessment): CauseScore[] {
@@ -171,12 +184,13 @@ export function rankCauses(a: Assessment): CauseScore[] {
   // Self-examination battery (phone-only tests)
   const ex = a.exam;
   if (ex) {
-    if (ex.dinPassed === false && !hearingLoss) { add('noiseCochlear', 0.8, 'ev.dinFailNormalPta'); add('central', 0.4, 'ev.dinFailNormalPta'); }
-    if (ex.dinPassed === false && hearingLoss) { add('presbycusis', 0.5, 'ev.dinFail'); add('noiseCochlear', 0.5, 'ev.dinFail'); }
+    // Digits-in-noise with TTS is uncalibrated and unnormed in Turkish: a weak clue only (audiology/physician reviews).
+    if (ex.dinPassed === false && !hearingLoss) { add('noiseCochlear', 0.3, 'ev.dinFailNormalPta'); add('central', 0.2, 'ev.dinFailNormalPta'); }
+    if (ex.dinPassed === false && hearingLoss) { add('presbycusis', 0.3, 'ev.dinFail'); add('noiseCochlear', 0.3, 'ev.dinFail'); }
     if (ex.valsalvaPop || ex.fullnessRelief) add('conductive', 1.6, 'ev.pressureRelief');
     if (ex.jugularChange === 'quieter' || ex.jugularChange === 'louder') add('vascular', 1.8, 'ev.jugularChange');
     if (ex.headTurnChange === 'quieter' || ex.headTurnChange === 'louder') add('vascular', 1.0, 'ev.headTurnChange');
-    if (ex.swayAbnormal) { add('meniere', 0.9, 'ev.swayAbnormal'); add('retrocochlear', 0.9, 'ev.swayAbnormal'); add('traumaFistula', 0.5, 'ev.swayAbnormal'); }
+    // Accelerometer sway has no validated threshold: recorded for the clinician, not scored.
     if (ex.somaticPositive) { add('somaticCervical', 1.4, 'ev.somaticTest'); add('somaticTmd', 1.2, 'ev.somaticTest'); }
     if (ex.somaticPositive === false) { add('somaticCervical', -0.8, ''); add('somaticTmd', -0.8, ''); }
   }
@@ -186,13 +200,19 @@ export function rankCauses(a: Assessment): CauseScore[] {
   const max = Math.max(...ids.map((i) => s[i]));
   const exps = ids.map((i) => Math.exp(s[i] - max));
   const sum = exps.reduce((x, y) => x + y, 0);
-  return ids
-    .map((id, k) => {
-      const pct = Math.round((exps[k] / sum) * 100);
-      const confidence: CauseScore['confidence'] = pct >= 45 && ev[id].length >= 2 ? 'high' : pct >= 20 ? 'medium' : 'low';
-      return { id, score: s[id], confidence, pct, evidence: ev[id] };
-    })
-    .sort((x, y) => y.score - x.score);
+  const scored = ids.map((id, k) => {
+    const pct = Math.round((exps[k] / sum) * 100);
+    const evid = ev[id].filter(Boolean);
+    const confidence: CauseScore['confidence'] = evid.length >= 3 || (pct >= 45 && evid.length >= 2) ? 'high' : evid.length >= 1 && pct >= 15 ? 'medium' : 'low';
+    const tier: CauseScore['tier'] = MUST_EXCLUDE.includes(id) && evid.length >= 1 ? 'exclude' : 'mechanism';
+    return { id, score: s[id], confidence, pct, evidence: evid, tier };
+  });
+  // Must-exclude causes with any clue come first (by clue count), then mechanisms by score.
+  return scored.sort((x, y) => {
+    if (x.tier !== y.tier) return x.tier === 'exclude' ? -1 : 1;
+    if (x.tier === 'exclude') return y.evidence.length - x.evidence.length || y.score - x.score;
+    return y.score - x.score;
+  });
 }
 
 /** Confirmatory tests implied by the top causes (deduplicated, in priority order). Keys resolve to test.* strings. */
@@ -216,6 +236,7 @@ export function confirmatoryTests(ranked: CauseScore[], top = 3): string[] {
     central: ['test.audiometry'],
   };
   const out: string[] = [];
-  for (const r of ranked.slice(0, top)) for (const tkey of map[r.id]) if (!out.includes(tkey)) out.push(tkey);
+  const pick = [...ranked.filter((r) => r.tier === 'exclude'), ...ranked.filter((r) => r.tier === 'mechanism').slice(0, top)];
+  for (const r of pick) for (const tkey of map[r.id]) if (!out.includes(tkey)) out.push(tkey);
   return out;
 }

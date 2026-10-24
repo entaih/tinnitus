@@ -15,6 +15,11 @@ export interface RedFlags {
   headTrauma: boolean;
   selfHarm: boolean;        // PHQ-9 item 9 > 0 or direct item
   rapidWorsening?: boolean; // hearing worsening over 4–90 days (NICE 2-week tier)
+  objectiveSound?: boolean;     // others can hear it / clicking (A9)
+  menierePattern?: boolean;     // vertigo 20 min–12 h with fullness / fluctuating hearing (A11)
+  newOtotoxicDrug?: boolean;    // new potentially ototoxic medicine in the last 3 months (A12)
+  pulsatileHeadacheVisual?: boolean; // pulsatile + headache / transient visual obscurations (IIH clue)
+  pulsatileNewUnilateral?: boolean;  // pulsatile + new (<3 m) and one-sided (dAVF clue)
 }
 
 export interface CaseHistory {
@@ -32,6 +37,8 @@ export interface CaseHistory {
   sleepProblem: boolean;
   stressWorsens: boolean;
   age?: number;
+  priorAudiometry?: boolean;   // has had a hearing test before
+  hearingAidUser?: boolean;
 }
 
 export interface QuestionnaireResult {
@@ -48,6 +55,9 @@ export interface HearingScreenResult {
   thresholds: { ear: 'left' | 'right'; freq: number; levelDb: number }[];
   ambientOk: boolean;
   calibrated: boolean;
+  /** 'separate' = monaural presentation per ear; 'both' = one binaural run stored under both ears */
+  mode?: 'separate' | 'both';
+  headphonesVerified?: boolean;
 }
 
 export interface PsychoacousticResult {
@@ -56,6 +66,11 @@ export interface PsychoacousticResult {
   pitchConfidence?: 'low' | 'medium' | 'high';
   loudnessDbSl?: number;     // dB sensation level relative to the user's threshold at pitch
   mmlDb?: number;            // minimum masking level relative to threshold of noise
+  mmlNotMaskable?: boolean;  // tinnitus not masked within the safe output limit (mmlDb then = cap − threshold)
+  mmlStimulus?: 'nbn' | 'bbn';
+  mmlCenterHz?: number;
+  riPositive?: boolean;      // ≥50 % suppression for ≥5 s (Hu 2021 / Sendesen 2024 definition)
+  riDepth?: number;          // minimum rating / baseline (0 = gone)
   residualInhibitionSec?: number;
   riCategory?: 'complete' | 'partial' | 'none';
 }

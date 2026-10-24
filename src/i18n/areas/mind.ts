@@ -3,6 +3,9 @@
  *  and adaptation advice keys used by the Home/Program screens. Keys are flat, dot-separated. */
 export const mindStrings = {
   tr: {
+    'unit.assess.causes': 'Neden soruları (isteğe bağlı, 2 dk)',
+    'unit.assess.exam': 'Telefonla kısa testler (isteğe bağlı)',
+    'adapt.somaticRefer': '6 haftalık boyun/çene egzersizlerine rağmen çınlama değişmedi. Egzersizlere kendi başınıza devam etmek yerine FTR hekimi ya da diş hekimi değerlendirmesi önerilir.',
     'unit.assess.pitch': 'Perde eşleme (çınlamanın tizliği)',
     // --- Mind hub ---
     'mind.title': 'Zihin',
@@ -273,6 +276,9 @@ export const mindStrings = {
     'adapt.changeStrategy': 'Sekizinci haftada THI 7 puandan az değişti. Strateji değişikliği öneririz: ACT ya da farkındalık yolunu deneyin, işitme ve ses hassasiyeti taramalarını yineleyin ve klinisyen eşliğinde BDT için başvurun.',
   } as Record<string, string>,
   en: {
+    'unit.assess.causes': 'Cause questions (optional, 2 min)',
+    'unit.assess.exam': 'Short phone tests (optional)',
+    'adapt.somaticRefer': 'Tinnitus has not changed after 6 weeks of neck/jaw exercises. Rather than continuing alone, a physical-medicine or dental assessment is recommended.',
     'unit.assess.pitch': 'Pitch match (tinnitus frequency)',
     'mind.title': 'Mind',
     'mind.subtitle': 'Skills that change your relationship with the sound: CBT, acceptance, mindfulness, sleep and sound sensitivity programmes.',

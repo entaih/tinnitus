@@ -2,9 +2,9 @@
 
 export const palette = {
   primary: { 50: '#EEF2FF', 100: '#E0E7FF', 200: '#C7D2FE', 300: '#A5B4FC', 400: '#818CF8', 500: '#6366F1', 600: '#4F46E5', 700: '#4338CA', 800: '#3730A3', 900: '#312E81' },
-  accent: { 100: '#FFEDD5', 300: '#FDBA74', 500: '#F97316', 700: '#C2410C' },
+  accent: { 100: '#FFF3E8', 300: '#FDBA74', 500: '#E8873A', 700: '#9A3412' },
   secondary: { 100: '#E0F2FE', 500: '#0EA5E9', 700: '#0369A1' },
-  neutral: { 50: '#F6F7FB', 100: '#EEF0F6', 200: '#E2E6EF', 300: '#C5CBD8', 400: '#98A2B3', 500: '#6B7488', 600: '#4B5565', 700: '#2E3646', 800: '#161C2D', 900: '#0F1422' },
+  neutral: { 50: '#F6F7FB', 100: '#EEF0F6', 200: '#E2E6EF', 300: '#8E97A8', 400: '#98A2B3', 500: '#5B6478', 600: '#4B5565', 700: '#2E3646', 800: '#161C2D', 900: '#0F1422' },
   inkDark: '#0B0F1A',
   nightBg: '#06080F',
   textOnDark: '#E8ECF5',
@@ -32,9 +32,9 @@ export interface ThemeColors {
 export const lightColors: ThemeColors = {
   bg: palette.neutral[50], card: palette.white, elevated: palette.white, tinted: palette.primary[50], overlay: 'rgba(15,20,34,0.55)',
   border: palette.neutral[200], borderStrong: palette.neutral[300],
-  text: palette.neutral[900], textSecondary: palette.neutral[600], textMuted: palette.neutral[500], textDisabled: palette.neutral[300],
+  text: palette.neutral[900], textSecondary: palette.neutral[600], textMuted: palette.neutral[500], textDisabled: '#C5CBD8',
   primary: palette.primary[600], primaryPressed: palette.primary[700], onPrimary: palette.white, primarySoft: palette.primary[50], primaryTrack: palette.primary[100],
-  gradient: ['#4F46E5', '#7C3AED'],
+  gradient: ['#4338CA', '#3730A3'],
   accent: palette.accent[500], accentSoft: palette.accent[100], accentText: palette.accent[700],
   secondary: palette.secondary[500], secondarySoft: palette.secondary[100], secondaryText: palette.secondary[700],
   success: '#15803D', successBg: '#DCFCE7', warning: '#B45309', warningBg: '#FEF3C7', danger: '#B91C1C', dangerBg: '#FEE2E2', info: '#1D4ED8', infoBg: '#DBEAFE',
@@ -45,8 +45,8 @@ export const lightColors: ThemeColors = {
     severe: { text: '#C2410C', bg: '#FFEDD5' },
     catastrophic: { text: '#B91C1C', bg: '#FEE2E2' },
   },
-  chart: { tfi: palette.primary[600], thi: palette.secondary[500], loudness: '#7C3AED', annoyance: '#F97316', sleep: palette.secondary[700], grid: palette.neutral[200] },
-  tabInactive: palette.neutral[400],
+  chart: { tfi: palette.primary[600], thi: palette.secondary[500], loudness: '#6D28D9', annoyance: '#C2410C', sleep: palette.secondary[700], grid: palette.neutral[200] },
+  tabInactive: palette.neutral[500],
   skeleton: palette.neutral[100],
 };
 
@@ -54,8 +54,8 @@ export const darkColors: ThemeColors = {
   bg: palette.inkDark, card: palette.neutral[800], elevated: '#1C2438', tinted: '#1A1F3D', overlay: 'rgba(0,0,0,0.65)',
   border: palette.neutral[700], borderStrong: palette.neutral[600],
   text: palette.textOnDark, textSecondary: palette.neutral[300], textMuted: palette.neutral[400], textDisabled: palette.neutral[500],
-  primary: palette.primary[400], primaryPressed: palette.primary[300], onPrimary: palette.white, primarySoft: '#1E2246', primaryTrack: '#2A2F63',
-  gradient: ['#4338CA', '#6D28D9'],
+  primary: palette.primary[400], primaryPressed: palette.primary[300], onPrimary: palette.inkDark, primarySoft: '#1E2246', primaryTrack: '#2A2F63',
+  gradient: ['#3730A3', '#312E81'],
   accent: palette.accent[300], accentSoft: '#3A2410', accentText: palette.accent[300],
   secondary: palette.secondary[500], secondarySoft: '#0C2A3F', secondaryText: '#7DD3FC',
   success: '#4ADE80', successBg: '#0F2E1B', warning: '#FBBF24', warningBg: '#3A2A0A', danger: '#F87171', dangerBg: '#3B1111', info: '#93C5FD', infoBg: '#10243F',
@@ -78,13 +78,13 @@ export const nightColors: ThemeColors = {
   elevated: '#161C2D',
   text: palette.neutral[300],
   textSecondary: palette.neutral[400],
-  primary: palette.primary[500],
+  primary: palette.primary[600],
   onPrimary: palette.white,
-  gradient: ['#312E81', '#4C1D95'],
+  gradient: ['#312E81', '#1E1B4B'],
 };
 
 export const space = { 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 8: 32, 10: 40, 12: 48 } as const;
-export const radius = { sm: 10, md: 14, lg: 20, xl: 28, full: 999 } as const;
+export const radius = { sm: 10, md: 14, lg: 16, xl: 24, full: 999 } as const;
 
 export const type = {
   display: { fontSize: 34, lineHeight: 41, fontWeight: '700' as const, letterSpacing: -0.4 },
@@ -95,7 +95,7 @@ export const type = {
   bodyStrong: { fontSize: 17, lineHeight: 26, fontWeight: '600' as const },
   bodySmall: { fontSize: 15, lineHeight: 22, fontWeight: '400' as const },
   caption: { fontSize: 13, lineHeight: 18, fontWeight: '500' as const, letterSpacing: 0.2 },
-  overline: { fontSize: 12, lineHeight: 16, fontWeight: '600' as const, letterSpacing: 0.8, textTransform: 'uppercase' as const },
+  overline: { fontSize: 12, lineHeight: 16, fontWeight: '600' as const, letterSpacing: 0.8 },
   numeric: { fontSize: 40, lineHeight: 44, fontWeight: '700' as const, fontVariant: ['tabular-nums'] as ('tabular-nums')[] },
 };
 

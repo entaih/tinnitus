@@ -264,11 +264,16 @@ export function encodeWav(channels: Float32Array[], sampleRate = SAMPLE_RATE): U
   writeStr(36, 'data');
   v.setUint32(40, dataBytes, true);
   let o = 44;
+  // TPDF dither (±1 LSB) decorrelates quantisation error so low-level tones do not acquire harmonic distortion.
+  const rng = makeRng(0xD17E);
   for (let i = 0; i < n; i++) {
     for (let c = 0; c < numCh; c++) {
       let s = channels[c][i];
       if (s > 1) s = 1; else if (s < -1) s = -1;
-      v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+      const dither = (rng() - rng()) / 32768;
+      let q = Math.round((s + dither) * 32767);
+      if (q > 32767) q = 32767; else if (q < -32768) q = -32768;
+      v.setInt16(o, q, true);
       o += 2;
     }
   }

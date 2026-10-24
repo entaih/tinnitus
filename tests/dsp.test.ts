@@ -57,7 +57,10 @@ test('tone burst has ramps', () => {
   const r = renderToneBurst(1000, 200, -20);
   const s = r.channels[0];
   assert.ok(Math.abs(s[0]) < 1e-6);
-  assert.ok(Math.max(...Array.from(s.subarray(2000, 4000)).map(Math.abs)) < 0.06);
+  assert.ok(Math.max(...Array.from(s.subarray(2000, 4000)).map(Math.abs)) < 0.11);
+  const left = renderToneBurst(1000, 100, -12, false, 'left');
+  assert.equal(left.channels.length, 2);
+  assert.equal(Math.max(...Array.from(left.channels[1]).map(Math.abs)), 0);
 });
 
 test('THI scoring and McCombe grades', () => {

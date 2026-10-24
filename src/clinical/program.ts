@@ -14,6 +14,8 @@ export interface ProgramPrefs {
   riPositive?: boolean;
   /** hearing screen already done */
   hearingDone?: boolean;
+  causesDone?: boolean;
+  examDone?: boolean;
 }
 
 const task = (id: string, overrides: Partial<ProgramTask> = {}): ProgramTask => {
@@ -97,10 +99,12 @@ export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate
     if (acute) themeKey = 'program.theme.acute';
 
     // Modules for the week (spread across days 1,3,5)
-    const modules = acute
+    let modules = acute
       ? [['edu.acute', 'edu.hearingProtection', 'cbt.relax1'], ['cbt.psychoeducation', 'cbt.soundEnrichment'], ['cbt.relax3', 'cbt.sleepGuidelines'], ['cbt.negativeThoughts', 'assess.thi']][w - 1] ?? []
-      : w <= 8 ? core[w - 1] : w <= 10 ? ['cbt.toolbox'] : ['cbt.restructuring', 'cbt.exposure'];
+      : mild && w === 6 ? ['cbt.relapse', 'cbt.toolbox']
+      : w <= 8 ? [...core[w - 1]] : w <= 10 ? ['cbt.toolbox'] : ['cbt.restructuring', 'cbt.exposure'];
     const moduleDays = [1, 3, 5, 2, 4, 6, 7];
+    if (hyper && activeAddOns.includes('hyper')) for (let i = 0; i < modules.length; i++) if (modules[i] === 'cbt.exposure') modules[i] = 'hyper.hierarchy';
 
     if (!acute) rationale.push('program.rationale.cbt');
     if (acute) rationale.push('program.rationale.acute');
@@ -143,6 +147,8 @@ export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate
       //     pitch match (tonal tinnitus → notched / narrow-band sound), residual inhibition (sound-first vs CBT-first),
       //     hearing screen (referral decision) when hearing difficulty or noise exposure is reported.
       if (!acute && w === 1) {
+        if (day === 1 && !prefs.causesDone) tasks.push(task('assess.causes'));
+        if (day === 2 && !prefs.examDone) tasks.push(task('assess.exam'));
         if (day === 2 && ph.includes('tonal') && !prefs.pitchHz) tasks.push(task('assess.pitch'));
         if (day === 3 && prefs.riPositive === undefined) tasks.push(task('sound.ri'));
         if (day === 4 && !prefs.hearingDone && (hearing || ph.includes('noiseInduced'))) tasks.push(task('assess.hearing'));
@@ -158,8 +164,9 @@ export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate
       // 8. Measurement schedule: THI at weeks 4, 8, 12 (+ mood/anxiety/sleep at 8); red flags re-screened at 4 and 12.
       if (day === 7 && (w === 4 || w === 8 || w === 12 || (acute && w === 4))) {
         tasks.push(task('assess.thi'));
-        if (w === 4 || w === 12) tasks.push(task('assess.redflags'));
-        if (w === 8) { tasks.push(task('assess.mood')); tasks.push(task('assess.anxiety')); if (insomnia) tasks.push(task('assess.sleep')); }
+        tasks.push(task('assess.redflags'));
+        tasks.push(task('assess.mood'));
+        if (w === 8 || w === 12) { tasks.push(task('assess.anxiety')); if (insomnia) tasks.push(task('assess.sleep')); }
       }
       days.push({ day, tasks });
     }
@@ -221,7 +228,7 @@ export function adherence(p: Program, now = new Date(), nDays = 7): number {
  * Outcome-driven adaptation (research_treatment §12.5). Returns i18n keys of suggested actions.
  * thiBaseline/thiNow are the latest two THI totals; adherence is the fraction of the last 14 days' tasks done.
  */
-export function adaptationAdvice(p: Program, opts: { week: number; thiBaseline?: number; thiNow?: number; adherence14: number; phq9?: number; phqItem9?: number }): string[] {
+export function adaptationAdvice(p: Program, opts: { week: number; thiBaseline?: number; thiNow?: number; adherence14: number; phq9?: number; phqItem9?: number; somatic?: boolean }): string[] {
   const out: string[] = [];
   const { week, thiBaseline, thiNow } = opts;
   const change = thiBaseline != null && thiNow != null ? thiBaseline - thiNow : undefined;
@@ -233,6 +240,7 @@ export function adaptationAdvice(p: Program, opts: { week: number; thiBaseline?:
     else if (change < 7) out.push('adapt.earlyNonResponse');
     else out.push('adapt.onTrack');
   }
+  if (opts.somatic && week >= 6 && change != null && change < 7) out.push('adapt.somaticRefer');
   if (week >= 8 && change != null) {
     if (change >= 11) out.push('adapt.responder');
     else if (change >= 7) out.push('adapt.improving');

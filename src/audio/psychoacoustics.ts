@@ -272,9 +272,9 @@ export function respondThreshold(state: ThresholdSearchState, heard: boolean): T
 }
 
 /** Standard settings for the hearing screen (5 dB up / 10 dB down, −60 dB start). */
-export const HEARING_SEARCH: ThresholdSearchOptions = { startDb: -60, minDb: -70, maxDb: 0, upStep: 5, downStep: 10, coarseStep: 10, confirmations: 2, maxAscents: 3 };
+export const HEARING_SEARCH: ThresholdSearchOptions = { startDb: -60, minDb: -90, maxDb: 0, upStep: 5, downStep: 10, coarseStep: 10, confirmations: 2, maxAscents: 3 };
 /** Settings for the loudness-match threshold (2 dB resolution). */
-export const TONE_THRESHOLD_SEARCH: ThresholdSearchOptions = { startDb: -60, minDb: -70, maxDb: 0, upStep: 2, downStep: 10, coarseStep: 6, confirmations: 2, maxAscents: 4 };
+export const TONE_THRESHOLD_SEARCH: ThresholdSearchOptions = { startDb: -60, minDb: -90, maxDb: 0, upStep: 2, downStep: 10, coarseStep: 6, confirmations: 2, maxAscents: 4 };
 
 /** Hearing-screen frequencies in presentation order. */
 export const SCREENING_FREQS = [500, 1000, 2000, 4000, 6000, 8000] as const;

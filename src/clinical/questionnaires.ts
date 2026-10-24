@@ -37,7 +37,7 @@ const THI_OPTIONS: Option[] = [
 
 export const THI: Questionnaire = {
   id: 'THI',
-  name: { tr: 'Tinnitus Engellilik Envanteri (THI)', en: 'Tinnitus Handicap Inventory (THI)' },
+  name: { tr: 'Çınlama etki puanı (THI)', en: 'Tinnitus impact score (THI)' },
   description: { tr: 'Tinnitusun günlük yaşamınızı ne kadar etkilediğini ölçen 25 soruluk, uluslararası standart ölçek.', en: 'The 25-item international standard measure of how much tinnitus affects daily life.' },
   minutes: 5,
   citation: 'newman1996',
@@ -62,7 +62,7 @@ export const THI: Questionnaire = {
     { subscale: 'E', tr: 'Çınlamanız nedeniyle kendinizi sık sık sinirli hissediyor musunuz?', en: 'Because of your tinnitus, do you find that you are often irritable?' },
     { subscale: 'F', tr: 'Çınlamanız nedeniyle okumakta güçlük çekiyor musunuz?', en: 'Because of your tinnitus, is it difficult for you to read?' },
     { subscale: 'E', tr: 'Çınlamanız sizi üzüyor mu?', en: 'Does your tinnitus make you upset?' },
-    { subscale: 'C', tr: 'Çınlamanızın aileniz ve arkadaşlarınızla ilişkilerinizde gerginlik yarattığını düşünüyor musunuz?', en: 'Do you feel that your tinnitus problem has placed stress on your relationships with members of your family and friends?' },
+    { subscale: 'F', tr: 'Çınlamanızın aileniz ve arkadaşlarınızla ilişkilerinizde gerginlik yarattığını düşünüyor musunuz?', en: 'Do you feel that your tinnitus problem has placed stress on your relationships with members of your family and friends?' },
     { subscale: 'F', tr: 'Dikkatinizi çınlamanızdan uzaklaştırıp başka şeylere odaklanmakta güçlük çekiyor musunuz?', en: 'Do you find it difficult to focus your attention away from your tinnitus and on other things?' },
     { subscale: 'C', tr: 'Çınlamanız üzerinde hiçbir kontrolünüz olmadığını düşünüyor musunuz?', en: 'Do you feel that you have no control over your tinnitus?' },
     { subscale: 'F', tr: 'Çınlamanız nedeniyle kendinizi sık sık yorgun hissediyor musunuz?', en: 'Because of your tinnitus, do you often feel tired?' },
@@ -157,7 +157,7 @@ export const HQ: Questionnaire = {
   description: { tr: 'Günlük seslere karşı hassasiyetinizi değerlendiren 14 soru (Khalfa ve ark., 2002).', en: '14 items assessing sensitivity to everyday sounds (Khalfa et al., 2002).' },
   minutes: 3,
   citation: 'khalfa2002',
-  evidence: 'rct',
+  evidence: 'expert',
   options: HQ_OPTIONS,
   max: 42,
   items: [
@@ -199,9 +199,9 @@ export const SCI: Questionnaire = {
   options: SCI_OPTIONS,
   max: 32,
   items: [
-    { tr: 'Uykuya dalmanız ne kadar sürer? (0: ≥61 dk, 1: 31–60 dk, 2: 16–30 dk, 3: 0–15 dk, 4: hemen)', en: 'How long does it take you to fall asleep? (0: ≥61 min, 1: 31–60, 2: 16–30, 3: 0–15, 4: at once)' },
-    { tr: 'Gece boyunca toplam ne kadar süre uyanık kalırsınız? (0: ≥61 dk … 4: 0–15 dk/hiç)', en: 'If you wake up during the night, how long are you awake in total? (0: ≥61 min … 4: 0–15 min/none)' },
-    { tr: 'Haftada kaç gece uyku sorunu yaşarsınız? (0: 5–7, 1: 4, 2: 3, 3: 1–2, 4: 0–1)', en: 'How many nights a week do you have a problem with your sleep? (0: 5–7, 1: 4, 2: 3, 3: 1–2, 4: 0–1)' },
+    { tr: 'Uykuya dalmanız ne kadar sürer? (4: 0–15 dk, 3: 16–30 dk, 2: 31–45 dk, 1: 46–60 dk, 0: 61 dk ve üzeri)', en: 'How long does it take you to fall asleep? (4: 0–15 min, 3: 16–30, 2: 31–45, 1: 46–60, 0: 61 min or more)' },
+    { tr: 'Gece boyunca toplam ne kadar süre uyanık kalırsınız? (4: 0–15 dk, 3: 16–30 dk, 2: 31–45 dk, 1: 46–60 dk, 0: 61 dk ve üzeri)', en: 'If you wake up during the night, how long are you awake in total? (4: 0–15 min, 3: 16–30, 2: 31–45, 1: 46–60, 0: 61 min or more)' },
+    { tr: 'Haftada kaç gece uyku sorunu yaşarsınız? (4: 0–1 gece, 3: 2 gece, 2: 3 gece, 1: 4 gece, 0: 5–7 gece)', en: 'How many nights a week do you have a problem with your sleep? (4: 0–1, 3: 2, 2: 3, 1: 4, 0: 5–7 nights)' },
     { tr: 'Uyku kalitenizi nasıl değerlendirirsiniz? (0: çok kötü … 4: çok iyi)', en: 'How would you rate your sleep quality? (0: very poor … 4: very good)' },
     { tr: 'Kötü uyku ruh halinizi, enerjinizi veya ilişkilerinizi ne kadar etkiliyor? (0: çok fazla … 4: hiç)', en: 'How much has poor sleep affected your mood, energy or relationships? (0: very much … 4: not at all)' },
     { tr: 'Kötü uyku odaklanmanızı, verimliliğinizi veya uyanık kalmanızı ne kadar etkiliyor? (0: çok fazla … 4: hiç)', en: 'How much has poor sleep affected your concentration, productivity or ability to stay awake? (0: very much … 4: not at all)' },

@@ -1,6 +1,6 @@
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 import { File, Paths } from 'expo-file-system';
-import { renderSound, renderToneBurst, specKey, toWavBytes, type SoundSpec } from './sounds';
+import { BURST_FILE_LEVEL_DB, renderSound, renderToneBurst, specKey, toWavBytes, type SoundSpec } from './sounds';
 import { dbToGain } from './dsp';
 
 /**
@@ -34,7 +34,7 @@ export async function materialize(spec: SoundSpec): Promise<string> {
   const cached = fileCache.get(key);
   if (cached) return cached;
   const dir = Paths.cache;
-  const file = new File(dir, `tinnova_${key}.wav`);
+  const file = new File(dir, `dingin_${key}.wav`);
   if (!file.exists) {
     const rendered = renderSound(spec);
     const bytes = toWavBytes(rendered);
@@ -44,14 +44,23 @@ export async function materialize(spec: SoundSpec): Promise<string> {
   return file.uri;
 }
 
-export async function materializeBurst(freq: number, ms: number, levelDb: number, warble = false): Promise<string> {
-  const key = `burst_${Math.round(freq)}_${ms}_${Math.round(levelDb * 10)}_${warble ? 'w' : 's'}`;
+export type Channel = 'left' | 'right' | 'both';
+
+/** Burst file rendered at BURST_FILE_LEVEL_DB; the presentation level is applied by the caller via player volume. */
+export async function materializeBurst(freq: number, ms: number, warble = false, channel: Channel = 'both'): Promise<string> {
+  const key = `burst2_${Math.round(freq)}_${ms}_${warble ? 'w' : 's'}_${channel}`;
   const cached = fileCache.get(key);
   if (cached) return cached;
-  const file = new File(Paths.cache, `tinnova_${key}.wav`);
-  if (!file.exists) await file.write(toWavBytes(renderToneBurst(freq, ms, levelDb, warble)));
+  const file = new File(Paths.cache, `dingin_${key}.wav`);
+  if (!file.exists) await file.write(toWavBytes(renderToneBurst(freq, ms, BURST_FILE_LEVEL_DB, warble, channel)));
   fileCache.set(key, file.uri);
   return file.uri;
+}
+
+/** Linear player volume that presents a burst at `levelDb` (dB re full scale, ≤ 0). Floor −90 dB. */
+export function burstVolume(levelDb: number): number {
+  const db = Math.max(-90, Math.min(0, levelDb));
+  return Math.min(1, dbToGain(db - BURST_FILE_LEVEL_DB));
 }
 
 export interface Layer {
@@ -146,15 +155,14 @@ export const soundEngine = new SoundEngine();
  * One-shot player for tone bursts (audiometry, pitch and loudness matching).
  * Level is expressed in dB relative to full scale of the generated tone (0 = reference).
  */
-export async function playBurst(freq: number, opts: { ms?: number; levelDb?: number; warble?: boolean; channel?: 'left' | 'right' | 'both' } = {}) {
+export async function playBurst(freq: number, opts: { ms?: number; levelDb?: number; warble?: boolean; channel?: Channel } = {}) {
   await ensureAudioMode();
   const ms = opts.ms ?? 1000;
   const levelDb = opts.levelDb ?? 0;
-  const uri = await materializeBurst(freq, ms, Math.max(-80, Math.min(0, levelDb)), opts.warble);
+  const uri = await materializeBurst(freq, ms, opts.warble, opts.channel ?? 'both');
   const player = createAudioPlayer({ uri });
-  player.volume = 1;
-  // expo-audio has no per-channel pan in Expo Go: we render mono and rely on the user's
-  // headphone balance; `channel` is kept in the API for a future native build.
+  // Monaural presentation uses a stereo file with one silent channel; level via float gain (no 16-bit shaping).
+  player.volume = burstVolume(levelDb);
   player.play();
   setTimeout(() => { try { player.remove(); } catch {} }, ms + 300);
   return player;

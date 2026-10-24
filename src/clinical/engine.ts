@@ -57,41 +57,71 @@ export function noiseNotch(a: Assessment): boolean {
   return false;
 }
 
+/**
+ * Uncalibrated screening thresholds are stored in dB re device full scale (≤ 0). To interpret them we apply a
+ * fixed heuristic offset to a *rough* dB HL estimate (consumer earphones at ~60–70 % phone volume). The
+ * uncertainty is ±15 dB, so this only ever *flags*; it never clears hearing loss.
+ */
+export const SCREEN_HL_OFFSET_DB = 70;
+export const SCREEN_HL_UNCERTAINTY_DB = 15;
+export const toHlEstimate = (levelDb: number) => Math.round(levelDb + SCREEN_HL_OFFSET_DB);
+/** Rough dB HL estimate of the PTA4 of the worse ear (see SCREEN_HL_OFFSET_DB). */
+export function pta4Hl(a: Assessment): number | null {
+  const p = pta4(a);
+  return p == null ? null : toHlEstimate(p);
+}
+
+const TIER_OF_REASON: Record<string, Tier> = {
+  'triage.selfHarm': 0, 'triage.neuro': 0, 'triage.vertigo': 0,
+  'triage.suddenHL': 1,
+  'triage.rapidWorsening': 2, 'triage.severeDistress': 2, 'triage.pulsatileUrgent': 2, 'triage.mentalHealth': 2,
+  'triage.pulsatile': 3, 'triage.unilateral': 3, 'triage.otorrhoea': 3, 'triage.trauma': 3, 'triage.ototoxic': 3,
+  'triage.meniere': 3, 'triage.asymmetry': 3, 'triage.objective': 3,
+  'triage.hearingLoss': 4, 'triage.neverTested': 4,
+};
+
+/**
+ * Collects every applicable reason and returns the highest (most urgent) tier. Lower-tier reasons are kept in
+ * the list so the referral list and the doctor summary stay complete (physician review A1).
+ */
 export function computeTriage(a: Assessment): TriageResult {
   const rf = a.redFlags;
+  const h = a.history;
   const phq = q(a, 'PHQ9');
   const gad = q(a, 'GAD7');
   const thi = q(a, 'THI');
   const reasons: string[] = [];
+  const push = (k: string) => { if (!reasons.includes(k)) reasons.push(k); };
 
   const phqItem9 = phq ? (phq.answers[8] ?? 0) > 0 : false;
-  if (rf?.selfHarm || phqItem9) return { tier: 0, triage: 'urgent', reasons: ['triage.selfHarm'] };
-  if (rf?.neuroSigns) reasons.push('triage.neuro');
-  if (rf?.vertigo) reasons.push('triage.vertigo');
-  if (reasons.length) return { tier: 0, triage: 'urgent', reasons };
+  if (rf?.selfHarm || phqItem9) push('triage.selfHarm');
+  if (rf?.neuroSigns) push('triage.neuro');
+  if (rf?.vertigo) push('triage.vertigo');
+  if (rf?.suddenHearingLoss) push('triage.suddenHL');
+  if (rf?.rapidWorsening) push('triage.rapidWorsening');
+  if ((thi && thi.total >= 58) || (phq && phq.total >= 20) || (gad && gad.total >= 15)) push('triage.severeDistress');
+  if ((phq && phq.total >= 15 && phq.total < 20)) push('triage.mentalHealth');
+  const unilateral = !!rf?.unilateralSymptoms || h?.side === 'left' || h?.side === 'right';
+  if (rf?.pulsatile) {
+    if (rf.pulsatileHeadacheVisual || rf.pulsatileNewUnilateral || (unilateral && h?.onset === 'lt3m')) push('triage.pulsatileUrgent');
+    else push('triage.pulsatile');
+  }
+  if (unilateral) push('triage.unilateral');
+  if (rf?.otorrhoeaOrPain) push('triage.otorrhoea');
+  if (rf?.headTrauma) push('triage.trauma');
+  if (rf?.newOtotoxicDrug || h?.ototoxicMeds) push('triage.ototoxic');
+  if (rf?.menierePattern || (h?.earFullness && h?.hearingDifficulty)) push('triage.meniere');
+  if (rf?.objectiveSound) push('triage.objective');
+  if (a.hearing?.mode !== 'both' && hearingAsymmetry(a)) push('triage.asymmetry');
+  const hl = pta4Hl(a);
+  if ((hl != null && hl > 25) || h?.hearingDifficulty) push('triage.hearingLoss');
+  if (h && h.onset !== 'lt3m' && !a.hearing && !h.priorAudiometry) push('triage.neverTested');
 
-  if (rf?.suddenHearingLoss) return { tier: 1, triage: 'urgent', reasons: ['triage.suddenHL'] };
-
-  const severeDistress = (thi && thi.total >= 58) || (phq && phq.total >= 20) || (gad && gad.total >= 15);
-  if (rf?.rapidWorsening) reasons.push('triage.rapidWorsening');
-  if (severeDistress) reasons.push('triage.severeDistress');
-  if (reasons.length) return { tier: 2, triage: 'urgent', reasons };
-
-  if (rf?.pulsatile) reasons.push('triage.pulsatile');
-  if (rf?.unilateralSymptoms || a.history?.side === 'left' || a.history?.side === 'right') reasons.push('triage.unilateral');
-  if (rf?.otorrhoeaOrPain) reasons.push('triage.otorrhoea');
-  if (rf?.headTrauma) reasons.push('triage.trauma');
-  if (a.history?.ototoxicMeds) reasons.push('triage.ototoxic');
-  if (a.history?.earFullness && a.history?.hearingDifficulty) reasons.push('triage.meniere');
-  if (hearingAsymmetry(a)) reasons.push('triage.asymmetry');
-  if (reasons.length) return { tier: 3, triage: 'audiology', reasons };
-
-  const p = pta4(a);
-  if ((p != null && p > 25) || a.history?.hearingDifficulty) reasons.push('triage.hearingLoss');
-  if (a.history && a.history.onset !== 'lt3m' && !a.hearing) reasons.push('triage.neverTested');
-  if (reasons.length) return { tier: 4, triage: 'audiology', reasons };
-
-  return { tier: 5, triage: 'selfcare', reasons: ['triage.selfcare'] };
+  if (!reasons.length) return { tier: 5, triage: 'selfcare', reasons: ['triage.selfcare'] };
+  const tier = Math.min(...reasons.map((r) => TIER_OF_REASON[r] ?? 5)) as Tier;
+  reasons.sort((x, y) => (TIER_OF_REASON[x] ?? 5) - (TIER_OF_REASON[y] ?? 5));
+  const triage: Triage = tier <= 2 ? 'urgent' : tier <= 4 ? 'audiology' : 'selfcare';
+  return { tier, triage, reasons };
 }
 
 export function buildProfile(a: Assessment): Profile {
@@ -121,10 +151,10 @@ export function buildProfile(a: Assessment): Profile {
     if (h.ototoxicMeds) phenotypes.push('ototoxicSuspect');
     if (h.earFullness && h.hearingDifficulty) phenotypes.push('possibleMeniere');
   }
-  const p = pta4(a);
+  const p = pta4Hl(a);
   if ((p != null && p > 25) || h?.hearingDifficulty) phenotypes.push('hearingLossAssociated');
   if ((rasst && rasst.total >= 2) || h?.somaticModulation || a.exam?.somaticPositive) phenotypes.push('somatosensory');
-  if ((hq && hq.total >= 16) || (!hq && h?.soundSensitivity) || a.exam?.ldlLow) phenotypes.push('hyperacusis');
+  if ((hq && hq.total >= 16) || (!hq && h?.soundSensitivity)) phenotypes.push('hyperacusis');
 
   const drivers: Driver[] = [];
   if (thi && thi.total >= 38) drivers.push('distress');
@@ -134,7 +164,7 @@ export function buildProfile(a: Assessment): Profile {
   if (phenotypes.includes('hyperacusis')) drivers.push('hyperacusis');
   if (phenotypes.includes('somatosensory')) drivers.push('somatic');
   if (phenotypes.includes('hearingLossAssociated')) drivers.push('hearingLoss');
-  if (thi && (thi.subscales.C ?? 0) >= 10) drivers.push('catastrophizing');
+  if (thi && (thi.subscales.C ?? 0) >= 8) drivers.push('catastrophizing'); // 5 catastrophic items (Newman 1996), ≥8/20
   if (thi && (thi.answers[0] ?? 0) + (thi.answers[17] ?? 0) >= 4) drivers.push('attention');
 
   const highDistress = [gad && gad.total >= 10, sci && sci.total <= 16, phq && phq.total >= 10, hq && hq.total >= 16].filter(Boolean).length >= 2;
@@ -147,18 +177,21 @@ export function buildProfile(a: Assessment): Profile {
   if (tri.tier === 2) add('rec.ent2w', 'guideline', 'nice2020', 1);
   if (tri.tier === 3) add('rec.entRoutine', 'guideline', 'tunkel2014', 1);
   if (tri.tier === 4) add('rec.audiology', 'guideline', 'tunkel2014', 1);
-  if (drivers.includes('hearingLoss')) add('rec.hearingAids', 'guideline', 'tunkel2014', 2);
+  if (tri.tier === 5) add('rec.audiologyOnce', 'guideline', 'adams2026', 3);
+  if (drivers.includes('hearingLoss')) add('rec.hearingAids', 'guideline', 'tunkel2014', (p != null && p >= 40) || h?.hearingDifficulty ? 1 : 2);
+  if (p != null && p >= 70) add('rec.ciCandidacy', 'rct', 'adams2026', 1);
   if (thi && thi.total >= 18) add('rec.cbt', 'guideline', 'fuller2020', highDistress ? 1 : 2);
   if (highDistress) add('rec.clinicianCbt', 'guideline', 'nice2020', 1);
-  if (ps?.riCategory === 'complete' || ps?.riCategory === 'partial') add('rec.soundFirst', 'rct', 'sendesen2024', 2);
-  if (ps && ps.riCategory === 'none') add('rec.cbtFirst', 'rct', 'sendesen2024', 2);
+  const riPos = ps ? (ps.riPositive ?? (ps.riCategory === 'complete')) : undefined;
+  if (riPos === true) add('rec.soundFirst', 'expert', 'sendesen2024', 2);
+  if (riPos === false) add('rec.cbtFirst', 'expert', 'sendesen2024', 2);
   if (!ps && thi) add('rec.soundTherapy', 'guideline', 'sereda2018', 3);
-  if (phenotypes.includes('tonal') && ps?.pitchHz) add('rec.notched', 'rct', 'okamoto2010', 3);
+  if (phenotypes.includes('tonal') && ps?.pitchHz && ps.pitchHz <= 8000) add('rec.notched', 'expert', 'stein2016', 3);
   if (drivers.includes('insomnia')) add('rec.cbti', 'rct', 'marks2023', 2);
   if (drivers.includes('hyperacusis')) add('rec.hyperacusis', 'expert', 'formby2015', 2);
   if (drivers.includes('somatic')) add('rec.somatic', 'rct', 'michiels2016', 2);
   if (phenotypes.includes('acute')) add('rec.acute', 'guideline', 'cima2019', 2);
-  if (drivers.includes('anxiety') || drivers.includes('depression')) add('rec.mentalHealth', 'guideline', 'nice2020', 2);
+  if (drivers.includes('anxiety') || drivers.includes('depression')) add('rec.mentalHealth', 'guideline', 'nice2020', (phq && phq.total >= 15) || (gad && gad.total >= 15) ? 1 : 2);
   add('rec.education', 'guideline', 'tunkel2014', 3);
   add('rec.avoidSupplements', 'guideline', 'tunkel2014', 3);
   recs.sort((x, y) => x.priority - y.priority);

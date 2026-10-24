@@ -22,7 +22,9 @@ test('pulsatile + neck modulation ranks vascular first and asks for imaging', ()
 
 test('blocked ear after a cold with autophony ranks conductive (curable) first', () => {
   const a = base({ causeAnswers: { blockedAfterCold: true, autophony: true }, exam: { date: '', valsalvaPop: true, fullnessRelief: true } });
-  assert.equal(rankCauses(a)[0].id, 'conductive');
+  const r = rankCauses(a);
+  assert.equal(r.find((x) => x.tier === 'mechanism')?.id, 'conductive');
+  assert.ok(r.find((x) => x.id === 'sscd')?.tier === 'exclude'); // autophony → must be excluded by a clinician
 });
 
 test('sudden hearing loss dominates everything', () => {
