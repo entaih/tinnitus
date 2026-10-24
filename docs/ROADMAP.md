@@ -3,7 +3,7 @@
 Kaynak: `docs/reviews/physician.md`, `audiologist.md`, `ux.md`, `marketing.md` (Ekim 2026). Durum sütunu: ✅ yapıldı · 🔧 yapılıyor · ⏭ sonraki sürüm · 🧪 klinik doğrulama gerektirir.
 
 ## 0. İlke kararları
-- Dingin **tanı koymaz**; "olası neden" kartları "hekiminizle konuşulacak olasılıklar"dır ve dışlanması gereken durumlar olasılıkla değil hekimin dışlamasıyla sunulur.
+- Dingin **ön tanı koyar** (ölçüt tabanlı tanısal karar desteği, ICD-10 kodlu, kesinlik dereceli). Ürün stratejisi: klinik araştırma ile doğrulama ve MDR sertifikasyonu; sertifikasyona kadar "araştırma sürümü, hekim doğrulaması zorunlu" beyanı. Dışlanması gereken durumlar ayırıcı tanı olarak her zaman listelenir.
 - Her çıkış (ekran, PDF, mağaza metni) "kanıta dayalı öz yönetim programı" der; "tedavi eder / tamamen düzelir" yasak.
 - Tek doğruluk kaynağı: `computeTriage` — her ekran aynı kademeyi gösterir.
 - Telefonla yapılan testler "ekran tahmini / kayıt"tır; normal–anormal etiketi yok.

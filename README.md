@@ -2,7 +2,7 @@
 
 **Dingin**, tinnitusu (kulak çınlaması) bilimsel ölçütlerle değerlendiren, olası profili ve sevk gereksinimini belirleyen ve kişiye özel, kanıta dayalı 12 haftalık bir rehabilitasyon programı üreten iOS + Android uygulamasıdır. Expo SDK 57 ile yazılmıştır ve **Expo Go** içinde çalışır.
 
-> Dingin bir tıbbi cihaz değildir ve tıbbi tanı koymaz. KBB uzmanı ve odyolog değerlendirmesinin yerini tutmaz. Prototip / araştırma amaçlıdır.
+> Dingin, ölçüt tabanlı bir **tanısal karar destek** algoritmasıyla ICD-10 kodlu **ön tanı** üretir (birincil neden, eşlik eden tanılar, dışlanması gereken ayırıcı tanılar, doğrulama planı). Bu çıktı **araştırma sürümüdür**: klinik araştırmada doğrulanacak ve MDR sertifikasyonu hedeflenmektedir; o zamana kadar hekim doğrulaması zorunludur.
 
 ## Hızlı başlangıç (Expo Go)
 
@@ -26,6 +26,7 @@ Kontroller: `npm run typecheck`, `npm test`.
 | **Ölçekler** | THI (Newman 1996; TR: Aksoy 2007), Hiperakuzi Anketi (Khalfa 2002), PHQ-9, GAD-7, Uyku Durumu Göstergesi (Espie 2014), RaSST somatosensoriyel tarama (Michiels 2022) | Valide, puanlama kesme noktaları literatürden |
 | **Psikoakustik profil** | 2AFC tekrarlı perde eşleme (medyan, güven aralığı), oktav karışıklığı testi, gürlük eşleme (dB SL), minimum maskeleme düzeyi, 60 s rezidüel inhibisyon testi | Vielsmeier 2020, Wunderlich 2015, Sendesen 2024 |
 | **İşitme taraması** | 0.5–8 kHz saf ton taraması, asimetri ve gürültü çentiği bayrakları, ±10 dB belirsizlik bandı ve zorunlu "tarama, test değil" uyarısı | Chen 2021 meta-analizi |
+| **Ön tanı motoru** | Her neden için gerekli / destekleyici / çelişen ölçütler, kesinlik düzeyi (yüksek/orta/düşük), ICD-10 kodu; birincil ön tanı + eşlik eden nedenler + dışlanması gereken ayırıcı tanılar + eşlik eden tanılar (işitme kaybı, hiperakuzi, insomnia, kaygı, depresyon) + doğrulama planı; hekim özetine yazılır | `src/clinical/diagnosis.ts`; klinik araştırmada doğrulanacak |
 | **Neden analizi** | 16 mekanizma (koklea tüy hücresi, presbiakuzi, ani işitme kaybı, Ménière, iletim tipi/Östaki, otoskleroz, ototoksik, boyun ve çene kaynaklı somatosensoriyel, damar kaynaklı pulsatil, sistemik, retrokoklear, miyoklonus, üçüncü pencere, travma/fistül, merkezi) öykü, kırmızı bayraklar, odyogram, psikoakustik, uyarlanabilir sorular ve otomatik muayene bulgularıyla puanlanır; her neden için organ/mekanizma, kesinleştiren test, uzman ve tedavi yolu (kür / tedavi / yönetim) | Kılavuzlar + otoloji literatürü, `docs/research` |
 | **Otomatik muayene** | Telefonla yapılan testler: rakam-gürültü (TTS), ses tolerans eşiği (LDL), Östaki basınç manevraları, damar manevraları (pulsatil), ivmeölçer denge testi, somatik manevra testi; tümü "ekran tahmini" etiketiyle | Tarama niteliğinde |
 | **Profil motoru** | Kademeli triyaj (0–5), fenotipler (akut/kronik, tonal, somatosensoriyel, hiperakuzi, işitme kaybı ilişkili, pulsatil…), sıkıntı sürücüleri, kanıt rozetli öneriler, "doktorunuza söyleyebilecekleriniz" PDF raporu | Bkz. `docs/research/diagnosis.md` §6.6 |

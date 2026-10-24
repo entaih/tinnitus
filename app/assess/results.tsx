@@ -5,7 +5,8 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Share2, FileText, Sparkles, ArrowRight, CheckCircle2, ChevronRight, Compass } from 'lucide-react-native';
 import { Screen, Text, Card, Button, Chip, EvidenceChip, Banner, Disclaimer, useCitation } from '@/components';
-import { Gauge, useInfoSheet, ReferralList, CauseList } from '@/components/assess';
+import { Gauge, useInfoSheet, ReferralList, CauseList, DiagnosisCard } from '@/components/assess';
+import { diagnose, diagnosisStatement } from '@/clinical/diagnosis';
 import { programGate } from '@/components/assess/programGate';
 import { CheckRow, Collapsible, GlossaryTerm, useGlossary } from '@/components/home';
 import { useTheme } from '@/theme';
@@ -173,6 +174,8 @@ export default function ResultsScreen() {
         ) : null}
       </Card>
 
+      {assessment ? <DiagnosisCard d={diagnose(assessment)} /> : null}
+
       {!selfcare ? (
         <>
           <Banner tone={triageTone} title={t(`results.triage.${profile.triage}`)} body={t('results.triage.whoBelow')} />
@@ -313,6 +316,11 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
     const r = a.questionnaires.find((q) => q.id === id);
     return r ? scoreQuestionnaire(QUESTIONNAIRES[id], r.answers) : null;
   };
+  const dx = diagnose(a);
+  lines.push(t('results.summary.dx', { v: diagnosisStatement(dx, t) }));
+  if (dx.secondary.length) lines.push(t('results.summary.dxSecondary', { v: dx.secondary.map((e) => `${t(`cause.${e.id}.name`)} (${e.icd}, ${t(`dx.certainty.${e.certainty}`)})`).join(', ') }));
+  if (dx.differentials.length) lines.push(t('results.summary.dxDifferential', { v: dx.differentials.map((e) => `${t(`cause.${e.id}.name`)} (${e.icd})`).join(', ') }));
+  if (dx.comorbid.length) lines.push(t('results.summary.dxComorbid', { v: dx.comorbid.map((c) => `${t(c.key)} (${c.icd})`).join(', ') }));
   const tri = computeTriage(a);
   lines.push(t('results.summary.triage', { tier: tri.tier, v: tri.reasons.map((r) => t(r)).join(', ') }));
   if (h?.age) lines.push(t('results.summary.age', { v: h.age }));
