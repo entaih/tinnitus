@@ -1,6 +1,6 @@
 # Dingin — architecture & conventions
 
-Dingin is an Expo SDK 58 / React Native 0.88 / Expo Router app that must run inside **Expo Go** (no custom native modules).
+Dingin is an Expo SDK 57 / React Native 0.86 / Expo Router app that must run inside **Expo Go** (no custom native modules).
 Primary language Turkish, English supported. Design tokens come from `docs/DESIGN.md` (teal/sand "quiet authority" palette).
 
 ## Layout

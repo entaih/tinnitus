@@ -91,7 +91,7 @@ export const type = {
   bodySmall: { fontSize: 15, lineHeight: 22, fontWeight: '400' as const },
   caption: { fontSize: 13, lineHeight: 18, fontWeight: '500' as const, letterSpacing: 0.2 },
   overline: { fontSize: 12, lineHeight: 16, fontWeight: '600' as const, letterSpacing: 0.8, textTransform: 'uppercase' as const },
-  numeric: { fontSize: 40, lineHeight: 44, fontWeight: '700' as const, fontVariant: ['tabular-nums'] as const },
+  numeric: { fontSize: 40, lineHeight: 44, fontWeight: '700' as const, fontVariant: ['tabular-nums'] as ('tabular-nums')[] },
 };
 
 export const shadow = {

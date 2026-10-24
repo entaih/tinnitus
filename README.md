@@ -1,6 +1,6 @@
 # Dingin — Tinnitus değerlendirme ve rehabilitasyon uygulaması
 
-**Dingin**, tinnitusu (kulak çınlaması) bilimsel ölçütlerle değerlendiren, olası profili ve sevk gereksinimini belirleyen ve kişiye özel, kanıta dayalı 12 haftalık bir rehabilitasyon programı üreten iOS + Android uygulamasıdır. Expo SDK 58 ile yazılmıştır ve **Expo Go** içinde çalışır.
+**Dingin**, tinnitusu (kulak çınlaması) bilimsel ölçütlerle değerlendiren, olası profili ve sevk gereksinimini belirleyen ve kişiye özel, kanıta dayalı 12 haftalık bir rehabilitasyon programı üreten iOS + Android uygulamasıdır. Expo SDK 57 ile yazılmıştır ve **Expo Go** içinde çalışır.
 
 > Dingin bir tıbbi cihaz değildir ve tıbbi tanı koymaz. KBB uzmanı ve odyolog değerlendirmesinin yerini tutmaz. Prototip / araştırma amaçlıdır.
 
@@ -12,7 +12,7 @@ npx expo start            # aynı Wi-Fi ağındaysanız
 npx expo start --tunnel   # farklı ağlar için (ngrok tüneli)
 ```
 
-1. Telefonunuza App Store / Google Play'den **Expo Go** (SDK 58 destekli sürüm) yükleyin.
+1. Telefonunuza App Store / Google Play'den **Expo Go** (SDK 57 destekli sürüm) yükleyin.
 2. Terminaldeki QR kodu iOS'ta Kamera, Android'de Expo Go ile tarayın.
 3. iOS'ta fiziksel cihaz için `npx expo login` ile aynı Expo hesabına giriş yapmanız gerekebilir.
 
