@@ -1,6 +1,10 @@
 /** i18n strings for the "assess" area. Keys are flat, dot-separated. */
 export const assessStrings = {
   tr: {
+    'assess.module.causes': 'Neden soruları',
+    'assess.module.causes.desc': 'Olası nedeni organ düzeyinde daraltan, size göre seçilmiş kısa sorular.',
+    'assess.module.exam': 'Otomatik muayene',
+    'assess.module.exam.desc': 'Gürültüde konuşma, ses toleransı, basınç ve damar manevraları, denge testi.',
     'results.summary.exam': 'Otomatik muayene: {v}',
     'results.summary.exam.din': 'gürültüde rakam eşiği {v} dB SNR ({r})',
     'results.summary.exam.pass': 'tarama kaygısı yok',
@@ -557,6 +561,10 @@ export const assessStrings = {
   } as Record<string, string>,
 
   en: {
+    'assess.module.causes': 'Cause questions',
+    'assess.module.causes.desc': 'Short questions chosen for you that narrow the probable cause at organ level.',
+    'assess.module.exam': 'Self-examination',
+    'assess.module.exam.desc': 'Speech in noise, sound tolerance, pressure and vascular manoeuvres, balance test.',
     'results.summary.exam': 'Self-examination: {v}',
     'results.summary.exam.din': 'digits-in-noise threshold {v} dB SNR ({r})',
     'results.summary.exam.pass': 'no screening concern',

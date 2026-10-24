@@ -50,6 +50,8 @@ const MODULES: { section: string; items: Module[] }[] = [
   {
     section: 'assess.section.measure',
     items: [
+      { key: 'causes', route: '/assess/causes', minutes: 2, evidence: 'guideline', citation: 'adams2026', icon: Stethoscope, lastDone: (as) => lastWith(as, (a) => (a.causeAnswers ? a.date : null)) },
+      { key: 'exam', route: '/assess/exam', minutes: 8, evidence: 'expert', citation: 'chen2021', icon: Activity, lastDone: (as) => lastWith(as, (a) => a.exam?.date) },
       { key: 'hearing', route: '/assess/hearing', minutes: 4, evidence: 'rct', citation: 'chen2021', icon: Headphones, lastDone: (as) => lastWith(as, (a) => a.hearing?.date) },
       { key: 'pitch', route: '/assess/pitch', minutes: 3, evidence: 'rct', citation: 'vielsmeier2020', icon: AudioWaveform, lastDone: (as) => lastWith(as, (a) => (a.psycho?.pitchHz != null ? a.psycho.date : null)) },
       { key: 'loudness', route: '/assess/loudness', minutes: 2, evidence: 'rct', citation: 'wunderlich2015', icon: Volume2, lastDone: (as) => lastWith(as, (a) => (a.psycho?.loudnessDbSl != null ? a.psycho.date : null)) },

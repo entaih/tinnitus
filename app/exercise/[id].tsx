@@ -8,6 +8,7 @@ import { Screen, Text, Card, Button, Banner, Chip, EvidenceChip, Disclaimer, use
 import { useTheme } from '@/theme';
 import { useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
+import { useAssessmentId } from '@/hooks/useProfile';
 import { EXERCISES, SELF_TEST, getExercise, selfTestPositive, stepSeconds, type ExerciseStep, type ModulationRating } from '@/content/exercises';
 import { citation } from '@/content/citations';
 
@@ -208,6 +209,8 @@ function SelfTest() {
   const router = useRouter();
   const { open, sheet } = useCitation();
   const logSession = useClinical((s) => s.logSession);
+  const saveExam = useClinical((s) => s.saveExam);
+  const examAssessmentId = useAssessmentId();
   const [i, setI] = useState(0);
   const [ratings, setRatings] = useState<Record<string, ModulationRating | undefined>>({});
   const [remaining, setRemaining] = useState(0);
@@ -232,7 +235,7 @@ function SelfTest() {
   if (done) return (
     <>
       <Stack.Screen options={{ title: SELF_TEST.title[locale] }} />
-      <Screen footer={<Button title={saved ? t('common.done') : t('somatic.selfTest.save')} onPress={() => { if (!saved) { logSession({ type: 'selfTest', minutes: 3, detail: JSON.stringify({ positive, ratings }) }); setSaved(true); } else router.back(); }} />}>
+      <Screen footer={<Button title={saved ? t('common.done') : t('somatic.selfTest.save')} onPress={() => { if (!saved) { logSession({ type: 'selfTest', minutes: 3, detail: JSON.stringify({ positive, ratings }) }); saveExam(examAssessmentId, { somaticPositive: positive }); setSaved(true); } else router.back(); }} />}>
         <Text variant="h1">{t('somatic.selfTest.result')}</Text>
         <Chip label={positive ? t('somatic.selfTest.positive') : t('somatic.selfTest.negative')} tone={positive ? 'warning' : 'success'} />
         <Text variant="bodySmall" tone="secondary">{t('somatic.selfTest.changed', { n: changed })}</Text>
