@@ -2,7 +2,7 @@
 export const examStrings = {
   tr: {
     // shared
-    'exam.title': 'Otomatik muayene',
+    'exam.title': 'Telefonla kısa testler',
     'exam.estimate': 'Ekran tahmini',
     'exam.notClinical': 'Bu sonuç bir tarama tahminidir; klinik testin yerine geçmez.',
     'exam.saveFinish': 'Kaydet ve bitir',
@@ -201,7 +201,7 @@ export const examStrings = {
 
   en: {
     // shared
-    'exam.title': 'Guided self-examination',
+    'exam.title': 'Short phone tests',
     'exam.estimate': 'Screen estimate',
     'exam.notClinical': 'This result is a screening estimate; it does not replace a clinical test.',
     'exam.saveFinish': 'Save and finish',
