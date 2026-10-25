@@ -8,12 +8,13 @@ import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
 import { topReferral } from '@/clinical/journey';
-export { topReferral };
 import { diagnosisActions, type Diagnosis } from '@/clinical/diagnosis';
 import type { Assessment, Profile } from '@/clinical/types';
 import type { SeverityBand } from '@/theme/tokens';
 import type { ProgramGate } from './programGate';
 import { CauseIllustration } from '@/components/illustrations';
+
+export { topReferral };
 
 type StepId = 'score' | 'doctor' | 'cause' | 'program';
 /** Up to three plain "what is in your programme" lines, from the profile drivers. */
