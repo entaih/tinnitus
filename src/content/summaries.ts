@@ -23,7 +23,7 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   'cbt.psychoeducation': {
     tr: [
       'Ses kulakta başlasa da beyinde "önemli" olarak işaretlendiği için fark edilir; tehlike etiketi dikkati sabitler.',
-      'Alışma (habituasyon), beynin sesi önemsiz saymayı öğrenmesidir; ses aynı kalsa da tepki azalır.',
+      'Alışma, beynin sesi önemsiz saymayı öğrenmesidir; ses aynı kalsa da tepki azalır.',
       'Dikkat–kaygı–uyarılma döngüsünü kendi yaşamınızda çizmek, programın hangi halkaya dokunduğunu gösterir.',
     ],
     en: [
@@ -35,12 +35,12 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   'cbt.relax1': {
     tr: [
       'Gerginlik sesi büyütür; kas gevşetme bedene gerginlik ile gevşeme arasındaki farkı öğretir.',
-      'On kas grubu, önce 5 saniye germe sonra bırakma; günde iki kez, iki hafta.',
+      'Kas gruplarını sırayla 5–7 saniye gerip bırakın; günde iki kez, iki hafta.',
       'Bu adım sonraki hızlı gevşeme becerilerinin temelidir; ilk günlerde sesin belirginleşmesi olağandır.',
     ],
     en: [
       'Tension amplifies the sound; muscle relaxation teaches the body the difference between tension and release.',
-      'Ten muscle groups, 5 seconds of tension then release; twice a day for two weeks.',
+      'Tense each muscle group in turn for 5–7 seconds, then release; twice a day for two weeks.',
       'This step is the base of the later rapid-relaxation skills; the sound standing out at first is normal.',
     ],
   },
@@ -58,12 +58,12 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   },
   'cbt.soundEnrichment': {
     tr: [
-      'Sessizlik sesi öne çıkarır; düşük düzeyde hoş bir ortam sesi zemini doldurur.',
-      'Ses karışma noktasının altında kalmalı: amaç sesi örtmek değil, zemine karıştırmaktır.',
+      'Sessizlik çınlamayı öne çıkarır; kısık ve hoş bir arka plan sesi sessizliği doldurur.',
+      'Ses karışma noktasının altında kalmalı: amaç sesi örtmek değil, arka plana karıştırmaktır.',
       'Gün boyu ve gece düşük düzeyde; yüksek ses ya da tam maskeleme alışmayı geciktirir.',
     ],
     en: [
-      'Silence makes the sound stand out; a low, pleasant background sound fills the ground.',
+      'Silence makes the sound stand out; a low, pleasant background sound fills the silence.',
       'Keep it below the mixing point: the aim is to blend the sound into the background, not to cover it.',
       'Low level through the day and at night; loud sound or full masking delays habituation.',
     ],
@@ -82,9 +82,9 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   },
   'cbt.sleepGuidelines': {
     tr: [
-      'Tinnitus ve uykusuzluk birbirini besler; döngü uyku tarafından kırılabilir.',
+      'Çınlama ve uykusuzluk birbirini besler; döngü uyku tarafından kırılabilir.',
       'Üç kural: sabit kalkış saati, yatakta yalnızca uyumak, uyuyamayınca kalkmak.',
-      'Gece düşük düzeyde ortam sesi sessizliği doldurur; saat kontrolü ve çaba uyanıklığı artırır.',
+      'Gece düşük düzeyde arka plan sesi sessizliği doldurur; saat kontrolü ve çaba uyanıklığı artırır.',
     ],
     en: [
       'Tinnitus and insomnia feed each other; the loop can be broken from the sleep side.',
@@ -95,42 +95,42 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   'cbt.relax3': {
     tr: [
       'Her nefes verişe "gevşe" sözcüğünü bağlamak, sözcüğü gevşemenin işareti hâline getirir.',
-      'Günde birkaç kez 2–3 dakika; önce sakin anlarda, sonra sesin belirgin olduğu anlarda.',
+      'Günde iki kez 2–3 dakika; önce sakin anlarda, sonra sesin belirgin olduğu anlarda.',
       'Birkaç hafta tekrarla tek bir nefes gevşemeyi başlatır; ilk günlerde etki küçük olabilir.',
     ],
     en: [
       'Pairing the word "relax" with each out-breath turns the word into a cue for relaxation.',
-      'A few times a day for 2–3 minutes; first in calm moments, then when the sound is prominent.',
+      'Twice a day for 2–3 minutes; first in calm moments, then when the sound is prominent.',
       'With a few weeks of repetition one breath starts relaxation; the effect may be small at first.',
     ],
   },
   'cbt.negativeThoughts': {
     tr: [
-      'Tinnitusla ilgili düşünceler birkaç tipik kalıpta bozulur: felaketleştirme, ya hep ya hiç, zihin okuma.',
+      'Çınlamayla ilgili düşünceler birkaç tipik kalıpta bozulur: felaketleştirme, ya hep ya hiç, aşırı genelleme.',
       'Kalıbı adlandırmak düşünceyi yok etmez; onunla aranıza sorgulamak için gereken mesafeyi koyar.',
       'Günlükteki kayıtlarınızın yanına kalıp adını yazın; en sık tekrarlayan kalıp gelecek haftanın hedefidir.',
     ],
     en: [
-      'Thoughts about tinnitus bend into a few typical patterns: catastrophising, all-or-nothing, mind reading.',
+      'Thoughts about tinnitus bend into a few typical patterns: catastrophising, all-or-nothing, overgeneralising.',
       'Naming the pattern does not remove the thought; it creates the distance you need to question it.',
       'Write the pattern name next to your diary entries; the most frequent one is next week\'s target.',
     ],
   },
   'cbt.positiveImagery': {
     tr: [
-      'Zihin görüntülerle bedeni etkiler; bir imge nabzı ve kas tonusunu değiştirebilir.',
+      'Zihin görüntülerle bedeni etkiler; bir imge nabzı ve kas gerginliğini değiştirebilir.',
       'Güvenli yer imgesi: beş duyuyla ayrıntılandırılmış, gevşemeden sonra girilen bir sahne.',
       'Sesi güvenli yerin dokusuna yerleştiren imge, onu düşman kategorisinden çıkarır; sesi kaybetmez.',
     ],
     en: [
-      'The mind affects the body through images; an image can change pulse and muscle tone.',
+      'The mind affects the body through images; an image can change pulse and muscle tension.',
       'Safe place imagery: a scene detailed with all five senses, entered after relaxation.',
       'An image that places the sound in the safe place\'s texture takes it out of the enemy category; it does not remove it.',
     ],
   },
   'cbt.relax4': {
     tr: [
-      'Bir iş için gereken kaslar çalışırken gerisini bırakmak: fark eden gevşeme.',
+      'Bir iş için gereken kaslar çalışırken gerisini bırakmak: seçici gevşeme.',
       'Üç kademe: oturarak, ayakta, hareket hâlinde; gün içinde birkaç kontrol noktası.',
       'Gevşeme bu adımda sandalyeden kalkıp gündelik hayata karışır.',
     ],
@@ -192,24 +192,24 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
     tr: [
       'Sesi görmezden gelmeye çalışmak dikkati sese çeker.',
       'Doğru yol dikkati esnetmek: sesi dışlamadan birçok uyaran arasında gezdirmek.',
-      'Üç kısa egzersiz; konsantrasyon isteyen işlerden önce bir dakika.',
+      'Üç kısa egzersiz: günde 10 dakika, iki hafta boyunca.',
     ],
     en: [
       'Trying to ignore the sound pulls attention towards it.',
       'The way through is to stretch attention: move it among many stimuli without excluding the sound.',
-      'Three short exercises; one minute before tasks that need concentration.',
+      'Three short exercises: 10 minutes a day for two weeks.',
     ],
   },
   'cbt.activity': {
     tr: [
       'Ruh hâli etkinliği izler: bırakılan etkinliklere dönmek sıkıntıyı azaltır.',
-      'Güvenlik davranışları (sürekli kulak tıkacı, ses kontrolü, sessiz ortamdan kaçma) kısa vadede rahatlatır, uzun vadede sesi büyütür.',
-      'Haftalık plan: bırakılan iki etkinlik, bırakılacak bir güvenlik davranışı.',
+      'Güvenlik davranışları (sürekli kulak tıkacı, ses kontrolü, sessiz ortamdan kaçma) kısa vadede rahatlatır, uzun vadede sesin önemini büyütür.',
+      'Haftalık plan: üç planlı etkinlik, bırakılacak bir güvenlik davranışı.',
     ],
     en: [
       'Mood follows activity: returning to dropped activities lowers distress.',
-      'Safety behaviours (constant earplugs, sound checking, avoiding quiet rooms) soothe now and amplify the sound later.',
-      'Weekly plan: two dropped activities to resume, one safety behaviour to let go.',
+      'Safety behaviours (constant earplugs, sound checking, avoiding quiet rooms) soothe now and make the sound loom larger later.',
+      'Weekly plan: three planned activities, one safety behaviour to let go.',
     ],
   },
   'cbt.relapse': {
@@ -239,7 +239,7 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   'cbt.concentration': {
     tr: [
       'Konsantrasyon güçlüğü ses, uykusuzluk ve kaygının karışımıdır; tek nedeni ses değildir.',
-      'Kısa tek görev blokları (25 dakika) ve düşük ortam sesi işi kolaylaştırır.',
+      'Kısa tek görev blokları (25 dakika) ve düşük arka plan sesi işi kolaylaştırır.',
       'Ses dikkati çektiğinde: etiketle, bir nefes ver, işe geri dön.',
     ],
     en: [
@@ -313,7 +313,7 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   'mind.bodyScan': {
     tr: [
       'Beden taramasının amacı gevşemek değil, ne varsa fark etmektir; gevşeme olursa yan üründür.',
-      'Dikkati ayaklardan başa taşıyın; tinnitus da fark edilen şeylerden biridir, itmeden ya da tutmadan.',
+      'Dikkati ayaklardan başa taşıyın; çınlama da fark edilen şeylerden biridir, itmeden ya da tutmadan.',
       'Dağılan zihni geri getirmek başarısızlık değil, egzersizin kendisidir; burada 15 dakikalık kısa sürüm.',
     ],
     en: [
@@ -337,12 +337,12 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   'mind.allowing': {
     tr: [
       'Acıyı ses değil, sese karşı direnç belirler.',
-      'Sese bilerek yaklaşıp "burada olabilir" diyerek yer açmak, düzeyi değişmese de sıkıntıyı azaltır.',
+      'Sese bilerek yaklaşıp "burada olabilir" diyerek yer açmak, düzeyi değişmese de sıkıntıyı azaltabilir.',
       'Zor geldiği anlarda nefes alanına dönün; izin vermek vazgeçmek değildir.',
     ],
     en: [
       'Suffering is set not by the sound but by resistance to it.',
-      'Approaching the sound deliberately and making room with "it can be here" eases distress even if the level stays.',
+      'Approaching the sound deliberately and making room with "it can be here" can ease distress even if the level stays.',
       'When it feels hard, return to the breathing space; allowing is not giving up.',
     ],
   },
@@ -361,9 +361,9 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   // --- CBT-I ---------------------------------------------------------------------------------------------------
   'cbti.education': {
     tr: [
-      'Uykuyu uyku baskısı, biyolojik saat ve uyarılma düzeyi belirler; tinnitus uyarılmayı besler.',
+      'Uykuyu uyku baskısı, biyolojik saat ve uyarılma düzeyi belirler; çınlama uyarılmayı besler.',
       'Altı haftalık yol: uyku günlüğü, uyaran kontrolü, uyku penceresi, gece düşünceleri, iniş pisti.',
-      'Uyku ses varken de yeniden kurulabilir; CBT-I tinnituslu kişilerde de sınanmıştır.',
+      'Uyku ses varken de yeniden kurulabilir; uykusuzluk terapisi çınlaması olan kişilerde de sınanmıştır.',
     ],
     en: [
       'Sleep is set by sleep pressure, the body clock and arousal; tinnitus feeds arousal.',
@@ -397,7 +397,7 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   },
   'cbti.cognitions': {
     tr: [
-      'Gece zihni uyku ve tinnitus hakkında felaketleştirir; gece tartışma zamanı değildir.',
+      'Gece zihni uyku ve çınlama hakkında felaketleştirir; gece tartışma zamanı değildir.',
       'Dengeli cümleleri gündüz düşünce kaydıyla hazırlayın, gece yalnızca hatırlayın.',
       'Uyku çabası paradoksu: uyumaya çalışmak uyanık tutar; çabayı bırakmak hedeftir.',
     ],
@@ -411,12 +411,12 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
     tr: [
       'Endişelere gündüz belirli bir zaman verin (15 dakika, yatak odası dışında).',
       'İniş pisti: her akşam aynı sırayla tekrarlanan 60–90 dakikalık hazırlık.',
-      'Gevşeme becerisini uykuya uyarlayın: yatakta bırakarak gevşeme, düşük ortam sesi.',
+      'Gevşemeyi yatakta değil, koltukta yapın; gece kısık arka plan sesi.',
     ],
     en: [
       'Give worries a fixed daytime slot (15 minutes, outside the bedroom).',
       'The runway: a 60–90 minute wind-down repeated in the same order every evening.',
-      'Adapt the relaxation skill to sleep: release-only relaxation in bed, low background sound.',
+      'Relax in a chair, not in bed; low background sound at night.',
     ],
   },
   'cbti.relapse': {
@@ -434,14 +434,14 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   // --- Hyperacusis ---------------------------------------------------------------------------------------------
   'hyper.education': {
     tr: [
-      'Hiperakuzi işitme sisteminin "kazanç ayarının" yükselmesidir; sessizlik ve kaçınma kazancı artırır.',
-      'Kademeli, düşük düzeyli ses ve BDT birlikte kazancı düşürür ve toleransı artırır.',
-      'Misofoni farklıdır: belirli seslere öfke/tiksinti; yolu ses rampası değil, bilgi ve BDT\'dir.',
+      'Ses hassasiyeti işitme sisteminin "kazanç ayarının" yükselmesidir; sessizlik ve kaçınma kazancı artırır.',
+      'Kademeli, kısık ses ve BDT birlikte kazancı düşürebilir ve toleransı artırabilir.',
+      'Misofoni farklıdır: belirli seslere öfke ya da tiksinti; kademeli ses yerine uzman değerlendirmesi gerekir.',
     ],
     en: [
       'Hyperacusis is a raised "gain setting" of the hearing system; silence and avoidance raise it further.',
-      'Gradual low-level sound together with CBT lowers the gain and builds tolerance.',
-      'Misophonia is different: anger/disgust at specific sounds; its path is information and CBT, not a sound ramp.',
+      'Gradual low-level sound together with CBT can lower the gain and build tolerance.',
+      'Misophonia is different: anger or disgust at specific sounds; it needs specialist assessment, not graded sound.',
     ],
   },
   'hyper.hierarchy': {
@@ -459,13 +459,13 @@ export const SUMMARIES: Record<string, ModuleSummary> = {
   'hyper.earplugs': {
     tr: [
       'Tıkaç yalnızca gerçekten yüksek (85 desibel üstü) ortamlar içindir.',
-      'Gündelik ortamlarda ve gece kullanmak kazancı yükseltir ve hassasiyeti sürdürür.',
-      'Dört haftalık bırakma planı: önce ev, sonra sokak, sonra kalabalık; gece hiç.',
+      'Gündelik ortamlarda ve gece kullanmak kazancı yükseltip hassasiyeti sürdürebilir.',
+      'Dört haftalık bırakma planı: önce ev, sonra kafe ve otobüs; gece de tıkaç yok.',
     ],
     en: [
       'Earplugs are only for genuinely loud settings (above 85 decibels).',
-      'Using them in everyday settings and at night raises the gain and keeps sensitivity going.',
-      'A four-week weaning plan: home first, then the street, then crowds; never at night.',
+      'Using them in everyday settings and at night can raise the gain and keep sensitivity going.',
+      'A four-week weaning plan: home first, then cafés and buses; no plugs at night either.',
     ],
   },
 };

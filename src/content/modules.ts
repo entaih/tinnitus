@@ -45,28 +45,28 @@ const CBT: ModuleContent[] = [
     id: 'cbt.welcome',
     title: { tr: 'Hoş geldiniz: program nasıl işler', en: 'Welcome: how the programme works' },
     intro: {
-      tr: 'Bu program, tinnitus için bilişsel davranışçı terapinin (BDT) internet üzerinden uygulanan ve randomize çalışmalarda sınanmış yapısını temel alır. Sekiz hafta boyunca her hafta iki üç kısa modül okuyacak, günlük kısa egzersizler yapacak ve ilerlemenizi izleyeceksiniz.',
-      en: 'This programme follows the structure of internet-delivered cognitive behavioural therapy (CBT) for tinnitus that has been tested in randomised trials. Over eight weeks you will read two or three short modules a week, do brief daily exercises and track your progress.',
+      tr: 'Bu program, çınlama (tinnitus) için bilişsel davranışçı terapiye (BDT) dayanır. BDT, düşünce ve davranışlarla çalışan bir terapidir; internetten uygulanan biçimi bilimsel çalışmalarda sınanmıştır. Sekiz hafta boyunca her hafta iki üç kısa modül okuyacak, her gün kısa egzersizler yapacaksınız.',
+      en: 'This programme is based on cognitive behavioural therapy (CBT) for tinnitus. CBT is a therapy that works with thoughts and behaviours; its internet-delivered form has been tested in scientific trials. Over eight weeks you will read two or three short modules a week and do brief daily exercises.',
     },
     sections: [
       {
         heading: { tr: 'Bu programın amacı', en: 'What this programme aims to do' },
         body: {
-          tr: `Bu programın amacı tinnitus sesini yok etmek değildir. Amaç, sesin hayatınızdaki yerini küçültmektir: dikkatinizi daha az çekmesi, uykunuzu daha az bozması, sizi daha az yormasıdır. Araştırmalar bunun mümkün olduğunu gösteriyor. Bir Cochrane derlemesinde 28 çalışma ve 2 733 katılımcı bir araya getirildiğinde, BDT'nin tinnitusun yaşam kalitesine etkisini azalttığı bulundu. Sesin kendisi çoğu kişide aynı kalsa da sesle ilişki değişebiliyor.
+          tr: `Bu programın amacı çınlama sesini yok etmek değildir. Amaç, sesin hayatınızdaki yerini küçültmektir: dikkatinizi daha az çekmesi, uykunuzu daha az bozması, sizi daha az yormasıdır. Araştırmalar bunun mümkün olduğunu gösteriyor. 28 çalışmayı ve 2 733 kişiyi bir araya getiren bir Cochrane derlemesine göre BDT, çınlamanın hayata etkisini azaltabiliyor. Ses çoğu kişide aynı kalsa da sesle ilişki değişebiliyor.
 
-İngiltere'de yapılan bir çalışmada, bu programa benzer sekiz haftalık bir internet programını tamamlayanların yaklaşık yarısı, Tinnitus Fonksiyonel İndeksi'nde klinik olarak anlamlı sayılan 13 puanlık düşüşe ulaştı. Bu, herkeste aynı sonucun görüleceği anlamına gelmez; ancak düzenli uygulayan kişilerin önemli bir bölümünde belirgin fark oluştuğunu gösterir.`,
-          en: `The aim of this programme is not to make the tinnitus sound disappear. The aim is to shrink the place it occupies in your life: for it to draw your attention less, disturb your sleep less and tire you less. Research shows this is possible. A Cochrane review pooling 28 trials and 2,733 participants found that CBT reduces the impact of tinnitus on quality of life. For most people the sound itself stays the same, but the relationship with it changes.
+İngiltere'deki bir çalışmada, buna benzer sekiz haftalık bir internet programını bitirenlerin yaklaşık yarısında belirgin düzelme görüldü (bir çınlama anketinde en az 13 puan düşüş). Bu, herkeste aynı sonucun görüleceği anlamına gelmez; ancak düzenli çalışanların önemli bir bölümünde fark oluşuyor.`,
+          en: `The aim of this programme is not to make the tinnitus sound disappear. The aim is to shrink the place it occupies in your life: for it to draw your attention less, disturb your sleep less and tire you less. Research shows this is possible. According to a Cochrane review pooling 28 trials and 2,733 participants, CBT can reduce the impact of tinnitus on life. For most people the sound itself stays the same, but the relationship with it can change.
 
-In a UK trial, about half of those who completed an eight-week internet programme similar to this one reached the 13-point drop on the Tinnitus Functional Index that counts as clinically meaningful. That does not mean everyone will see the same result, but it shows that a substantial share of people who practise regularly notice a real difference.`,
+In a UK trial, about half of those who completed an eight-week internet programme similar to this one improved clearly (a drop of at least 13 points on a tinnitus questionnaire). That does not mean everyone will see the same result, but a substantial share of people who practise regularly notice a difference.`,
         },
       },
       {
         heading: { tr: 'Sekiz haftanın haritası', en: 'A map of the eight weeks' },
         body: {
-          tr: `- **1. hafta:** Tinnitus nedir, beyin sesi neden fark eder, alışma (habituasyon) modeli. Derin gevşeme, 1. adım.
-- **2. hafta:** Kısa gevşeme. Ses zenginleştirme: sessizlikten kaçınmak. Düşünce günlüğüne giriş.
+          tr: `- **1. hafta:** Çınlama nedir, beyin sesi neden fark eder, alışma modeli. Derin gevşeme, 1. adım.
+- **2. hafta:** Kısa gevşeme. Rahatlatan arka plan sesi: sessizlikten kaçınmak. Düşünce günlüğüne giriş.
 - **3. hafta:** Uyku ilkeleri. Nefesle gevşeme.
-- **4. hafta:** Olumsuz otomatik düşünceleri tanımak. Olumlu imgeleme. Fark eden gevşeme.
+- **4. hafta:** Olumsuz otomatik düşünceleri tanımak. Olumlu imgeleme. Seçici gevşeme.
 - **5. hafta:** Düşünceleri yeniden yapılandırma. Hızlı gevşeme.
 - **6. hafta:** Sese bilinçli maruz kalma. Gevşemeyi gündelik hayata taşıma.
 - **7. hafta:** Dikkati yönlendirme. Etkinlik planlama ve güvenlik davranışlarını azaltma.
@@ -91,12 +91,12 @@ Each week has one main idea, one exercise and one practice task. The modules are
         body: {
           tr: `- Günde 15–30 dakika ayırın. Araştırmalardaki programlarda günlük gevşeme uygulaması 10–15 dakika, günde iki kez önerilir; tek seferle de başlayabilirsiniz.
 - Modülleri sırayla izleyin. Her modül bir öncekinin üzerine kurulur.
-- Egzersizleri tam yapmak, mükemmel yapmaktan önemlidir. Dikkatiniz dağıldığında sadece geri dönün.
-- Günlük kısa kayıt (ses düzeyi, rahatsızlık, ruh hâli) ilerlemeyi görünür kılar. Tinnitus günden güne dalgalanır; haftalık eğilime bakın, tek bir güne değil.
+- Egzersizleri düzenli yapmak, kusursuz yapmaktan önemlidir. Dikkatiniz dağıldığında sadece geri dönün.
+- Günlük kısa kayıt (ses düzeyi, rahatsızlık, ruh hâli) ilerlemeyi görünür kılar. Çınlama günden güne dalgalanır; haftalık eğilime bakın, tek bir güne değil.
 - Zorlu bir gün programın bozulduğu anlamına gelmez. Kaldığınız yerden devam edin.`,
           en: `- Set aside 15–30 minutes a day. The trial programmes recommend 10–15 minutes of relaxation practice twice daily; you can start with once.
 - Follow the modules in order. Each builds on the one before.
-- Doing the exercises fully matters more than doing them perfectly. When your attention drifts, simply return.
+- Doing the exercises regularly matters more than doing them perfectly. When your attention drifts, simply return.
 - A short daily record (loudness, annoyance, mood) makes progress visible. Tinnitus fluctuates from day to day; look at the weekly trend, not at a single day.
 - A hard day does not mean the programme has failed. Continue from where you left off.`,
         },
@@ -105,7 +105,7 @@ Each week has one main idea, one exercise and one practice task. The modules are
         heading: { tr: 'Bu programın sınırları', en: 'The limits of this programme' },
         kind: 'warning',
         body: {
-          tr: `Bu program tıbbi değerlendirmenin yerini tutmaz. Tek taraflı veya ani başlayan tinnitus, nabızla eş zamanlı ses, baş dönmesi, işitmede ani düşüş ya da yüzde güçsüzlük gibi belirtiler varsa önce bir kulak burun boğaz uzmanına başvurun. Kendinize zarar verme düşünceleri yaşıyorsanız 112'yi arayın veya en yakın acil servise gidin; program bunu bekleyebilir, siz bekleyemezsiniz.`,
+          tr: `Bu program tıbbi değerlendirmenin yerini tutmaz. Tek taraflı veya ani başlayan çınlama, nabızla eş zamanlı ses, baş dönmesi, işitmede ani düşüş ya da yüzde güçsüzlük gibi belirtiler varsa önce bir kulak burun boğaz uzmanına başvurun. Kendinize zarar verme düşünceleri yaşıyorsanız 112'yi arayın veya en yakın acil servise gidin; program bunu bekleyebilir, siz bekleyemezsiniz.`,
           en: `This programme does not replace medical assessment. If your tinnitus is one-sided or started suddenly, pulses with your heartbeat, comes with dizziness, a sudden drop in hearing or facial weakness, see an ear, nose and throat specialist first. If you are having thoughts of harming yourself, call 112 or go to the nearest emergency department; the programme can wait, you cannot.`,
         },
       },
@@ -122,7 +122,7 @@ Each week has one main idea, one exercise and one practice task. The modules are
       kind: 'worksheet',
       minutes: 5,
       items: [
-        { tr: 'Tinnitus şu anda hayatınızı en çok hangi alanda etkiliyor? (uyku, iş, dinlenme, ilişkiler…)', en: 'Which area of your life does tinnitus affect most right now? (sleep, work, rest, relationships…)' },
+        { tr: 'Çınlama şu anda hayatınızı en çok hangi alanda etkiliyor? (uyku, iş, dinlenme, ilişkiler…)', en: 'Which area of your life does tinnitus affect most right now? (sleep, work, rest, relationships…)' },
         { tr: 'Sekiz hafta sonra neyin farklı olmasını isterdiniz? Sesin yok olmasından başka bir şey yazın.', en: 'What would you like to be different in eight weeks? Write something other than the sound disappearing.' },
         { tr: 'Günün hangi saatinde 15 dakikayı bu programa ayırabilirsiniz?', en: 'At what time of day can you give 15 minutes to this programme?' },
       ],
@@ -135,18 +135,18 @@ Each week has one main idea, one exercise and one practice task. The modules are
   },
   {
     id: 'cbt.psychoeducation',
-    title: { tr: 'Tinnitus ve beyin', en: 'Tinnitus and the brain' },
+    title: { tr: 'Çınlama ve beyin', en: 'Tinnitus and the brain' },
     intro: {
-      tr: 'Tinnitusu anlamak, onunla ilişkinizi değiştirmenin ilk adımıdır. Bu modül sesin nereden geldiğini, beynin onu neden sürekli fark ettiğini ve alışmanın (habituasyon) nasıl gerçekleştiğini anlatır.',
+      tr: 'Çınlamayı anlamak, onunla ilişkinizi değiştirmenin ilk adımıdır. Bu modül sesin nereden geldiğini, beynin onu neden sürekli fark ettiğini ve alışmanın nasıl gerçekleştiğini anlatır.',
       en: 'Understanding tinnitus is the first step to changing your relationship with it. This module explains where the sound comes from, why the brain keeps noticing it and how habituation happens.',
     },
     sections: [
       {
         heading: { tr: 'Ses nereden geliyor', en: 'Where the sound comes from' },
         body: {
-          tr: `Tinnitus, dış ortamda bir ses kaynağı olmadan duyulan sestir. Yetişkinlerin yaklaşık yüzde 10–15'i bunu yaşar; daha küçük bir bölümü için rahatsız edicidir. Çoğu kişide başlangıç noktası iç kulaktır: gürültü, yaş, bazı ilaçlar ya da başka nedenlerle iç kulaktaki duyu hücrelerinin bir bölümü beyne daha az sinyal gönderir. İşitme sistemi bu azalmayı dengelemek için kendi "kazancını" artırır. Sonuç, dışarıdan gelmeyen ama gerçek olarak duyulan bir sestir.
+          tr: `Çınlama (tinnitus), dışarıda bir kaynağı olmadan duyulan sestir. Yetişkinlerin yaklaşık yüzde 10–15'i bunu yaşar; daha küçük bir bölümü için rahatsız edicidir. Çoğu kişide başlangıç noktası iç kulaktır: gürültü, yaş, bazı ilaçlar ya da başka nedenlerle iç kulaktaki duyu hücrelerinin bir bölümü beyne daha az sinyal gönderir. İşitme sistemi bu azalmayı dengelemek için, radyonun sesini açar gibi, kendi "kazancını" artırır. Sonuç, dışarıdan gelmeyen ama gerçekten duyulan bir sestir.
 
-Bu nedenle tinnitus kulakta değil, çoğunlukla işitme yollarında ve beyinde üretilir. Bu bilgi önemlidir: sesi duyuyor olmanız kulağınızda ilerleyen bir hasar olduğu anlamına gelmez. Değerlendirmeniz tamamlandıysa ve bir kulak burun boğaz uzmanı başka bir neden bulmadıysa, ses zararsızdır; rahatsız edicidir ama tehlikeli değildir.`,
+Bu nedenle çınlama kulakta değil, çoğunlukla işitme yollarında ve beyinde üretilir. Bu bilgi önemlidir: sesi duyuyor olmanız kulağınızda ilerleyen bir hasar olduğu anlamına gelmez. Değerlendirmeniz tamamlandıysa ve bir kulak burun boğaz uzmanı başka bir neden bulmadıysa, ses zararsızdır; rahatsız edicidir ama tehlikeli değildir.`,
           en: `Tinnitus is sound heard without an external source. Around 10–15 per cent of adults experience it; for a smaller share it is bothersome. In most people the starting point is the inner ear: because of noise, age, certain medicines or other causes, some of the sensory cells send fewer signals to the brain. The hearing system raises its own "gain" to compensate. The result is a sound that does not come from outside but is heard as real.
 
 So tinnitus is mostly generated not in the ear but along the hearing pathways and in the brain. This matters: hearing the sound does not mean there is ongoing damage in your ear. If your assessment is complete and an ENT specialist has found no other cause, the sound is harmless; unpleasant, but not dangerous.`,
@@ -155,12 +155,12 @@ So tinnitus is mostly generated not in the ear but along the hearing pathways an
       {
         heading: { tr: 'Beyin neden bu sesi bırakmıyor', en: 'Why the brain will not let the sound go' },
         body: {
-          tr: `Beyniniz her saniye binlerce sinyal alır ve neredeyse hepsini süzer. Buzdolabının uğultusunu, üzerinizdeki giysinin temasını, kendi nefesinizi çoğu zaman fark etmezsiniz. Bir sinyalin süzgeçten geçip bilince ulaşması için beynin onu "önemli" olarak işaretlemesi gerekir.
+          tr: `Beyniniz her saniye binlerce sinyal alır ve neredeyse hepsini süzer. Buzdolabının uğultusunu, üzerinizdeki giysinin temasını, kendi nefesinizi çoğu zaman fark etmezsiniz. Bir sinyalin fark edilmesi için beynin onu "önemli" diye işaretlemesi gerekir.
 
-Tinnitus genellikle iki nedenle önemli işaretlenir. Birincisi yeniliktir: beklenmedik bir sinyal dikkat çeker. İkincisi tehdit değeridir: "Bu ses ne? Kötüleşecek mi? Hiç geçmeyecek mi?" gibi sorular, sesi kaygı ve tehlike ile ilişkilendirir. Beyin, tehlikeyle ilişkilendirdiği sinyalleri filtrelemez; aksine onlara öncelik verir. Böylece bir döngü oluşur: ses fark edilir, kaygı artar, kaygı sesi daha önemli kılar, ses daha çok fark edilir.
+Çınlama genellikle iki nedenle önemli işaretlenir. Birincisi yeniliktir: beklenmedik bir sinyal dikkat çeker. İkincisi tehdit değeridir: "Bu ses ne? Kötüleşecek mi? Hiç geçmeyecek mi?" gibi sorular, sesi kaygı ve tehlike ile ilişkilendirir. Beyin, tehlikeyle ilişkilendirdiği sinyalleri filtrelemez; aksine onlara öncelik verir. Böylece bir döngü oluşur: ses fark edilir, kaygı artar, kaygı sesi daha önemli kılar, ses daha çok fark edilir.
 
 Bu döngü sesin kendisini değil, sesin ne kadar duyulduğunu belirler. Aynı ses düzeyinde bir kişi sesi günün çoğunda fark etmezken bir başkası sürekli duyabilir. Fark, kulakta değil, beynin sinyale verdiği anlamdadır.`,
-          en: `Your brain receives thousands of signals every second and filters almost all of them. You usually do not notice the hum of the fridge, the touch of your clothes or your own breathing. For a signal to pass the filter and reach awareness, the brain has to tag it as "important".
+          en: `Your brain receives thousands of signals every second and filters almost all of them. You usually do not notice the hum of the fridge, the touch of your clothes or your own breathing. For a signal to be noticed, the brain has to tag it as "important".
 
 Tinnitus usually gets tagged for two reasons. The first is novelty: an unexpected signal draws attention. The second is threat value: questions such as "What is this sound? Will it get worse? Will it never stop?" link the sound with anxiety and danger. The brain does not filter signals it has linked with danger; it prioritises them. A loop forms: the sound is noticed, anxiety rises, anxiety makes the sound more important, the sound is noticed more.
 
@@ -168,13 +168,13 @@ This loop does not determine the sound itself but how much of it is heard. At th
         },
       },
       {
-        heading: { tr: 'Alışma: habituasyon modeli', en: 'Getting used to it: the habituation model' },
+        heading: { tr: 'Alışma nasıl olur', en: 'Getting used to it: the habituation model' },
         body: {
-          tr: `Habituasyon, beynin tekrar eden ve zararsız olduğu anlaşılan bir sinyale verdiği tepkiyi azaltmasıdır. Yeni bir eve taşındığınızda sokaktan gelen sesleri ilk geceler duyarsınız; haftalar içinde duymaz olursunuz. Ses değişmemiştir; beynin ona verdiği önem değişmiştir.
+          tr: `Alışma, beynin tekrar eden ve zararsız olduğu anlaşılan bir sinyale verdiği tepkiyi azaltmasıdır. Yeni bir eve taşındığınızda sokaktan gelen sesleri ilk geceler duyarsınız; haftalar içinde duymaz olursunuz. Ses değişmemiştir; beynin ona verdiği önem değişmiştir.
 
-Tinnitusta habituasyon iki düzeyde olur. Önce **tepkiye alışma**: ses hâlâ duyulur ama kaygı, öfke ve gerginlik azalır. Sonra **algıya alışma**: ses günün büyük kısmında fark edilmez olur, ancak dikkat ona yöneltildiğinde hâlâ oradadır. Çoğu kişi için ikinci aşama aylar alır ve birinci aşamadan geçer.
+Çınlamada alışma iki düzeyde olur. Önce **tepkiye alışma**: ses hâlâ duyulur ama kaygı, öfke ve gerginlik azalır. Sonra **algıya alışma**: ses günün büyük kısmında fark edilmez olur, ancak dikkat ona yöneltildiğinde hâlâ oradadır. Çoğu kişi için ikinci aşama aylar alır ve birinci aşamadan geçer.
 
-Habituasyonu zorlaştıran üç şey vardır: sesi tehlikeli saymak, sesi sürekli kontrol etmek (dinleyip ölçmek) ve sessizlikten ya da sesten kaçınmak. Programın geri kalanı tam olarak bu üçünü hedefler: düşüncelerle çalışmak, dikkati yönlendirmek ve kaçınmayı azaltmak.`,
+Alışmayı zorlaştıran üç şey vardır: sesi tehlikeli saymak, sesi sürekli kontrol etmek (dinleyip ölçmek) ve sessizlikten ya da sesten kaçınmak. Programın geri kalanı tam olarak bu üçünü hedefler: düşüncelerle çalışmak, dikkati yönlendirmek ve kaçınmayı azaltmak.`,
           en: `Habituation is the brain reducing its response to a signal that repeats and turns out to be harmless. When you move to a new home you hear the street during the first nights; within weeks you stop hearing it. The sound has not changed; the importance the brain gives it has.
 
 In tinnitus, habituation happens on two levels. First **habituation of reaction**: the sound is still heard but anxiety, anger and tension drop. Then **habituation of perception**: the sound goes unnoticed for most of the day, though it is still there when attention is turned to it. For most people the second stage takes months and passes through the first.
@@ -186,7 +186,7 @@ Three things make habituation harder: treating the sound as dangerous, constantl
         heading: { tr: 'Sık sorulan sorular', en: 'Frequently asked questions' },
         body: {
           tr: `- **Ses zamanla kötüleşir mi?** Çoğu kişide ses düzeyi yıllar içinde sabit kalır veya azalır. Dalgalanmalar normaldir ve genellikle yorgunluk, stres, gürültü ya da uykusuzlukla ilişkilidir.
-- **Sesi duymam kulağımın bozulduğu anlamına mı gelir?** Hayır. İşitme kaybı tinnitusla sık birlikte görülür ama ses, kaybın ilerlediğinin göstergesi değildir. İşitmenizdeki değişiklikleri odyolojik değerlendirmeyle izleyin.
+- **Sesi duymam kulağımın bozulduğu anlamına mı gelir?** Hayır. İşitme kaybı çınlamayla sık birlikte görülür ama ses, kaybın ilerlediğinin göstergesi değildir. İşitmenizdeki değişiklikleri odyolojik değerlendirmeyle izleyin.
 - **Ses bazen neden daha gürültülü?** Sessiz ortamlar, yorgunluk, kaygı ve dikkatin sese dönmesi sesi daha belirgin kılar. Düzey aynı olsa da fark ediş değişir.
 - **Sese dikkat etmemek mümkün mü?** Zorla dikkat etmemeye çalışmak dikkati artırır. Programda dikkatin başka yere nasıl yöneltileceğini çalışacaksınız.`,
           en: `- **Will the sound get worse over time?** In most people the level stays stable or decreases over the years. Fluctuations are normal and usually linked to tiredness, stress, noise or lack of sleep.
@@ -215,8 +215,8 @@ Three things make habituation harder: treating the sound as dangerous, constantl
       ],
     },
     keyTakeaway: {
-      tr: 'Tinnitus kulakta değil beyinde "önemli" işaretlenen bir sinyaldir; alışma, bu işareti kaldırmakla başlar.',
-      en: 'Tinnitus is a signal tagged as "important" in the brain, not the ear; habituation begins by removing that tag.',
+      tr: 'Çınlama çoğu zaman kulakta başlar, ama beyin onu "önemli" diye işaretlediği için öne çıkar; alışma, bu işareti kaldırmakla başlar.',
+      en: 'Tinnitus usually starts in the ear, but it stands out because the brain tags it as "important"; habituation begins by removing that tag.',
     },
     citations: ['fuller2020', 'tunkel2014', 'cima2019'],
   },
@@ -229,14 +229,14 @@ Three things make habituation harder: treating the sound as dangerous, constantl
     },
     sections: [
       {
-        heading: { tr: 'Gevşemenin tinnitusla ilgisi', en: 'What relaxation has to do with tinnitus' },
+        heading: { tr: 'Gevşemenin çınlamayla ilgisi', en: 'What relaxation has to do with tinnitus' },
         body: {
-          tr: `Tinnitus ve beden gerginliği birbirini besler. Ses fark edildiğinde omuzlar kalkar, çene sıkılır, nefes sığlaşır; bu gerginlik sinir sistemini uyanık tutar ve beyin sesi daha önemli sayar. Gevşeme bu döngüyü ters yönden çözer: beden sakinleştiğinde beyin tehlike sinyalini düşürür ve ses arka plana çekilmeye başlar.
+          tr: `Çınlama ve beden gerginliği birbirini besler. Ses fark edildiğinde omuzlar kalkar, çene sıkılır, nefes sığlaşır; bu gerginlik sinir sistemini uyanık tutar ve beyin sesi daha önemli sayar. Gevşeme bu döngüyü ters yönden çözer: beden sakinleştiğinde beyin tehlike sinyalini düşürür ve ses arka plana çekilmeye başlar.
 
-Öst'ün uygulamalı gevşeme protokolü, tinnitus için geliştirilen internet temelli BDT programlarının omurgasıdır; on beş çekirdek modülün altısı bu yöntemin adımlarıdır. Yöntemin amacı, bir gevşeme kasetini dinlemek değil, istediğiniz anda 20–30 saniye içinde gevşeyebilmeyi öğrenmektir. Bu modül o yolun başlangıcıdır.`,
+Öst'ün uygulamalı gevşeme yöntemi, çınlama için hazırlanan internet programlarının temelidir; on beş ana modülün altısı bu yöntemin adımlarıdır. Yöntemin amacı, bir gevşeme kasetini dinlemek değil, istediğiniz anda 20–30 saniye içinde gevşeyebilmeyi öğrenmektir.`,
           en: `Tinnitus and body tension feed each other. When the sound is noticed, shoulders rise, the jaw tightens, breathing gets shallow; this tension keeps the nervous system alert and the brain counts the sound as more important. Relaxation unwinds the loop from the other end: when the body settles, the brain lowers the danger signal and the sound starts to recede.
 
-Öst's applied relaxation protocol is the backbone of internet-based CBT programmes for tinnitus; six of the fifteen core modules are its steps. The goal is not to listen to a relaxation recording but to learn to relax within 20–30 seconds whenever you choose. This module is the start of that path.`,
+Öst's applied relaxation protocol is the backbone of internet-based CBT programmes for tinnitus; six of the fifteen core modules are its steps. The goal is not to listen to a relaxation recording but to learn to relax within 20–30 seconds whenever you choose.`,
         },
       },
       {
@@ -245,12 +245,12 @@ Three things make habituation harder: treating the sound as dangerous, constantl
         body: {
           tr: `- Rahat bir sandalyeye oturun ya da uzanın. Gözlerinizi kapatın veya bir noktaya yumuşakça bakın.
 - Her kas grubunu **5–7 saniye** gerin; ağrıtacak kadar değil, gerginliği belirgin hissedecek kadar. Sonra bir anda bırakın ve **15–20 saniye** gevşemenin yayılmasını izleyin.
-- Nefesi tutmayın. Gererken normal nefes alın; bırakırken nefesi yavaşça verin.
+- Göğüs adımı dışında nefesi tutmayın. Gererken normal nefes alın; bırakırken yavaşça verin.
 - Ağrılı veya yaralı bir bölgeyi germeyin; o bölgeyi atlayın ya da yalnızca hayal edin.
-- Tinnitus sesi egzersiz sırasında daha belirgin gelebilir. Bu normaldir ve zamanla azalır; sesi engellemeye çalışmadan devam edin.`,
+- Çınlama sesi egzersiz sırasında daha belirgin gelebilir. Bu normaldir ve zamanla azalır; sesi engellemeye çalışmadan devam edin.`,
           en: `- Sit in a comfortable chair or lie down. Close your eyes or rest them softly on a point.
 - Tense each muscle group for **5–7 seconds**; not to the point of pain, just enough to feel the tension clearly. Then let go all at once and follow the release spreading for **15–20 seconds**.
-- Do not hold your breath. Breathe normally while tensing; breathe out slowly as you release.
+- Apart from the chest step, do not hold your breath. Breathe normally while tensing; breathe out slowly as you release.
 - Do not tense a painful or injured area; skip it or only imagine it.
 - The tinnitus sound may feel more prominent during the exercise. This is normal and lessens with time; continue without trying to block the sound.`,
         },
@@ -261,7 +261,7 @@ Three things make habituation harder: treating the sound as dangerous, constantl
         body: {
           tr: `Zamanlayıcı aşağıdaki sırayı adım adım yürütür. Her adımda önce gerin, sonra bırakın. Sırası: eller ve ön kollar, üst kollar, alın, gözler ve burun, çene ve dil, boyun, omuzlar, göğüs ve nefes, karın, sırt, kalçalar ve uyluklar, baldırlar, ayaklar. Sonunda bütün bedeni bir kez daha tarayıp kalan gerginliği bırakın.
 
-İlk hafta iki kez, günde iki kere uygulayın. Her uygulamadan sonra 0–10 arasında ne kadar gevşediğinizi aklınızdan not edin; rakam değil, yön önemlidir.`,
+İlk iki hafta günde iki kez uygulayın. Her uygulamadan sonra 0–10 arasında ne kadar gevşediğinizi aklınızdan not edin; rakam değil, yön önemlidir.`,
           en: `The timer walks through the sequence below step by step. In each step first tense, then release. The order: hands and forearms, upper arms, forehead, eyes and nose, jaw and tongue, neck, shoulders, chest and breathing, abdomen, back, hips and thighs, calves, feet. At the end scan the whole body once more and release any remaining tension.
 
 Practise twice daily during the first two weeks. After each session note in your mind how relaxed you feel on 0–10; the direction matters, not the number.`,
@@ -271,7 +271,7 @@ Practise twice daily during the first two weeks. After each session note in your
         heading: { tr: 'Sık karşılaşılan zorluklar', en: 'Common difficulties' },
         body: {
           tr: `- **Dikkatim dağılıyor.** Bu, egzersizin bir parçasıdır. Fark ettiğiniz anda hangi kasta kaldığınıza dönün.
-- **Gevşedikçe sesi daha çok duyuyorum.** Dış sesler azaldığında iç ses öne çıkar. Haftalar içinde bu etki azalır. İsterseniz egzersizi düşük düzeyde bir ortam sesiyle yapabilirsiniz.
+- **Gevşedikçe sesi daha çok duyuyorum.** Dış sesler azaldığında iç ses öne çıkar. Haftalar içinde bu etki azalır. İsterseniz egzersizi düşük düzeyde bir arka plan sesiyle yapabilirsiniz.
 - **Uyuyakalıyorum.** Gece yapıyorsanız sorun değil; gündüz yapıyorsanız oturarak uygulayın. Amaç beceriyi uyanıkken öğrenmektir.
 - **Vaktim yok.** 15 dakika bulamadığınız günlerde yalnızca üst beden (eller, kollar, yüz, omuzlar) ile 6–7 dakikalık kısa sürüm yapın. Düzen, süreden önemlidir.`,
           en: `- **My mind wanders.** That is part of the exercise. The moment you notice, return to the muscle you were on.
@@ -290,8 +290,8 @@ Practise twice daily during the first two weeks. After each session note in your
         { tr: 'Üst kollar: dirsekleri bükün, pazularınızı sıkın… ve bırakın. Kolların ağırlaştığını fark edin.', en: 'Upper arms: bend the elbows, tighten the biceps… and release. Notice the arms grow heavy.', seconds: 40 },
         { tr: 'Alın: kaşlarınızı yukarı kaldırın, alnı kırıştırın… ve bırakın. Alın düz ve serin.', en: 'Forehead: raise the eyebrows, wrinkle the forehead… and release. The forehead smooth and cool.', seconds: 40 },
         { tr: 'Gözler ve burun: gözleri sıkıca yumun, burnu kırıştırın… ve bırakın. Göz kapakları hafif.', en: 'Eyes and nose: squeeze the eyes shut, wrinkle the nose… and release. Eyelids light.', seconds: 40 },
-        { tr: 'Çene ve dil: dişleri hafifçe sıkın, dili damağa bastırın… ve bırakın. Dudaklar aralık, çene gevşek.', en: 'Jaw and tongue: press the teeth lightly together, push the tongue to the palate… and release. Lips parted, jaw loose.', seconds: 40 },
-        { tr: 'Boyun: çeneyi hafifçe göğse doğru çekin, boynun arkasında gerginliği hissedin… ve bırakın. Başın rahatça dengelendiğini fark edin.', en: 'Neck: draw the chin gently towards the chest, feel the tension at the back of the neck… and release. Notice the head balance easily.', seconds: 40 },
+        { tr: 'Çene ve dil: dişleri hafifçe sıkın, dili damağa bastırın… ve bırakın. Dudaklar aralık, çene gevşek. Çene ağrırsa bu adımı atlayın.', en: 'Jaw and tongue: press the teeth lightly together, push the tongue to the palate… and release. Lips parted, jaw loose. Skip this step if the jaw hurts.', seconds: 40 },
+        { tr: 'Boyun: çeneyi hafifçe göğse doğru çekin, boynun arkasında gerginliği hissedin… ve bırakın. Ağrı ya da baş dönmesi olursa bu adımı atlayın.', en: 'Neck: draw the chin gently towards the chest, feel the tension at the back of the neck… and release. Skip this step if it causes pain or dizziness.', seconds: 40 },
         { tr: 'Omuzlar: omuzları kulaklara doğru kaldırın… ve düşürün. Omuzlar aşağı, geniş ve ağır.', en: 'Shoulders: lift the shoulders towards the ears… and drop them. Shoulders down, wide and heavy.', seconds: 40 },
         { tr: 'Göğüs ve nefes: derin bir nefes alın, tutun, göğüste gerginliği hissedin… ve yavaşça verin. Nefes kendi ritmine dönsün.', en: 'Chest and breathing: take a deep breath, hold it, feel the tension in the chest… and let it out slowly. Let the breath return to its own rhythm.', seconds: 45 },
         { tr: 'Karın: karın kaslarını sertleştirin… ve bırakın. Her nefesle karın yumuşakça iner kalkar.', en: 'Abdomen: tighten the stomach muscles… and release. With each breath the belly rises and falls softly.', seconds: 40 },
@@ -320,10 +320,10 @@ Practise twice daily during the first two weeks. After each session note in your
       {
         heading: { tr: 'Neden germeyi bırakıyoruz', en: 'Why we drop the tensing' },
         body: {
-          tr: `İlk haftalarda germe ve bırakma, bedene iki durumu ayırt etmeyi öğretti. Şimdi beden bu farkı biliyor; gevşemeyi doğrudan çağırabilir. Öst'ün protokolünde bu adım "yalnızca bırakma" (release-only) olarak adlandırılır ve bir iki hafta sürer. Amaç, gevşemeyi gittikçe daha az zamanda ve daha az "tören" ile üretebilmektir; sonunda bir sözcük ve bir nefesle.
+          tr: `İlk haftalarda germe ve bırakma, bedene iki durumu ayırt etmeyi öğretti. Şimdi beden bu farkı biliyor; gevşemeyi doğrudan çağırabilir. Öst'ün yönteminde bu adımın adı "yalnızca bırakma"dır ve bir iki hafta sürer. Amaç, gevşemeyi giderek daha kısa sürede, sonunda bir sözcük ve bir nefesle üretebilmektir.
 
 Bu adımı denediğinizde gevşeme ilk adımdakinden daha sığ gelebilir. Bu beklenen bir durumdur; birkaç gün içinde derinleşir. Yeterince gevşeyemediğinizi düşündüğünüz günlerde ilk adıma dönmek yerine bu adımı tekrar edin.`,
-          en: `In the first weeks, tensing and releasing taught the body to tell the two states apart. The body now knows that difference and can call up relaxation directly. In Öst's protocol this step is called "release only" and lasts one to two weeks. The aim is to produce relaxation in less and less time with less and less "ceremony"; eventually with one word and one breath.
+          en: `In the first weeks, tensing and releasing taught the body to tell the two states apart. The body now knows that difference and can call up relaxation directly. In Öst's protocol this step is called "release only" and lasts one to two weeks. The aim is to produce relaxation ever faster, eventually with one word and one breath.
 
 When you try this step the relaxation may feel shallower than in step one. That is expected; it deepens within a few days. On days when you feel you did not relax enough, repeat this step rather than going back to step one.`,
         },
@@ -351,7 +351,7 @@ In the final minute feel the whole body as one. When ready, open your eyes and s
           tr: `- Günde iki kez, 5–7 dakika. Sabah kalkınca ve akşam işten dönünce iyi iki zaman dilimidir.
 - Farklı yerlerde deneyin: masada, otobüste, bekleme salonunda. Gevşemenin yalnızca yatakta olmadığını beden öğrensin.
 - Her uygulamadan önce ve sonra gerginliğinizi 0–10 arasında puanlayın. Birkaç gün sonra başlangıç puanlarının da düştüğünü görebilirsiniz.
-- Tinnitus sesini uygulama sırasında duymanız beklenir. Ses sizi rahatsız ettiğinde onu bir bölge gibi ele alın: sesi fark edin, nefes verin, bir sonraki bölgeye geçin.`,
+- Çınlama sesini uygulama sırasında duymanız beklenir. Ses sizi rahatsız ettiğinde onu bir bölge gibi ele alın: sesi fark edin, nefes verin, bir sonraki bölgeye geçin.`,
           en: `- Twice a day, 5–7 minutes. On waking and after coming home from work are two good slots.
 - Try different places: at your desk, on the bus, in a waiting room. Let the body learn that relaxation is not only for the bed.
 - Before and after each session rate your tension 0–10. After a few days you may see the starting scores fall too.
@@ -361,10 +361,10 @@ In the final minute feel the whole body as one. When ready, open your eyes and s
       {
         heading: { tr: 'Neden iki hafta', en: 'Why two weeks' },
         body: {
-          tr: `Öst'ün protokolünde her adım bir iki hafta sürer ve toplam eğitim 8–12 hafta alır. Bu süre keyfi değildir: gevşeme bir bilgi değil, bir motor beceridir; bisiklete binmek ya da bir enstrüman çalmak gibi tekrarla yerleşir. İki haftalık düzenli uygulamanın ardından beden, "bırak" komutunu daha az çabayla uygular ve bir sonraki adım (nefesle işaretli gevşeme) bu temelin üstüne kurulur.
+          tr: `Öst'ün yönteminde her adım bir iki hafta sürer ve toplam eğitim 8–12 hafta alır. Gevşeme bir bilgi değil, bisiklete binmek gibi tekrarla yerleşen bir beceridir. İki haftalık düzenli uygulamanın ardından beden, "bırak" komutunu daha az çabayla uygular ve bir sonraki adım (nefesle işaretli gevşeme) bu temelin üstüne kurulur.
 
 Günlük kayıtta gevşeme sonrası gerginlik puanınızı not etmeye devam edin. Puanlar bir çizgi gibi değil, dalgalı bir eğri gibi düşer; iki haftanın sonunda ortalamaya bakın.`,
-          en: `In Öst's protocol each step lasts one to two weeks and the whole training takes 8–12 weeks. That time is not arbitrary: relaxation is not a piece of knowledge but a motor skill; like riding a bicycle or playing an instrument it settles in through repetition. After two weeks of regular practice the body carries out the "release" command with less effort, and the next step (cue-controlled breathing) is built on that foundation.
+          en: `In Öst's protocol each step lasts one to two weeks and the whole training takes 8–12 weeks. Relaxation is not knowledge but a skill that settles in with repetition, like riding a bicycle. After two weeks of regular practice the body carries out the "release" command with less effort, and the next step (cue-controlled breathing) is built on that foundation.
 
 Keep noting your post-relaxation tension score in the daily record. Scores fall not in a straight line but as a wavy curve; at the end of the two weeks look at the average.`,
         },
@@ -394,34 +394,34 @@ Keep noting your post-relaxation tension score in the daily record. Scores fall 
   },
   {
     id: 'cbt.soundEnrichment',
-    title: { tr: 'Ses zenginleştirme: sessizlikten kaçınmak', en: 'Sound enrichment: avoiding silence' },
+    title: { tr: 'Rahatlatan arka plan sesi: sessizlikten kaçınmak', en: 'Sound enrichment: avoiding silence' },
     intro: {
-      tr: 'Sessiz bir odada tinnitus tek sestir ve bütün dikkati toplar. Düşük düzeyde, hoş bir ortam sesi, tinnitusun zemine karışmasına yardımcı olur. Bu modül ses zenginleştirmenin ne olduğunu, neyin işe yaradığını ve neyin yaramadığını anlatır.',
-      en: 'In a silent room tinnitus is the only sound and gathers all attention. A low-level, pleasant background sound helps the tinnitus blend into the ground. This module explains what sound enrichment is, what works and what does not.',
+      tr: 'Sessiz bir odada çınlama tek sestir ve bütün dikkati toplar. Kısık ve hoş bir arka plan sesi, çınlamanın diğer seslere karışmasına yardım eder.',
+      en: 'In a silent room tinnitus is the only sound and gathers all attention. A low-level, pleasant background sound helps the tinnitus blend in with other sounds.',
     },
     sections: [
       {
-        heading: { tr: 'Zemin ile şekil', en: 'Figure and ground' },
+        heading: { tr: 'Ön plan ve arka plan', en: 'Foreground and background' },
         body: {
-          tr: `Beyin sesleri birbirine göre algılar. Tamamen sessiz bir ortamda zayıf bir ses bile "şekil" olur; arka planda başka sesler olduğunda aynı ses "zemine" karışır. Tinnitusun gece ya da sessiz odada daha gürültülü gelmesinin nedeni budur: ses artmamıştır, karşılaştırma noktası kaybolmuştur.
+          tr: `Beyin sesleri birbirine göre algılar. Tamamen sessiz bir ortamda zayıf bir ses bile öne çıkar; arka planda başka sesler olduğunda aynı ses onlara karışır. Çınlamanın gece ya da sessiz odada daha gürültülü gelmesinin nedeni budur: ses artmamıştır, karşılaştırma noktası kaybolmuştur.
 
-Ses zenginleştirme, günün sessiz bölümlerine düşük düzeyde ve nötr bir ses eklemektir: vantilatör, yağmur, dere, pembe gürültü, hafif bir müzik. Kılavuzlar bunu bir seçenek olarak önerir; Cochrane derlemesi tek başına ses terapisinin kanıt düzeyini düşük bulur ve danışmanlıkla birlikte kullanılmasını önerir. Bu programda ses, BDT'nin yerine değil, yanına konur.`,
-          en: `The brain perceives sounds relative to each other. In complete silence even a faint sound becomes the "figure"; with other sounds in the background the same sound blends into the "ground". That is why tinnitus seems louder at night or in a quiet room: the sound has not increased, the reference point has disappeared.
+Rahatlatan arka plan sesi, günün sessiz anlarına eklenen kısık ve sakin bir sestir: vantilatör, yağmur, dere, pembe gürültü, hafif bir müzik. Kılavuzlar bunu bir seçenek olarak sunar. Cochrane derlemesi ise ses terapisinin tek başına etkisine dair kanıtı zayıf bulur. Bu yüzden programda ses, düşünce ve gevşeme çalışmalarının yerine değil, yanına konur.`,
+          en: `The brain perceives sounds relative to each other. In complete silence even a faint sound stands out; with other sounds in the background the same sound blends in. That is why tinnitus seems louder at night or in a quiet room: the sound has not increased, the reference point has disappeared.
 
-Sound enrichment means adding a low-level, neutral sound to the quiet parts of the day: a fan, rain, a stream, pink noise, soft music. Guidelines list it as an option; the Cochrane review rates the evidence for sound therapy alone as low and advises using it alongside counselling. In this programme sound sits beside CBT, not in place of it.`,
+Sound enrichment means adding a low-level, neutral sound to the quiet parts of the day: a fan, rain, a stream, pink noise, soft music. Guidelines list it as an option. The Cochrane review, however, rates the evidence for sound therapy on its own as weak. So in this programme sound sits beside the thought and relaxation work, not in place of it.`,
         },
       },
       {
         heading: { tr: 'Karışma noktası: maskelemek değil, karıştırmak', en: 'The mixing point: blending, not masking' },
         body: {
-          tr: `En önemli kural ses düzeyidir. Ses, tinnitusu tamamen örtmemelidir. Düzeyi, tinnitus ile dış sesin **karışmaya başladığı** noktanın hemen altına ayarlayın: ikisini de duyarsınız ama tinnitus artık yalnız değildir. Buna karışma noktası denir.
+          tr: `En önemli kural ses düzeyidir. Ses, çınlamayı tamamen örtmemelidir. Düzeyi, çınlama ile dış sesin **karışmaya başladığı** noktanın hemen altına ayarlayın: ikisini de duyarsınız ama çınlama artık yalnız değildir. Buna karışma noktası denir.
 
-Neden tamamen örtmüyoruz? Tinnitusu her sessizlikte örtmek, beynin ona alışmasını engeller; ses her ortaya çıktığında yeni bir olay gibi algılanır. Karışma noktasının altında kalmak, beynin sese güvenli bir bağlamda alışmasına izin verir. Ayrıca yüksek ses işitmeyi yorar ve ses hassasiyetini artırabilir.
+Neden tamamen örtmüyoruz? Çınlamayı her sessizlikte örtmek, beynin ona alışmasını engelleyebilir; ses her ortaya çıktığında yeni bir olay gibi algılanır. Karışma noktasının altında kalmak, beynin sese güvenli bir bağlamda alışmasına izin verir. Ayrıca yüksek ses işitmeyi yorar ve ses hassasiyetini artırabilir.
 
-Uygulamanın Sesler bölümündeki "karışma noktası" aracı bu düzeyi birlikte bulmanıza yardımcı olur. Düzeyi bulduktan sonra ayarı değiştirmeden bırakın; sesi "yeterince örtüyor mu" diye tekrar tekrar kontrol etmek, dikkati yeniden tinnitusa çeker.`,
+Uygulamanın Sesler bölümündeki "karışma noktası" aracı bu düzeyi birlikte bulmanıza yardımcı olur. Düzeyi bulduktan sonra ayarı değiştirmeden bırakın; sesi "yeterince örtüyor mu" diye tekrar tekrar kontrol etmek, dikkati yeniden çınlamaya çeker.`,
           en: `The most important rule is the level. The sound should not cover the tinnitus completely. Set it just below the point where the tinnitus and the outside sound **begin to blend**: you hear both, but the tinnitus is no longer alone. This is called the mixing point.
 
-Why not cover it fully? Masking the tinnitus every time it is quiet stops the brain from habituating to it; each time it reappears it is treated as a new event. Staying below the mixing point lets the brain get used to the sound in a safe context. Loud sound also tires the hearing and can increase sound sensitivity.
+Why not cover it fully? Masking the tinnitus every time it is quiet can stop the brain from habituating to it; each time it reappears it is treated as a new event. Staying below the mixing point lets the brain get used to the sound in a safe context. Loud sound also tires the hearing and can increase sound sensitivity.
 
 The "mixing point" tool in the Sounds section helps you find this level. Once found, leave it alone; repeatedly checking whether it "covers enough" draws attention back to the tinnitus.`,
         },
@@ -431,7 +431,7 @@ The "mixing point" tool in the Sounds section helps you find this level. Once fo
         kind: 'tip',
         body: {
           tr: `- Sessiz anlarda kullanın: okurken, çalışırken, uykuya dalarken. Gürültülü ortamda gerek yoktur.
-- Günde toplam iki saatten başlayıp mümkünse daha uzun süreye çıkın; programda günlük hedef tinnitus profilinize göre ayarlanır.
+- Günde toplam iki saatten başlayıp mümkünse daha uzun süreye çıkın; programda günlük hedef çınlama profilinize göre ayarlanır.
 - Gece için hoparlör ya da yastık hoparlörü kulaklıktan iyidir; ses sabit kalsın, aniden kesilmesin. Uyku zamanlayıcısı en az 90 dakika olsun.
 - Sesi sevin: rahatsız eden bir ses işe yaramaz. Doğa sesleri ve gürültü türleri arasında sonuç farkı gösterilmemiştir; tercihiniz belirleyicidir.
 - Kulaklıkla kullanıyorsanız ses düzeyi sınırını açık tutun ve günde birkaç saatle sınırlayın.`,
@@ -446,9 +446,9 @@ The "mixing point" tool in the Sounds section helps you find this level. Once fo
         heading: { tr: 'Kaçınılması gerekenler', en: 'What to avoid' },
         kind: 'warning',
         body: {
-          tr: `- Tam sessizlik: kulak tıkacı ile uyumak ya da sessiz odada uzun süre kalmak tinnitusu öne çıkarır ve ses hassasiyetini artırabilir.
+          tr: `- Tam sessizlik: kulak tıkacı ile uyumak ya da sessiz odada uzun süre kalmak çınlamayı öne çıkarır ve ses hassasiyetini artırabilir.
 - Sesi gün boyu yüksek düzeyde açık tutmak: işitme için risk oluşturur ve alışmayı geciktirir.
-- "Tinnitusu geçiren ses" vaadiyle satılan uygulamalar ve kayıtlar: ses zenginleştirme bir rahatlatma aracıdır; tek başına sesi azalttığına dair güvenilir kanıt yoktur.`,
+- "Çınlamayı geçiren ses" vaadiyle satılan uygulamalar ve kayıtlar: rahatlatan arka plan sesi bir rahatlatma aracıdır; tek başına sesi azalttığına dair güvenilir kanıt yoktur.`,
           en: `- Complete silence: sleeping with earplugs or spending long periods in a silent room brings tinnitus forward and can increase sound sensitivity.
 - Keeping sound on loud all day: it risks hearing and delays habituation.
 - Apps and recordings sold as "sounds that cure tinnitus": sound enrichment is a comfort tool; there is no reliable evidence that it reduces the sound on its own.`,
@@ -475,7 +475,7 @@ The "mixing point" tool in the Sounds section helps you find this level. Once fo
       ],
     },
     keyTakeaway: {
-      tr: 'Düşük düzeyde ve karışma noktasının altında kalan hoş bir ortam sesi tinnitusu yalnız bırakmaz; sesi örtmek değil, zemine karıştırmak hedeftir.',
+      tr: 'Düşük düzeyde ve karışma noktasının altında kalan hoş bir arka plan sesi çınlamayı yalnız bırakmaz; sesi örtmek değil, arka plana karıştırmak hedeftir.',
       en: 'A pleasant background sound kept low and below the mixing point means the tinnitus is no longer alone; the goal is to blend it into the ground, not to cover it.',
     },
     citations: ['sereda2018', 'scherer2019', 'tunkel2014'],
@@ -484,14 +484,14 @@ The "mixing point" tool in the Sounds section helps you find this level. Once fo
     id: 'cbt.thoughtDiary',
     title: { tr: 'Düşünce günlüğüne giriş', en: 'Introducing the thought diary' },
     intro: {
-      tr: 'Tinnitusla ilgili sıkıntının büyük bölümü sesin kendisinden değil, ses hakkında düşündüklerimizden gelir. Düşünce günlüğü, bu düşünceleri yakalamanın ve zamanla onlarla ilişkinizi değiştirmenin aracıdır.',
+      tr: 'Çınlamayla ilgili sıkıntının büyük bölümü sesin kendisinden değil, ses hakkında düşündüklerimizden gelir. Düşünce günlüğü, bu düşünceleri yakalamanın ve zamanla onlarla ilişkinizi değiştirmenin aracıdır.',
       en: 'Much of the distress around tinnitus comes not from the sound itself but from what we think about it. The thought diary is the tool for catching these thoughts and, over time, changing your relationship with them.',
     },
     sections: [
       {
         heading: { tr: 'Olay, düşünce, duygu', en: 'Event, thought, feeling' },
         body: {
-          tr: `BDT'nin temel gözlemi basittir: bir olay doğrudan bir duygu yaratmaz; arada bir yorum vardır. Aynı ses iki kişide farklı duygular doğurur çünkü iki kişi ona farklı anlam verir.
+          tr: `Bu terapinin temel gözlemi basittir: bir olay doğrudan bir duygu yaratmaz; arada bir yorum vardır. Aynı ses iki kişide farklı duygular doğurur çünkü iki kişi ona farklı anlam verir.
 
 Bir örnek: akşam oturma odasında ses belirginleşti. Birinci yorum: "Yine başladı, bu gece de uyuyamayacağım, bu böyle sürüp gidecek." Duygu: çaresizlik, kaygı, öfke. İkinci yorum: "Oda sessiz, ses her akşam bu saatte öne çıkıyor; yarın sabah yine arka planda olacak." Duygu: hafif rahatsızlık, belki biraz yorgunluk. Ses aynı, gece farklı.
 
@@ -580,30 +580,30 @@ You will see the value of this entry in week four: "I will not get anything done
     id: 'cbt.sleepGuidelines',
     title: { tr: 'Uyku ilkeleri', en: 'Sleep guidelines' },
     intro: {
-      tr: 'Tinnitusu olan kişilerin önemli bir bölümü uykuya dalmakta ya da gece uyandıktan sonra tekrar uyumakta zorlanır. Bu modül, uyku hijyeni ile uyaran kontrolünün tinnitusa uyarlanmış temel ilkelerini sunar. Belirgin uykusuzluk yaşıyorsanız programın Uyku için BDT bölümü bu ilkeleri derinleştirir.',
-      en: 'A sizeable share of people with tinnitus struggle to fall asleep or to get back to sleep after waking at night. This module presents the core principles of sleep hygiene and stimulus control adapted to tinnitus. If you have marked insomnia, the CBT for insomnia part of the programme deepens these principles.',
+      tr: 'Çınlaması olan kişilerin önemli bir bölümü uykuya dalmakta ya da gece uyandıktan sonra tekrar uyumakta zorlanır. Bu modül, iyi uyku alışkanlıklarının ve yatağı yeniden uykuya bağlama yönteminin çınlamaya uyarlanmış ilkelerini anlatır. Belirgin uykusuzluk yaşıyorsanız programın uyku dersleri bu ilkeleri derinleştirir.',
+      en: 'A sizeable share of people with tinnitus struggle to fall asleep or to get back to sleep after waking at night. This module presents the core principles of sleep hygiene and stimulus control adapted to tinnitus. If you have marked insomnia, the sleep lessons of the programme go deeper.',
     },
     sections: [
       {
-        heading: { tr: 'Tinnitus ve uyku arasındaki döngü', en: 'The loop between tinnitus and sleep' },
+        heading: { tr: 'Çınlama ve uyku arasındaki döngü', en: 'The loop between tinnitus and sleep' },
         body: {
-          tr: `Yatak odası genellikle günün en sessiz yeridir; tinnitus burada en belirgindir. Uykuya dalamamak kaygı doğurur, kaygı uyanıklığı artırır, uyanıklık sesi daha çok fark ettirir. Birkaç kötü geceden sonra yatak, uyku yerine "sesle baş başa kalma" ile ilişkilenir ve yatağa girmek bile tetikleyici olur.
+          tr: `Yatak odası genellikle günün en sessiz yeridir; çınlama burada en belirgindir. Uykuya dalamamak kaygı doğurur, kaygı uyanıklığı artırır, uyanıklık sesi daha çok fark ettirir. Birkaç kötü geceden sonra yatak, uyku yerine "sesle baş başa kalma" ile ilişkilenir ve yatağa girmek bile tetikleyici olur.
 
-İyi haber, uykunun tinnitustan bağımsız olarak düzeltilebilir olmasıdır. Marks ve arkadaşlarının 2023 tarihli randomize çalışmasında uykusuzluk için BDT, tinnitus eğitimi ve ses zenginleştirmesine dayalı bakıma kıyasla uykuda ve tinnitus sıkıntısında daha büyük düzelme sağladı. Uykuyu hedeflemek tinnitusa da iyi gelir.`,
+İyi haber, uykunun çınlamadan bağımsız olarak düzeltilebilir olmasıdır. Marks ve arkadaşlarının 2023 tarihli çalışmasında uykusuzluk terapisi, çınlama eğitimi ve arka plan sesine dayalı bakımdan daha çok yarar sağladı: uyku daha fazla düzeldi, çınlama sıkıntısı da azaldı. Uykuya çalışmak çınlama sıkıntısını da hafifletebilir.`,
           en: `The bedroom is usually the quietest place of the day; tinnitus is most prominent there. Not falling asleep breeds anxiety, anxiety increases wakefulness, wakefulness makes the sound more noticeable. After a few bad nights the bed becomes linked with "being alone with the sound" rather than with sleep, and even getting into bed becomes a trigger.
 
-The good news is that sleep can be improved independently of tinnitus. In the 2023 randomised trial by Marks and colleagues, CBT for insomnia improved sleep and tinnitus distress more than care based on tinnitus education and sound enrichment. Targeting sleep helps tinnitus too.`,
+The good news is that sleep can be improved independently of tinnitus. In the 2023 randomised trial by Marks and colleagues, CBT for insomnia helped more than care based on tinnitus education and sound enrichment: sleep improved more, and tinnitus distress fell too. Working on sleep can ease tinnitus distress as well.`,
         },
       },
       {
-        heading: { tr: 'Uyku hijyeni: zemin hazırlamak', en: 'Sleep hygiene: preparing the ground' },
+        heading: { tr: 'İyi uyku alışkanlıkları', en: 'Sleep hygiene: preparing the ground' },
         body: {
           tr: `- **Sabit kalkış saati.** Haftanın yedi günü aynı saatte kalkın; uyku dürtüsünü düzenleyen en güçlü sinyal budur. Yatış saati değişebilir, kalkış saati değişmez.
 - **Kafein ve alkol.** Öğleden sonra kafein almayın. Alkol uykuya dalmayı kolaylaştırır gibi görünse de gecenin ikinci yarısını böler.
 - **Işık.** Sabah güneş ışığı alın; akşam ekran parlaklığını düşürün. Yatak odası karanlık ve serin olsun.
 - **Gündüz uykusu.** Gündüz uyumayın ya da 20 dakikayla sınırlayın; öğleden sonra üçten sonra hiç uyumayın.
 - **Egzersiz.** Düzenli hareket uykuyu derinleştirir; ancak yatmadan önceki iki saatte yoğun egzersizden kaçının.
-- **Ses.** Yatak odasında düşük düzeyde ortam sesi kullanın (önceki modül). Tam sessizlik tinnitusu öne çıkarır.`,
+- **Ses.** Yatak odasında düşük düzeyde arka plan sesi kullanın (önceki modül). Tam sessizlik çınlamayı öne çıkarır.`,
           en: `- **Fixed rise time.** Get up at the same time all seven days; this is the strongest signal regulating sleep drive. Bedtime can vary, rise time does not.
 - **Caffeine and alcohol.** No caffeine after midday. Alcohol may seem to help you drop off, but it fragments the second half of the night.
 - **Light.** Get daylight in the morning; dim screens in the evening. Keep the bedroom dark and cool.
@@ -616,7 +616,7 @@ The good news is that sleep can be improved independently of tinnitus. In the 20
         heading: { tr: 'Uyaran kontrolü: yatağı yeniden uykuya bağlamak', en: 'Stimulus control: re-linking the bed with sleep' },
         kind: 'exercise',
         body: {
-          tr: `Uyaran kontrolü, uykusuzluk için en güçlü kanıta sahip davranışsal yöntemdir. Kuralları basittir, uygulaması sabır ister:
+          tr: `Uyaran kontrolü, uykusuzlukta en iyi incelenmiş davranış yöntemlerinden biridir. Kuralları basittir, uygulaması sabır ister:
 
 1. Yatağa yalnızca uykunuz geldiğinde gidin; saat geldiğinde değil.
 2. Yatakta uyku ve yakınlık dışında bir şey yapmayın: telefon, televizyon, yemek, çalışma yok.
@@ -624,8 +624,8 @@ The good news is that sleep can be improved independently of tinnitus. In the 20
 4. Gece uyanıp tekrar uyuyamazsanız aynı kuralı uygulayın.
 5. Kaç saat uyuduğunuzdan bağımsız olarak aynı saatte kalkın.
 
-Tinnitusa uyarlama: kalktığınızda gittiğiniz odada da düşük düzeyde ses olsun. Yatakta uyanık kalıp sesi dinlemek, yatak ile sesi birbirine bağlar; kalkmak bu bağı koparır. İlk hafta daha az uyuyabilirsiniz; bu geçicidir ve yöntemin işlemesinin parçasıdır.`,
-          en: `Stimulus control is the behavioural method with the strongest evidence for insomnia. The rules are simple; applying them takes patience:
+Çınlamaya uyarlama: kalktığınızda gittiğiniz odada da düşük düzeyde ses olsun. Yatakta uyanık kalıp sesi dinlemek, yatak ile sesi birbirine bağlar; kalkmak bu bağı koparır. İlk hafta daha az uyuyabilirsiniz; bu geçicidir ve yöntemin işlemesinin parçasıdır.`,
+          en: `Stimulus control is one of the best-studied behavioural methods for insomnia. The rules are simple; applying them takes patience:
 
 1. Go to bed only when sleepy, not when the clock says so.
 2. Do nothing in bed other than sleep and intimacy: no phone, television, food or work.
@@ -641,7 +641,7 @@ Adaptation for tinnitus: have low-level sound in the room you move to as well. L
         kind: 'tip',
         body: {
           tr: `- Saate bakmayın; saat hesaplamak uyanıklığı artırır.
-- "Yine uyuyamayacağım" düşüncesini fark edin ve ona cevap vermeyin; nefesinize ya da ortam sesine dönün.
+- "Yine uyuyamayacağım" düşüncesini fark edin ve ona cevap vermeyin; nefesinize ya da arka plan sesine dönün.
 - Kısa gevşeme (2. adım) yatakta yapılabilir; ancak 15–20 dakika sonra hâlâ uyanıksanız kalkın.
 - Sabah olmuşsa ve kalkış saatinize bir saatten az kaldıysa kalkın; günü başlatın.`,
           en: `- Do not look at the clock; calculating hours increases wakefulness.
@@ -657,14 +657,14 @@ Adaptation for tinnitus: have low-level sound in the room you move to as well. L
       items: [
         { tr: 'Haftanın yedi günü için tek bir kalkış saati belirledim.', en: 'I set one rise time for all seven days of the week.' },
         { tr: 'Öğleden sonra kafeini kestim.', en: 'I cut caffeine after midday.' },
-        { tr: 'Yatak odasına düşük düzeyde ortam sesi kurdum.', en: 'I set up low-level background sound in the bedroom.' },
+        { tr: 'Yatak odasına düşük düzeyde arka plan sesi kurdum.', en: 'I set up low-level background sound in the bedroom.' },
         { tr: 'Telefonu yatak odasının dışında bırakıyorum.', en: 'I leave the phone outside the bedroom.' },
         { tr: 'Uyuyamadığımda kalkıp başka bir odaya geçmeyi en az bir gece denedim.', en: 'I tried getting up and moving to another room when I could not sleep, on at least one night.' },
       ],
     },
     keyTakeaway: {
-      tr: 'Sabit kalkış saati, yatakta yalnızca uyumak ve uyuyamayınca kalkmak; tinnitusu olan kişilerde uyku bu üç kuralla ve düşük ortam sesiyle yeniden kurulur.',
-      en: 'A fixed rise time, the bed only for sleep and getting up when sleep does not come; with low background sound, these three rules rebuild sleep for people with tinnitus.',
+      tr: 'Sabit kalkış saati, yatakta yalnızca uyumak ve uyuyamayınca kalkmak; çınlaması olan kişilerde uyku bu üç kuralla ve kısık arka plan sesiyle yeniden kurulabilir.',
+      en: 'A fixed rise time, the bed only for sleep and getting up when sleep does not come; with low background sound, these three rules can rebuild sleep for people with tinnitus.',
     },
     citations: ['marks2023', 'espie2014'],
   },
@@ -677,14 +677,14 @@ Adaptation for tinnitus: have low-level sound in the room you move to as well. L
     },
     sections: [
       {
-        heading: { tr: 'Koşullu işaret', en: 'The conditioned cue' },
+        heading: { tr: 'Gevşemeyi bir işarete bağlamak', en: 'Tying relaxation to a cue' },
         body: {
-          tr: `Önceki iki adımda gevşemeyi üretmeyi öğrendiniz. Şimdi bu durumu bir işarete bağlayacağız: nefes verme anı ve "gevşe" sözcüğü. Tekrar tekrar eşleştirildiğinde işaret ile durum birbirine bağlanır; tıpkı bir kokunun bir anıyı çağırması gibi. Öst bu adıma "cue-controlled", yani işaretle denetimli gevşeme adını verir.
+          tr: `Önceki iki adımda gevşemeyi üretmeyi öğrendiniz. Şimdi bu durumu bir işarete bağlayacağız: nefes verme anı ve "gevşe" sözcüğü. Tekrar tekrar eşleştirildiğinde işaret ile durum birbirine bağlanır; tıpkı bir kokunun bir anıyı çağırması gibi. Öst bu adıma "işaretle gevşeme" der.
 
-Nefes bu iş için uygundur çünkü her zaman yanınızdadır ve yavaş nefes verme tek başına sinir sistemini yatıştırır. Dakikada altı civarı nefes (yaklaşık dört saniye alıp altı saniye verme) kaygı ve uykuya dalma üzerinde orta düzeyde kanıta sahiptir; burada bir tinnitus tedavisi olarak değil, gevşeme becerisinin bir parçası olarak sunulur.`,
+Nefes bu iş için uygundur çünkü her zaman yanınızdadır ve yavaş nefes verme tek başına sinir sistemini yatıştırır. Dakikada altı civarı nefesin (yaklaşık dört saniye alıp altı saniye vermek) kaygıyı azaltıp uykuya dalmayı kolaylaştırabileceğine dair bazı kanıtlar var. Burada çınlama tedavisi olarak değil, gevşeme becerisinin bir parçası olarak sunulur.`,
           en: `In the previous two steps you learned to produce relaxation. Now we will tie that state to a cue: the moment of breathing out and the word "relax". Paired again and again, cue and state become linked, just as a smell can call up a memory. Öst calls this step cue-controlled relaxation.
 
-The breath suits this purpose because it is always with you and slow exhalation by itself calms the nervous system. Around six breaths a minute (roughly four seconds in, six seconds out) has moderate evidence for anxiety and sleep onset; here it is offered not as a tinnitus treatment but as part of the relaxation skill.`,
+The breath suits this purpose because it is always with you and slow exhalation by itself calms the nervous system. There is some evidence that around six breaths a minute (roughly four seconds in, six seconds out) can ease anxiety and sleep onset. Here it is offered not as a tinnitus treatment but as part of the relaxation skill.`,
         },
       },
       {
@@ -711,7 +711,7 @@ Twice a day for two weeks. The word may be something else for you: "calm", "let 
         heading: { tr: 'Sesle birlikte', en: 'Together with the sound' },
         kind: 'tip',
         body: {
-          tr: `Bu adımdan itibaren egzersizi bilerek tinnitusun belirgin olduğu anlarda da yapın: sessiz odada, gece yatakta, yorgunken. Amaç sesi yok etmek değil, ses varken de gevşeyebildiğinizi bedene göstermektir. Ses yükselmiş gibi gelirse bu bir başarısızlık değildir; nefes verin, sözcüğü söyleyin, devam edin.`,
+          tr: `Bu adımdan itibaren egzersizi bilerek çınlamanın belirgin olduğu anlarda da yapın: sessiz odada, gece yatakta, yorgunken. Amaç sesi yok etmek değil, ses varken de gevşeyebildiğinizi bedene göstermektir. Ses yükselmiş gibi gelirse bu bir başarısızlık değildir; nefes verin, sözcüğü söyleyin, devam edin.`,
           en: `From this step on, deliberately practise at moments when the tinnitus is prominent: in a quiet room, at night in bed, when tired. The aim is not to remove the sound but to show the body that you can relax while the sound is there. If the sound seems to rise, that is not a failure; breathe out, say the word, continue.`,
         },
       },
@@ -748,7 +748,7 @@ Twice a day for two weeks. The word may be something else for you: "calm", "let 
     id: 'cbt.negativeThoughts',
     title: { tr: 'Olumsuz düşünceleri tanımak', en: 'Recognising negative thoughts' },
     intro: {
-      tr: 'İki haftadır düşünce günlüğü tutuyorsunuz. Şimdi kayıtlara geri dönüp tekrar eden kalıpları tanıma zamanı. Tinnitusla ilgili düşünceler birkaç tipik biçimde bozulur; kalıbı adlandırmak, düşünceyi gerçekten ayırmanın ilk adımıdır.',
+      tr: 'İki haftadır düşünce günlüğü tutuyorsunuz. Şimdi kayıtlara geri dönüp tekrar eden kalıpları tanıma zamanı. Çınlamayla ilgili düşünceler birkaç tipik biçimde çarpılır; kalıba ad koymak, düşünce ile gerçeği ayırmanın ilk adımıdır.',
       en: 'You have kept a thought diary for two weeks. Now it is time to return to the entries and recognise recurring patterns. Thoughts about tinnitus tend to distort in a few typical ways; naming the pattern is the first step in separating the thought from the fact.',
     },
     sections: [
@@ -757,14 +757,14 @@ Twice a day for two weeks. The word may be something else for you: "calm", "let 
         body: {
           tr: `Zihin kısa yollar kullanır. Çoğu zaman bu kısa yollar işe yarar; kaygı ya da yorgunluk anlarında ise sistematik biçimde yanılır. Bu yanılmalara bilişsel çarpıtma ya da düşünce hatası denir. Düşünce hatası, düşüncenin yanlış olduğu anlamına gelmez; kanıttan daha fazlasını iddia ettiği anlamına gelir.
 
-Tinnitus bu hataları kolayca tetikler çünkü ses belirsizdir: nereden geldiği görülmez, ne zaman biteceği bilinmez, başkaları duymaz. Belirsizlik, zihnin boşlukları en kötü olasılıkla doldurmasına zemin hazırlar.`,
+Çınlama bu hataları kolayca tetikler çünkü ses belirsizdir: nereden geldiği görülmez, ne zaman biteceği bilinmez, başkaları duymaz. Belirsizlik, zihnin boşlukları en kötü olasılıkla doldurmasına zemin hazırlar.`,
           en: `The mind uses shortcuts. Most of the time they work; in moments of anxiety or fatigue they err systematically. These errors are called cognitive distortions or thinking errors. A thinking error does not mean the thought is wrong; it means the thought claims more than the evidence supports.
 
 Tinnitus triggers these errors easily because the sound is ambiguous: its source cannot be seen, its end is unknown, others cannot hear it. Ambiguity invites the mind to fill the gaps with the worst possibility.`,
         },
       },
       {
-        heading: { tr: 'Tinnitusta sık görülen kalıplar', en: 'Patterns common in tinnitus' },
+        heading: { tr: 'Çınlamada sık görülen kalıplar', en: 'Patterns common in tinnitus' },
         body: {
           tr: `- **Felaketleştirme:** "Bu ses sonunda beni delirtecek." Olası en kötü sonucu olacakmış gibi ele almak.
 - **Ya hep ya hiç:** "Ses varken hiçbir şeyden zevk alamam." Ara durumların silinmesi.
@@ -828,7 +828,7 @@ The link works both ways. When you recognise the pattern and put distance betwee
       ],
     },
     keyTakeaway: {
-      tr: 'Tinnitusla ilgili düşünceler birkaç tipik kalıpta bozulur; kalıbı adlandırmak düşünceyi yok etmez ama onunla aranıza sorgulamak için gereken mesafeyi koyar.',
+      tr: 'Çınlamayla ilgili düşünceler birkaç tipik kalıpta bozulur; kalıbı adlandırmak düşünceyi yok etmez ama onunla aranıza sorgulamak için gereken mesafeyi koyar.',
       en: 'Thoughts about tinnitus distort in a few typical patterns; naming the pattern does not remove the thought but creates the distance needed to question it.',
     },
     citations: ['fuller2020', 'beukes2018'],
@@ -837,7 +837,7 @@ The link works both ways. When you recognise the pattern and put distance betwee
     id: 'cbt.positiveImagery',
     title: { tr: 'Olumlu imgeleme', en: 'Positive imagery' },
     intro: {
-      tr: 'Zihin görüntülerle de düşünür. Tinnitusla ilgili kaygı çoğu zaman bir görüntü olarak gelir: uykusuz bir gece, sessiz bir odada baş başa kalma. Bu modülde zihnin aynı gücünü tersine kullanmayı, sesi daha az tehditkâr bir çerçeveye yerleştiren imgeler oluşturmayı öğreneceksiniz.',
+      tr: 'Zihin görüntülerle de düşünür. Çınlamayla ilgili kaygı çoğu zaman bir görüntü olarak gelir: uykusuz bir gece, sessiz bir odada baş başa kalma. Bu modülde zihnin aynı gücünü tersine kullanmayı, sesi daha az tehditkâr bir çerçeveye yerleştiren imgeler oluşturmayı öğreneceksiniz.',
       en: 'The mind thinks in images too. Anxiety about tinnitus often arrives as a picture: a sleepless night, being alone in a silent room. In this module you will learn to use the same power of the mind in reverse, building images that place the sound in a less threatening frame.',
     },
     sections: [
@@ -846,7 +846,7 @@ The link works both ways. When you recognise the pattern and put distance betwee
         body: {
           tr: `Bir limonu kestiğinizi, suyunun parmaklarınıza aktığını ve bir dilimi ısırdığınızı hayal edin. Ağzınız sulanır; limon yoktur. Zihindeki görüntüler bedeni, gerçek olaylara yakın biçimde etkiler. Bu, kaygı için bir sorun, gevşeme için bir fırsattır.
 
-Tinnitus programlarında olumlu imgeleme iki amaçla kullanılır. Birincisi, gevşemeyi derinleştiren güvenli bir yer imgesi. İkincisi, sesin kendisini yeniden çerçeveleyen bir imge: sesi düşman olmaktan çıkarıp bir doğa sesi, bir arka plan dokusu ya da uzaklaşan bir nesne olarak görmek. Bu, sesi sevmek zorunda olduğunuz anlamına gelmez; onu daha az tehlikeli bir kategoriye taşımak yeterlidir.`,
+Çınlama programlarında olumlu imgeleme iki amaçla kullanılır. Birincisi, gevşemeyi derinleştiren güvenli bir yer imgesi. İkincisi, sesin kendisini yeniden çerçeveleyen bir imge: sesi düşman olmaktan çıkarıp bir doğa sesi, bir arka plan dokusu ya da uzaklaşan bir nesne olarak görmek. Bu, sesi sevmek zorunda olduğunuz anlamına gelmez; onu daha az tehlikeli bir kategoriye taşımak yeterlidir.`,
           en: `Imagine cutting a lemon, the juice running over your fingers, biting into a slice. Your mouth waters; there is no lemon. Images in the mind affect the body in ways close to real events. That is a problem for anxiety and an opportunity for relaxation.
 
 Tinnitus programmes use positive imagery for two purposes. First, an image of a safe place that deepens relaxation. Second, an image that reframes the sound itself: moving it from enemy to a sound of nature, a background texture or a receding object. This does not mean you must like the sound; moving it into a less dangerous category is enough.`,
@@ -864,7 +864,7 @@ Tinnitus programmes use positive imagery for two purposes. First, an image of a 
 - **Dokunma:** Güneşin sıcaklığı, kumun dokusu, bir battaniye.
 - **Beden:** Oturuyor musunuz, uzanıyor musunuz? Ağırlığınız nerede?
 
-Yeri her gün aynı ayrıntılarla ziyaret edin. Birkaç tekrardan sonra bir iki saniyede oraya gidebilirsiniz. Tinnitusu bu yerin sesleri arasına yerleştirin: uzaktaki bir cırcır böceği, elektrik direğinin uğultusu, rüzgârın tel örgüde çıkardığı ses. Ses yerin bir parçası olduğunda tehdit olmaktan çıkar.`,
+Yeri her gün aynı ayrıntılarla ziyaret edin. Birkaç tekrardan sonra bir iki saniyede oraya gidebilirsiniz. Çınlamayı bu yerin sesleri arasına yerleştirin: uzaktaki bir cırcır böceği, elektrik direğinin uğultusu, rüzgârın tel örgüde çıkardığı ses. Ses yerin bir parçası olduğunda tehdit olmaktan çıkar.`,
           en: `Close your eyes and choose a place where you feel completely at peace, real or imagined. A beach, a forest path, the garden of your childhood home, a warm kitchen. Build the place with all five senses:
 
 - **Sight:** What is the light like, what colours, what is on the horizon?
@@ -915,7 +915,7 @@ Imagery is not a suppression method. If the sound comes forward despite the imag
         { tr: 'Bu yerin sesleri: hangi sesler var, hangisi yakın, hangisi uzak?', en: 'The sounds of this place: which sounds are there, which near, which far?', seconds: 60 },
         { tr: 'Kokular ve dokunma: hava, sıcaklık, altınızdaki yüzey.', en: 'Smells and touch: the air, the temperature, the surface beneath you.', seconds: 60 },
         { tr: 'Bedeninizi bu yerde hissedin. Ağırlığınız, nefesiniz, rahatlığınız.', en: 'Feel your body in this place. Your weight, your breath, your ease.', seconds: 60 },
-        { tr: 'Tinnitusu bu yerin seslerinden biri olarak davet edin. Uzakta, dokunun bir parçası.', en: 'Invite the tinnitus in as one of the sounds of this place. Distant, part of the texture.', seconds: 90 },
+        { tr: 'Çınlamayı bu yerin seslerinden biri olarak davet edin. Uzakta, dokunun bir parçası.', en: 'Invite the tinnitus in as one of the sounds of this place. Distant, part of the texture.', seconds: 90 },
         { tr: 'Birkaç nefes daha bu yerde kalın. Buraya her zaman dönebileceğinizi bilin.', en: 'Stay a few more breaths in this place. Know that you can always return.', seconds: 60 },
         { tr: 'Yavaşça odaya dönün. Parmaklar, nefes, gözler.', en: 'Slowly come back to the room. Fingers, breath, eyes.', seconds: 30 },
       ],
@@ -928,7 +928,7 @@ Imagery is not a suppression method. If the sound comes forward despite the imag
   },
   {
     id: 'cbt.relax4',
-    title: { tr: 'Derin gevşeme 4: fark eden gevşeme', en: 'Deep relaxation 4: differential relaxation' },
+    title: { tr: 'Derin gevşeme 4: seçici gevşeme', en: 'Deep relaxation 4: differential relaxation' },
     intro: {
       tr: 'Dördüncü adım gevşemeyi hareketin içine taşır. Gündelik bir iş yaparken yalnızca o iş için gereken kaslar çalışır; geri kalanı gevşek kalır. Bu, gevşemenin sandalyeden kalkıp hayata karıştığı adımdır.',
       en: 'The fourth step carries relaxation into movement. While doing an everyday task, only the muscles needed for that task work; the rest stay loose. This is the step where relaxation leaves the chair and joins daily life.',
@@ -937,9 +937,9 @@ Imagery is not a suppression method. If the sound comes forward despite the imag
       {
         heading: { tr: 'Gereksiz gerginlik', en: 'Unnecessary tension' },
         body: {
-          tr: `Yazı yazarken omuzlarınız kalkıyor mu? Telefonda konuşurken çeneniz sıkılıyor mu? Araba kullanırken direksiyonu gereğinden sıkı mı tutuyorsunuz? Çoğumuz bir işi yaparken o işle ilgisi olmayan onlarca kası da gerer. Bu "artık gerginlik" gün boyu birikir ve akşam tinnitusun daha gürültülü geldiği yorgunluğun bir parçasıdır.
+          tr: `Yazı yazarken omuzlarınız kalkıyor mu? Telefonda konuşurken çeneniz sıkılıyor mu? Araba kullanırken direksiyonu gereğinden sıkı mı tutuyorsunuz? Çoğumuz bir işi yaparken o işle ilgisi olmayan onlarca kası da gerer. Bu "artık gerginlik" gün boyu birikir ve akşam çınlamanın daha gürültülü geldiği yorgunluğun bir parçasıdır.
 
-Fark eden gevşeme (differential relaxation), bir etkinlik sırasında hangi kasların gerçekten gerektiğini ayırt edip diğerlerini bırakma becerisidir. Öst'ün protokolünde bu adım, oturarak, ayakta ve hareket hâlinde olmak üzere kademeli uygulanır ve 60–90 saniyelik kısa gevşemelerle çalışılır.`,
+Seçici gevşeme, bir iş sırasında hangi kasların gerçekten gerektiğini fark edip diğerlerini bırakma becerisidir. Öst'ün yönteminde bu adım, oturarak, ayakta ve hareket hâlinde olmak üzere kademeli uygulanır ve 60–90 saniyelik kısa gevşemelerle çalışılır.`,
           en: `Do your shoulders rise when you type? Does your jaw clench when you talk on the phone? Do you grip the steering wheel harder than needed? Most of us tense dozens of muscles unrelated to the task while doing it. This "residual tension" accumulates through the day and is part of the evening fatigue in which tinnitus sounds louder.
 
 Differential relaxation is the skill of telling which muscles a task really needs and letting the others go. In Öst's protocol this step is practised in stages, sitting, standing and moving, using short 60–90 second relaxations.`,
@@ -969,8 +969,8 @@ Stay two or three days at each stage. This week twice a day, with different acti
         heading: { tr: 'Gün içinde kontrol noktaları', en: 'Checkpoints through the day' },
         kind: 'tip',
         body: {
-          tr: `Günde beş altı kez, kısa bir "gerginlik taraması" yapın: omuzlar, çene, eller, karın. Telefonu her elinize aldığınızda, her kapıdan geçtiğinizde, her e-postayı açtığınızda. Tarama üç saniye sürer; bulduğunuz gerginliği bir nefesle bırakın. Çene ve boyun gerginliği olan kişilerde bu alışkanlık tinnitusun somatik bileşenini de hafifletebilir; bu konu için programın egzersiz bölümüne bakın.`,
-          en: `Five or six times a day, do a short "tension scan": shoulders, jaw, hands, abdomen. Each time you pick up the phone, walk through a door, open an email. The scan takes three seconds; release what you find with one breath. For people with jaw and neck tension this habit may also ease the somatic component of tinnitus; see the exercise section of the programme for that.`,
+          tr: `Günde beş altı kez, kısa bir "gerginlik taraması" yapın: omuzlar, çene, eller, karın. Telefonu her elinize aldığınızda, her kapıdan geçtiğinizde, her e-postayı açtığınızda. Tarama üç saniye sürer; bulduğunuz gerginliği bir nefesle bırakın. Çene ve boyun gerginliği olan kişilerde bu alışkanlık, çınlamanın boyun ve çeneden gelen payını da hafifletebilir; bunun için programın boyun-çene egzersizlerine bakın.`,
+          en: `Five or six times a day, do a short "tension scan": shoulders, jaw, hands, abdomen. Each time you pick up the phone, walk through a door, open an email. The scan takes three seconds; release what you find with one breath. For people with jaw and neck tension this habit may also ease the part of tinnitus that comes from the neck and jaw; see the programme's neck and jaw exercises for that.`,
         },
       },
       {
@@ -1010,8 +1010,8 @@ Stay two or three days at each stage. This week twice a day, with different acti
     id: 'cbt.restructuring',
     title: { tr: 'Düşünceleri yeniden yapılandırma', en: 'Restructuring thoughts' },
     intro: {
-      tr: 'Düşünceleri yakaladınız ve kalıplarını tanıdınız. Bu modülde her düşünceyi bir iddia gibi ele alıp kanıtları tartacak ve daha dengeli bir alternatif oluşturacaksınız. Bu, BDT\'nin çekirdek becerisidir ve haftalar içinde otomatikleşir.',
-      en: 'You have caught the thoughts and recognised their patterns. In this module you will treat each thought as a claim, weigh the evidence and build a more balanced alternative. This is the core skill of CBT and becomes automatic over the weeks.',
+      tr: 'Düşünceleri yakaladınız ve kalıplarını tanıdınız. Bu modülde her düşünceyi bir iddia gibi ele alıp kanıtları tartacak ve daha dengeli bir alternatif oluşturacaksınız. Bu, terapinin temel becerisidir ve haftalar içinde alışkanlık hâline gelir.',
+      en: 'You have caught the thoughts and recognised their patterns. In this module you will treat each thought as a claim, weigh the evidence and build a more balanced alternative. This is the core skill of the therapy and becomes a habit over the weeks.',
     },
     sections: [
       {
@@ -1069,13 +1069,13 @@ The balanced thought is longer and less dramatic. Being less dramatic is good; a
         },
       },
       {
-        heading: { tr: 'Tinnitusa özgü örnek', en: 'A tinnitus-specific example' },
+        heading: { tr: 'Çınlamaya özgü örnek', en: 'A tinnitus-specific example' },
         body: {
           tr: `**Düşünce:** "Ses yüzünden hiçbir şeye odaklanamıyorum, işimi kaybedeceğim." Kaygı 85.
 
 **Destekleyen:** Bugün bir raporu bitirmek iki saat yerine üç saat sürdü. Sessiz odada ses belirgindi.
 
-**Karşı:** Rapor bitti ve geri gönderilmedi. Son altı ayda performans görüşmem olumlu geçti. Odaklanma zorluğu en çok sabah uykusuz kalktığım günlerde oluyor; ses her gün aynı ama odaklanma farklı. Ofiste hafif bir ortam sesi açınca daha iyi gidiyor.
+**Karşı:** Rapor bitti ve geri gönderilmedi. Son altı ayda performans görüşmem olumlu geçti. Odaklanma zorluğu en çok sabah uykusuz kalktığım günlerde oluyor; ses her gün aynı ama odaklanma farklı. Ofiste hafif bir arka plan sesi açınca daha iyi gidiyor.
 
 **Dengeli:** "Ses, özellikle uykusuz günlerde dikkatimi daha çok çekiyor ve bazı işler daha uzun sürüyor. Yine de işimi yapıyorum ve kimse bir eksik görmedi. Odaklanmayı zorlaştıran asıl şey uykusuzluk; ona çalışıyorum." Kaygı 45.`,
           en: `**Thought:** "I cannot focus on anything because of the sound; I will lose my job." Anxiety 85.
@@ -1114,7 +1114,7 @@ The balanced thought is longer and less dramatic. Being less dramatic is good; a
       {
         heading: { tr: 'Gündelik işaretler', en: 'Everyday cues' },
         body: {
-          tr: `Önceki adımlarda gevşeme belirli bir oturuma bağlıydı. Şimdi onu gün içine dağıtıyoruz. Öst'ün protokolünde kişi gün boyunca tekrar eden birkaç doğal olayı işaret olarak seçer ve her işaret geldiğinde 20–30 saniyelik bir gevşeme yapar. Günde 15–20 kez tekrarlanan bu kısa uygulamalar, gün boyu biriken gerginliği oluşmadan boşaltır.
+          tr: `Önceki adımlarda gevşeme belirli bir oturuma bağlıydı. Şimdi onu gün içine dağıtıyoruz. Öst'ün yönteminde kişi gün boyunca tekrar eden birkaç doğal olayı işaret olarak seçer ve her işaret geldiğinde 20–30 saniyelik bir gevşeme yapar. Günde 15–20 kez tekrarlanan bu kısa uygulamalar, gün boyu biriken gerginliği oluşmadan boşaltır.
 
 İşaret olarak işe yarayanlar: telefon çalması veya bildirim sesi, saate bakmak, bir kapıdan geçmek, su içmek, bilgisayarda yeni bir sekme açmak, kırmızı ışıkta beklemek, merdiven çıkmak. İşaretin günde çok kez, fark edilir biçimde ve stresli olmayan bir bağlamda gerçekleşmesi gerekir. Üç dört işaret yeterlidir; telefonunuzun duvar kâğıdına ya da masanıza küçük bir renkli nokta koymak hatırlamaya yardım eder.`,
           en: `In the earlier steps relaxation was tied to a set session. Now we spread it through the day. In Öst's protocol the person chooses a few natural events that recur during the day as cues and does a 20–30 second relaxation each time one occurs. Repeated 15–20 times a day, these brief practices drain tension before it accumulates.
@@ -1132,21 +1132,21 @@ Cues that work: the phone ringing or a notification tone, looking at the clock, 
 4. Omuzlardan başlayarak bedeni hızla tarayın: yüz, çene, omuzlar, eller, karın. Gerginlik bulduğunuz yeri nefesle bırakın.
 5. Yaptığınız işe devam edin.
 
-Bu uygulama göze çarpmaz; toplantıda, kuyrukta, otobüste yapılabilir. Kimse fark etmez. Bir hafta boyunca günde en az 15 kez uygulayın; her uygulamayı saymak gerekmez, işaretler hatırlatacaktır.`,
+Bu uygulama göze çarpmaz; toplantıda, kuyrukta, otobüste yapılabilir. Bir hafta boyunca günde en az 15 kez uygulayın; her uygulamayı saymak gerekmez, işaretler hatırlatacaktır.`,
           en: `1. Notice the cue.
 2. Take one or two deep breaths.
 3. On each out-breath say "relax" in your mind.
 4. Scan the body quickly from the shoulders down: face, jaw, shoulders, hands, abdomen. Release any tension you find with the breath.
 5. Carry on with what you were doing.
 
-This practice is invisible; it can be done in a meeting, in a queue, on the bus. No one notices. For a week practise at least 15 times a day; you do not need to count each one, the cues will remind you.`,
+This practice is invisible; it can be done in a meeting, in a queue, on the bus. For a week practise at least 15 times a day; you do not need to count each one, the cues will remind you.`,
         },
       },
       {
-        heading: { tr: 'Tinnitusun kendisi bir işaret olarak', en: 'The tinnitus itself as a cue' },
+        heading: { tr: 'Çınlamanın kendisi bir işaret olarak', en: 'The tinnitus itself as a cue' },
         kind: 'tip',
         body: {
-          tr: `Bu haftadan itibaren tinnitusu fark etmenin kendisini bir işaret yapmayı deneyin. Sesi fark ettiğiniz anda iki nefes, "gevşe", hızlı tarama. Bu, beynin ses ile gerginlik arasında kurduğu bağı ses ile gevşeme arasında yeni bir bağa dönüştürmeye başlar. Bir gecede olmaz; ama her tekrar, sesin anlamını biraz değiştirir.
+          tr: `Bu haftadan itibaren çınlamayı fark etmenin kendisini bir işaret yapmayı deneyin. Sesi fark ettiğiniz anda iki nefes, "gevşe", hızlı tarama. Bu, beynin ses ile gerginlik arasında kurduğu bağı ses ile gevşeme arasında yeni bir bağa dönüştürmeye başlar. Bir gecede olmaz; ama her tekrar, sesin anlamını biraz değiştirir.
 
 Dikkat: sesi gevşeme ile "kapatmaya" çalışmayın. Gevşemenin amacı sesi yok etmek değil, sesle birlikte sakin kalabilmektir. Ses gevşemeden sonra da oradaysa uygulama yine başarılıdır.`,
           en: `From this week on, try making the noticing of tinnitus itself a cue. The moment you notice the sound: two breaths, "relax", quick scan. This begins to turn the link the brain has made between sound and tension into a new link between sound and relaxation. It does not happen overnight; but each repetition shifts the meaning of the sound a little.
@@ -1173,7 +1173,7 @@ Note: do not try to "switch off" the sound with relaxation. The purpose of relax
         { tr: 'Gün içinde sık tekrar eden üç dört işaret seçtim (telefon, kapı, su, saat…).', en: 'I chose three or four cues that recur often during the day (phone, door, water, clock…).' },
         { tr: 'Hatırlatıcı olarak bir yere küçük bir işaret koydum.', en: 'I placed a small reminder mark somewhere.' },
         { tr: 'Bugün en az 15 kez 20–30 saniyelik gevşeme yaptım.', en: 'Today I did the 20–30 second relaxation at least 15 times.' },
-        { tr: 'Tinnitusu fark ettiğim en az üç anda hızlı gevşeme uyguladım.', en: 'I applied rapid relaxation in at least three moments when I noticed the tinnitus.' },
+        { tr: 'Çınlamayı fark ettiğim en az üç anda hızlı gevşeme uyguladım.', en: 'I applied rapid relaxation in at least three moments when I noticed the tinnitus.' },
       ],
     },
     keyTakeaway: {
@@ -1193,9 +1193,9 @@ Note: do not try to "switch off" the sound with relaxation. The purpose of relax
       {
         heading: { tr: 'Korku-kaçınma döngüsü', en: 'The fear-avoidance loop' },
         body: {
-          tr: `Tinnitus rahatsız ettiğinde doğal tepki ondan uzaklaşmaktır: televizyonu açmak, odadan çıkmak, dikkati zorla başka yere çekmek. Bu, kısa vadede rahatlatır. Ancak her kaçınma beyne aynı mesajı verir: "Bu ses tehlikeli, ondan kaçmak gerekiyor." Ses bir sonraki sefer daha büyük bir tehdit olarak gelir ve kaçınma daha da gerekli görünür. Buna korku-kaçınma döngüsü denir; kaygı bozukluklarında ve kronik ağrıda da aynı mekanizma çalışır.
+          tr: `Çınlama rahatsız ettiğinde doğal tepki ondan uzaklaşmaktır: televizyonu açmak, odadan çıkmak, dikkati zorla başka yere çekmek. Bu, kısa vadede rahatlatır. Ancak her kaçınma beyne aynı mesajı verir: "Bu ses tehlikeli, ondan kaçmak gerekiyor." Ses bir sonraki sefer daha büyük bir tehdit olarak gelir ve kaçınma daha da gerekli görünür. Buna korku-kaçınma döngüsü denir; kaygı bozukluklarında ve kronik ağrıda da aynı mekanizma çalışır.
 
-Döngüyü kıran şey, korkulan uyaranla kontrollü biçimde kalmaktır. Sese güvenli bir ortamda, belirli bir süre, kaçmadan kulak verdiğinizde iki şey olur: kaygı önce yükselir, sonra kendiliğinden düşer (buna alışma denir) ve beyin "bu sese kulak verdim, hiçbir şey olmadı" bilgisini kaydeder. Tekrarlarla tehdit etiketi zayıflar. Tinnitus için internet temelli BDT programlarında bu, altıncı haftanın ana modülüdür.`,
+Döngüyü kıran şey, korkulan uyaranla kontrollü biçimde kalmaktır. Sese güvenli bir ortamda, belirli bir süre, kaçmadan kulak verdiğinizde iki şey olur: kaygı önce yükselir, sonra kendiliğinden düşer (buna alışma denir) ve beyin "bu sese kulak verdim, hiçbir şey olmadı" bilgisini kaydeder. Tekrarlarla tehdit etiketi zayıflar. Çınlama için internet programlarında bu, altıncı haftanın ana modülüdür.`,
           en: `When tinnitus is unpleasant the natural response is to move away from it: turn on the television, leave the room, force attention elsewhere. That brings short-term relief. But each avoidance sends the brain the same message: "This sound is dangerous; it must be escaped." Next time the sound arrives as a bigger threat and avoidance seems even more necessary. This is the fear-avoidance loop; the same mechanism operates in anxiety disorders and chronic pain.
 
 What breaks the loop is staying with the feared stimulus in a controlled way. When you listen to the sound in a safe setting, for a set time, without escaping, two things happen: anxiety rises first and then falls by itself (this is habituation), and the brain records "I listened to this sound and nothing happened." With repetition the threat label weakens. In internet-based CBT programmes for tinnitus this is the core module of week six.`,
@@ -1205,7 +1205,7 @@ What breaks the loop is staying with the feared stimulus in a controlled way. Wh
         heading: { tr: 'Nasıl yapılır', en: 'How to do it' },
         kind: 'exercise',
         body: {
-          tr: `1. **Hazırlık.** Sakin bir yerde oturun. Ortam sesi varsa kapatın; bu egzersizde ses yalnız olmalı. Kısa bir gevşeme (nefesle işaretli) yapın.
+          tr: `1. **Hazırlık.** Sakin bir yerde oturun. Arka plan sesi varsa kapatın; bu egzersizde ses yalnız olmalı. Kısa bir gevşeme (nefesle işaretli) yapın.
 2. **Önce puanlayın.** Şu anki rahatsızlığınızı 0–10 arasında puanlayın.
 3. **Dinleyin.** Dikkatinizi bilerek sese yöneltin. Sesi merakla inceleyin: perdesi, dokusu, bir mi birden çok mu, sabit mi dalgalı mı, hangi kulakta ya da başın neresinde. Sesi bir araştırmacı gibi betimleyin; yargılamadan.
 4. **Kalın.** Kaygı yükselirse kaçmayın; nefesi verin ve dinlemeye devam edin. Dikkat dağılırsa sese geri getirin. Hedef, kaygının kendi başına düştüğünü yaşamaktır.
@@ -1236,7 +1236,7 @@ Some people feel relief in the first session; others need a few days. If the sco
         heading: { tr: 'Güvenlik', en: 'Safety' },
         kind: 'warning',
         body: {
-          tr: `Bu egzersiz sese kulak vermektir; ses eklemek değildir. Tinnitusu "duymak için" sesi yükseltmeyin, kulaklık takmayın. Rahatsızlık 10 puana çıkıp birkaç dakika düşmüyorsa seansı kısa gevşeme ile bitirin ve ertesi gün daha kısa süreyle tekrar deneyin. Ses hassasiyeti (hiperakuzi) belirtileriniz varsa programın ses hassasiyeti bölümü bu egzersizi ayrı bir yöntemle ele alır. Egzersiz sonrası sürekli kötüleşme fark ederseniz ara verin ve bir uzmanla konuşun.`,
+          tr: `Bu egzersiz sese kulak vermektir; ses eklemek değildir. Çınlamayı "duymak için" sesi yükseltmeyin, kulaklık takmayın. Rahatsızlık 10 puana çıkıp birkaç dakika düşmüyorsa seansı kısa gevşeme ile bitirin ve ertesi gün daha kısa süreyle tekrar deneyin. Ses hassasiyeti (hiperakuzi) belirtileriniz varsa programın ses hassasiyeti bölümü bu egzersizi ayrı bir yöntemle ele alır. Egzersiz sonrası sürekli kötüleşme fark ederseniz ara verin ve bir uzmanla konuşun.`,
           en: `This exercise is about listening to the sound, not adding sound. Do not raise the volume or put on earphones "to hear" the tinnitus. If distress reaches 10 and does not fall for several minutes, end the session with a short relaxation and try again the next day for a shorter time. If you have symptoms of sound sensitivity (hyperacusis), the sound sensitivity section of the programme handles this exercise with a separate method. If you notice sustained worsening after the exercise, pause and talk to a specialist.`,
         },
       },
@@ -1252,14 +1252,14 @@ Some people feel relief in the first session; others need a few days. If the sco
     id: 'cbt.relax6',
     title: { tr: 'Derin gevşeme 6: uygulamalı gevşeme', en: 'Deep relaxation 6: applied relaxation' },
     intro: {
-      tr: 'Son adım, öğrendiğiniz hızlı gevşemeyi gerçekten gerginleştiren durumlarda kullanmaktır. Beceri artık hazır; şimdi işe koşulacak. Bu adım tamamlandığında gevşeme bir egzersiz olmaktan çıkar ve sesle, kaygıyla, günün zorluklarıyla karşılaştığınızda otomatik olarak devreye giren bir araç olur.',
-      en: 'The final step is using the rapid relaxation you have learned in situations that genuinely raise tension. The skill is ready; now it goes to work. Once this step is complete, relaxation stops being an exercise and becomes a tool that switches on automatically when you meet the sound, anxiety or the strains of the day.',
+      tr: 'Son adım, öğrendiğiniz hızlı gevşemeyi gerçekten gerginleştiren durumlarda kullanmaktır. Bu adım tamamlandığında gevşeme bir egzersiz olmaktan çıkar ve sesle, kaygıyla, günün zorluklarıyla karşılaştığınızda otomatik olarak devreye giren bir araç olur.',
+      en: 'The final step is using the rapid relaxation you have learned in situations that genuinely raise tension. Once this step is complete, relaxation stops being an exercise and becomes a tool that switches on automatically when you meet the sound, anxiety or the strains of the day.',
     },
     sections: [
       {
         heading: { tr: 'Uygulama eğitimi', en: 'Application training' },
         body: {
-          tr: `Öst'ün protokolünde son aşama "uygulama eğitimi"dir: kişi, kaygı yaratan durumları önce hafiften zora doğru sıralar ve hızlı gevşemeyi bu durumlarda sırayla dener. Tinnitus için bu durumlar genellikle şunlardır: sessiz bir odada oturmak, gece yatakta uyanmak, kalabalık ve gürültülü bir ortamda bulunmak, yorgun olmak, sesin aniden yükselmesi, başkalarına tinnitustan söz etmek, konsantrasyon gerektiren bir iş yapmak.
+          tr: `Öst'ün yönteminde son aşama "uygulama eğitimi"dir: kişi, kaygı yaratan durumları önce hafiften zora doğru sıralar ve hızlı gevşemeyi bu durumlarda sırayla dener. Çınlama için bu durumlar genellikle şunlardır: sessiz bir odada oturmak, gece yatakta uyanmak, kalabalık ve gürültülü bir ortamda bulunmak, yorgun olmak, sesin aniden yükselmesi, başkalarına çınlamadan söz etmek, konsantrasyon gerektiren bir iş yapmak.
 
 Yöntem: durum başladığında ilk gerginlik işaretini fark edin (omuz, çene, nefes, kalp atışı), 20–30 saniyelik gevşemeyi uygulayın, durumda kalmaya devam edin. Gevşeme durumu değiştirmez; sizin durum içindeki tepkinizi değiştirir. Her uygulama, "bu durumla baş edebiliyorum" kaydını güçlendirir.`,
           en: `The last stage of Öst's protocol is "application training": the person ranks anxiety-provoking situations from mild to hard and tries rapid relaxation in them in turn. For tinnitus these situations are usually: sitting in a quiet room, waking in bed at night, being in a crowded noisy place, being tired, the sound rising suddenly, telling others about the tinnitus, doing work that demands concentration.
@@ -1298,10 +1298,10 @@ Combine it with last week's exposure exercise: when anxiety rises while listenin
         body: {
           tr: `Durum: akşam yemeğinde kalabalık bir lokanta, gerginlik puanı 60. Giriş öncesi iki nefes, "gevşe". Masaya otururken hızlı tarama: omuzlar kalkmış, çene sıkı; bırakın. Konuşma sırasında ses belirginleşince kaçmak yerine yeniden iki nefes; sesi dışlamayın, masadaki konuşmaya dikkati genişletin. Yemeğin sonunda gerginlik 30. Kayıt: "Kaldım, gevşedim, ses oradaydı, yemek güzeldi."
 
-Bu kayıtlar sekiz hafta boyunca birikir ve bakım döneminde "ben bunu yapabiliyorum" kanıtı olarak işe yarar.`,
+Bu kayıtlar, zor günlerde "bunu yapabiliyorum" kanıtı olur.`,
           en: `Situation: a busy restaurant at dinner, tension score 60. Two breaths before going in, "relax". Sitting down, a quick scan: shoulders up, jaw tight; let go. When the sound comes forward during conversation, two breaths again instead of escaping; do not shut the sound out, widen attention to the talk at the table. By the end of the meal tension is 30. Record: "I stayed, I relaxed, the sound was there, the meal was good."
 
-These records accumulate over eight weeks and serve in the maintenance period as evidence that "I can do this".`,
+These records become evidence on hard days that "I can do this".`,
         },
       },
       {
@@ -1338,14 +1338,14 @@ After each application ask yourself one question: Did I stay in the situation? I
     id: 'cbt.attention',
     title: { tr: 'Dikkati yönlendirme', en: 'Redirecting attention' },
     intro: {
-      tr: 'Dikkat bir fener gibidir: bir yere yöneltildiğinde orası aydınlanır, gerisi kararır. Tinnitus feneri kendine çeker. Bu modülde feneri bilinçli olarak nasıl hareket ettireceğinizi ve tinnitusu dışlamadan dikkati genişletmeyi çalışacaksınız.',
+      tr: 'Dikkat bir fener gibidir: bir yere yöneltildiğinde orası aydınlanır, gerisi kararır. Çınlama feneri kendine çeker. Bu modülde feneri bilinçli olarak nasıl hareket ettireceğinizi ve çınlamayı dışlamadan dikkati genişletmeyi çalışacaksınız.',
       en: 'Attention is like a torch: wherever it points lights up, the rest goes dark. Tinnitus pulls the torch towards itself. In this module you will practise moving the torch deliberately and widening attention without shutting the tinnitus out.',
     },
     sections: [
       {
         heading: { tr: 'Dikkat eğitilebilir', en: 'Attention can be trained' },
         body: {
-          tr: `Dikkat bir kas gibidir; kullanıldıkça güçlenir ve yönlendirilebilir hâle gelir. Tinnitusta sorun dikkatin "bozuk" olması değil, sesin yüksek öncelik almasıdır. Öncelik, sesin tehdit değeriyle (önceki modüller) ve dikkat alışkanlığıyla belirlenir. Alışkanlık kısmını egzersizle değiştirmek mümkündür.
+          tr: `Dikkat bir kas gibidir; kullanıldıkça güçlenir ve yönlendirilebilir hâle gelir. Çınlamada sorun dikkatin "bozuk" olması değil, sesin yüksek öncelik almasıdır. Öncelik, sesin tehdit değeriyle (önceki modüller) ve dikkat alışkanlığıyla belirlenir. Alışkanlık kısmını egzersizle değiştirmek mümkündür.
 
 İki yanlış strateji vardır. Birincisi sesi zorla görmezden gelmeye çalışmak: "Sese dikkat etme" komutu, dikkati sese çeker; beyaz ayıyı düşünmemeye çalışmak gibi. İkincisi dikkati sürekli meşgul tutarak sesi bastırmak: bu yorucudur ve meşguliyet bittiğinde ses daha güçlü döner. Doğru strateji dikkati **esnetmektir**: sesi dahil ederek, ama tek odak yapmadan, dikkati birçok uyaran arasında gezdirmek.`,
           en: `Attention is like a muscle; it strengthens with use and becomes steerable. In tinnitus the problem is not that attention is "broken" but that the sound takes high priority. Priority is set by the sound's threat value (earlier modules) and by habit. The habit part can be changed with exercise.
@@ -1357,11 +1357,11 @@ There are two wrong strategies. The first is trying to ignore the sound by force
         heading: { tr: 'Üç egzersiz', en: 'Three exercises' },
         kind: 'exercise',
         body: {
-          tr: `**1. Ses tarama (3 dakika).** Oturun, gözleri kapatın. Ortamdaki sesleri sayın: en uzaktan en yakına. Trafik, bir kapı, buzdolabı, nefesiniz, tinnitus. Her sese 20–30 saniye kulak verin, sonra bir sonrakine geçin. Tinnitus listedeki seslerden yalnızca biridir; ne atlanır ne de öne alınır.
+          tr: `**1. Ses tarama (3 dakika).** Oturun, gözleri kapatın. Ortamdaki sesleri sayın: en uzaktan en yakına. Trafik, bir kapı, buzdolabı, nefesiniz, çınlama. Her sese 20–30 saniye kulak verin, sonra bir sonrakine geçin. Çınlama listedeki seslerden yalnızca biridir; ne atlanır ne de öne alınır.
 
-**2. Dikkat kaydırma (3 dakika).** Dikkatinizi sırayla beş duyuya götürün: üç şey görün, üç ses duyun, üç dokunma hissedin, bir koku, bir tat. Sonra tekrar görmeye dönün. Tinnitus "duyma" turunda yer alır; diğer turlarda arka planda kalır. Bu egzersiz dikkatin ne kadar hızlı taşınabildiğini gösterir.
+**2. Dikkat kaydırma (3 dakika).** Dikkatinizi sırayla beş duyuya götürün: üç şey görün, üç ses duyun, üç dokunma hissedin, bir koku, bir tat. Sonra tekrar görmeye dönün. Çınlama "duyma" turunda yer alır; diğer turlarda arka planda kalır. Bu egzersiz dikkatin ne kadar hızlı taşınabildiğini gösterir.
 
-**3. Geniş dikkat (3 dakika).** Dikkati tek bir noktaya değil, bütün alana açın: bütün sesler, bütün beden, bütün oda aynı anda. Bu "yumuşak odak" hâlinde tinnitus büyük bir resmin küçük bir parçasıdır. Dikkat daralıp sese yapıştığında yeniden genişletin.
+**3. Geniş dikkat (3 dakika).** Dikkati tek bir noktaya değil, bütün alana açın: bütün sesler, bütün beden, bütün oda aynı anda. Bu "yumuşak odak" hâlinde çınlama büyük bir resmin küçük bir parçasıdır. Dikkat daralıp sese yapıştığında yeniden genişletin.
 
 Günde bir kez 10 dakika, iki hafta. Egzersizler sesi azaltmak için değil, dikkatin sahibinin siz olduğunu hatırlatmak içindir.`,
           en: `**1. Sound scan (3 minutes).** Sit, close your eyes. Count the sounds around you, from farthest to nearest. Traffic, a door, the fridge, your breath, the tinnitus. Give each sound 20–30 seconds, then move to the next. The tinnitus is only one sound on the list; it is neither skipped nor put first.
@@ -1377,7 +1377,7 @@ Once a day for 10 minutes, two weeks. The exercises are not meant to reduce the 
         heading: { tr: 'Konsantrasyon gerektiren işlerde', en: 'During tasks that demand concentration' },
         kind: 'tip',
         body: {
-          tr: `- Sessiz ortamda çalışıyorsanız düşük düzeyde ortam sesi açın; dikkat için zemin oluşturur.
+          tr: `- Sessiz ortamda çalışıyorsanız düşük düzeyde arka plan sesi açın; dikkat için zemin oluşturur.
 - İşi küçük parçalara bölün ve her parçanın başında dikkati bilerek işe yöneltin.
 - Ses dikkati çektiğinde bunu bir hata saymayın; "fark ettim" deyin ve işe dönün. Her dönüş bir tekrardır, bir yenilgi değil.
 - Yorgunken odaklanma herkes için zordur; sesi suçlamadan önce uykuyu kontrol edin.`,
@@ -1393,7 +1393,7 @@ Once a day for 10 minutes, two weeks. The exercises are not meant to reduce the 
       minutes: 10,
       steps: [
         { tr: 'Ses tarama: gözleri kapatın. En uzaktaki sesten başlayın. Ne duyuyorsunuz?', en: 'Sound scan: close your eyes. Start from the farthest sound. What do you hear?', seconds: 60 },
-        { tr: 'Daha yakın sesler: oda, cihazlar, nefes. Tinnitus da listede, yalnızca biri.', en: 'Nearer sounds: the room, devices, breath. The tinnitus is on the list too, just one of them.', seconds: 60 },
+        { tr: 'Daha yakın sesler: oda, cihazlar, nefes. Çınlama da listede, yalnızca biri.', en: 'Nearer sounds: the room, devices, breath. The tinnitus is on the list too, just one of them.', seconds: 60 },
         { tr: 'Her sese sırayla 20 saniye kulak verin; sonra bir sonrakine geçin.', en: 'Give each sound 20 seconds in turn; then move to the next.', seconds: 60 },
         { tr: 'Dikkat kaydırma: gözleri açın. Üç şey görün. Üç ses duyun. Üç dokunma hissedin.', en: 'Attention shifting: open your eyes. See three things. Hear three sounds. Feel three touches.', seconds: 90 },
         { tr: 'Bir koku, bir tat. Sonra tekrar üç şey görün. Dikkatin ne kadar hızlı taşındığını fark edin.', en: 'One smell, one taste. Then see three things again. Notice how fast attention moves.', seconds: 90 },
@@ -1412,16 +1412,16 @@ Once a day for 10 minutes, two weeks. The exercises are not meant to reduce the 
     id: 'cbt.activity',
     title: { tr: 'Etkinlik planlama ve güvenlik davranışları', en: 'Activity planning and safety behaviours' },
     intro: {
-      tr: 'Tinnitus sessizce hayatı daraltabilir: konserden vazgeçilir, arkadaş yemeği ertelenir, akşamlar televizyon karşısında geçer. Bu modül, sesin kıstığı etkinlikleri geri almayı ve "güvenlik davranışı" adı verilen, kısa vadede koruyup uzun vadede tinnitusu güçlendiren alışkanlıkları tanımayı hedefler.',
+      tr: 'Çınlama sessizce hayatı daraltabilir: konserden vazgeçilir, arkadaş yemeği ertelenir, akşamlar televizyon karşısında geçer. Bu modül, sesin kıstığı etkinlikleri geri almayı ve "güvenlik davranışı" adı verilen, kısa vadede koruyup uzun vadede çınlamayı güçlendiren alışkanlıkları tanımayı hedefler.',
       en: 'Tinnitus can quietly narrow life: the concert is dropped, dinner with friends postponed, evenings spent in front of the television. This module aims to reclaim the activities the sound has squeezed out, and to recognise "safety behaviours", habits that protect in the short term and strengthen tinnitus in the long term.',
     },
     sections: [
       {
         heading: { tr: 'Daralan hayat', en: 'The narrowing life' },
         body: {
-          tr: `Sıkıntı veren bir belirtiyle yaşayan kişi, enerjisini korumak için etkinlikleri azaltır. Bu mantıklı görünür; ama etkinlik azaldıkça keyif ve başarı deneyimleri de azalır, ruh hâli düşer ve düşük ruh hâli tinnitusu daha ağır hissettirir. Günler birbirine benzemeye başlar; ses, günün en belirgin olayı olur.
+          tr: `Sıkıntı veren bir belirtiyle yaşayan kişi, enerjisini korumak için etkinlikleri azaltır. Bu mantıklı görünür; ama etkinlik azaldıkça keyif ve başarı deneyimleri de azalır, ruh hâli düşer ve düşük ruh hâli çınlamayı daha ağır hissettirir. Günler birbirine benzemeye başlar; ses, günün en belirgin olayı olur.
 
-Davranışsal etkinleştirme, depresyon için en iyi kanıta sahip yöntemlerden biridir ve tinnitus BDT programlarının yedinci haftasında yer alır. İlke basittir: önce hareket, sonra motivasyon. Keyif almayı beklemeden, planlayarak etkinliğe dönmek. Ruh hâli etkinliği takip eder; tersi nadiren olur.`,
+Planlı etkinliğe dönüş (davranışsal etkinleştirme), depresyonda en iyi kanıta sahip yöntemlerden biridir; çınlama programlarının yedinci haftasında yer alır. İlke basittir: önce hareket, sonra motivasyon. Keyif almayı beklemeden, planlayarak etkinliğe dönmek. Ruh hâli etkinliği takip eder; tersi nadiren olur.`,
           en: `A person living with a distressing symptom reduces activities to conserve energy. That seems sensible; but as activity shrinks, so do experiences of pleasure and achievement, mood drops, and low mood makes tinnitus feel heavier. Days start to look alike; the sound becomes the most prominent event of the day.
 
 Behavioural activation is among the best-evidenced methods for depression and sits in week seven of tinnitus CBT programmes. The principle is simple: action first, motivation second. Returning to activity by plan, without waiting to feel like it. Mood follows activity; the reverse rarely happens.`,
@@ -1430,10 +1430,10 @@ Behavioural activation is among the best-evidenced methods for depression and si
       {
         heading: { tr: 'Güvenlik davranışları', en: 'Safety behaviours' },
         body: {
-          tr: `Güvenlik davranışı, tehlike hissini azaltmak için yapılan ama tehlikenin gerçek olmadığını öğrenmeyi engelleyen her şeydir. Tinnitusta sık görülenler:
+          tr: `Güvenlik davranışı, tehlike hissini azaltmak için yapılan ama tehlikenin gerçek olmadığını öğrenmeyi engelleyen her şeydir. Çınlamada sık görülenler:
 
-- **Sessizlikten kaçınmak:** her ortamda bir ses açmak zorunda hissetmek; ses zenginleştirme ile farkı, zorunluluk hissidir.
-- **Kulak tıkacı kullanmak:** gürültülü olmayan ortamlarda (lokanta, toplantı, ev) tıkaç takmak işitme sistemini sese daha duyarlı hâle getirir ve ses hassasiyetine zemin hazırlar.
+- **Sessizlikten kaçınmak:** her ortamda bir ses açmak zorunda hissetmek; rahatlatan arka plan sesi ile farkı, zorunluluk hissidir.
+- **Kulak tıkacı kullanmak:** gürültülü olmayan ortamlarda (lokanta, toplantı, ev) tıkaç takmak işitme sistemini sese daha duyarlı hâle getirebilir ve ses hassasiyetine zemin hazırlayabilir.
 - **Sesi kontrol etmek:** gün içinde "hâlâ orada mı, arttı mı" diye dinlemek, parmağıyla kulağı tıkayarak ölçmek.
 - **Sürekli araştırmak:** internette yeni tedaviler aramak, forumlarda kötü hikâyeler okumak.
 - **Konuşmaktan kaçınmak ya da sürekli konuşmak:** her ikisi de sesin önemini büyütür.
@@ -1442,7 +1442,7 @@ Bu davranışların hepsi anlaşılır. Ancak her biri beyne aynı mesajı verir
           en: `A safety behaviour is anything done to reduce the sense of danger that prevents learning the danger is not real. Common ones in tinnitus:
 
 - **Avoiding silence:** feeling compelled to have sound on in every setting; the difference from sound enrichment is the sense of compulsion.
-- **Using earplugs:** wearing plugs in places that are not loud (restaurant, meeting, home) makes the hearing system more sensitive to sound and lays the ground for sound sensitivity.
+- **Using earplugs:** wearing plugs in places that are not loud (restaurant, meeting, home) can make the hearing system more sensitive to sound and lay the ground for sound sensitivity.
 - **Checking the sound:** listening during the day to see "is it still there, has it grown", measuring by pressing a finger in the ear.
 - **Constant researching:** searching online for new treatments, reading bad stories on forums.
 - **Avoiding talking about it, or talking constantly:** both enlarge the importance of the sound.
@@ -1492,19 +1492,19 @@ If you plan a loud setting (concert, wedding), using hearing protection in genui
     id: 'cbt.relapse',
     title: { tr: 'Geriye dönüşleri önleme', en: 'Preventing setbacks' },
     intro: {
-      tr: 'Sekiz haftanın sonuna geldiniz. Tinnitus dalgalanır; kötü günler ve kötü haftalar olacaktır. Bu modül, kötü bir dönemin program öncesine dönüş anlamına gelmediğini ve erken işaretleri fark edip ne yapacağınızı önceden planlamayı anlatır.',
+      tr: 'Sekiz haftanın sonuna geldiniz. Çınlama dalgalanır; kötü günler ve kötü haftalar olacaktır. Bu modül, kötü bir dönemin program öncesine dönüş anlamına gelmediğini ve erken işaretleri fark edip ne yapacağınızı önceden planlamayı anlatır.',
       en: 'You have reached the end of the eight weeks. Tinnitus fluctuates; there will be bad days and bad weeks. This module explains why a bad period does not mean a return to before the programme, and how to plan ahead for recognising early signs and knowing what to do.',
     },
     sections: [
       {
         heading: { tr: 'Dalgalanma ile geriye dönüş arasındaki fark', en: 'The difference between a fluctuation and a relapse' },
         body: {
-          tr: `Tinnitus şiddeti yorgunluk, hastalık, stres, gürültü, uykusuzluk ve mevsimle değişir. Programı tamamlamış kişilerin çoğu da zaman zaman sesin yükseldiği günler yaşar. Bu bir **dalgalanmadır**: birkaç gün ile bir hafta sürer, tetikleyicisi genellikle bellidir ve beceriler kullanıldığında geçer.
+          tr: `Çınlama şiddeti yorgunluk, hastalık, stres, gürültü, uykusuzluk ve mevsimle değişir. Programı tamamlamış kişilerin çoğu da zaman zaman sesin yükseldiği günler yaşar. Bu bir **dalgalanmadır**: birkaç gün ile bir hafta sürer, tetikleyicisi genellikle bellidir ve beceriler kullanıldığında yatışır.
 
 **Geriye dönüş** ise sıkıntının haftalarca sürmesi ve eski kalıpların (kaçınma, ses kontrolü, felaketleştirme, uykusuzluk döngüsü) geri gelmesidir. Geriye dönüşler de olur ve çoğu, becerilerin bir süre kullanılmamasıyla ilişkilidir. İyi haber: öğrendiğiniz beceriler silinmez. Bir iki haftalık yoğun uygulama genellikle sizi kaldığınız yere getirir; sekiz haftaya yeniden gerek yoktur.
 
 Önemli bir tuzak: "Ses yine yükseldi, demek ki hiçbir şey işe yaramadı." Bu, tanıdığınız bir kalıp: ya hep ya hiç. Sekiz hafta önce yazdığınız ilk çalışma kâğıdına bakın; neyin değiştiğini oradan görün.`,
-          en: `Tinnitus severity changes with fatigue, illness, stress, noise, lack of sleep and the seasons. Most people who have completed the programme still have days when the sound rises. That is a **fluctuation**: it lasts a few days to a week, the trigger is usually obvious, and it passes when the skills are used.
+          en: `Tinnitus severity changes with fatigue, illness, stress, noise, lack of sleep and the seasons. Most people who have completed the programme still have days when the sound rises. That is a **fluctuation**: it lasts a few days to a week, the trigger is usually obvious, and it eases when the skills are used.
 
 A **relapse** is distress lasting for weeks with the old patterns returning (avoidance, sound checking, catastrophising, the insomnia loop). Relapses happen too, and most are linked to the skills going unused for a while. The good news: what you have learned is not erased. One or two weeks of intensive practice usually bring you back to where you were; another eight weeks are not needed.
 
@@ -1580,30 +1580,30 @@ When two of these signs last longer than two weeks, activate your maintenance pl
     id: 'cbt.hearingTactics',
     title: { tr: 'İşitme taktikleri', en: 'Hearing tactics' },
     intro: {
-      tr: 'Tinnitusla birlikte işitme güçlüğü yaşayan kişilerde iletişim çabası günü yorar ve yorgunluk sesi büyütür. Bu modül, dinlemeyi kolaylaştıran pratik taktikleri ve işitme cihazı değerlendirmesinin neden öncelikli olduğunu anlatır.',
+      tr: 'Çınlamayla birlikte işitme güçlüğü yaşayan kişilerde iletişim çabası günü yorar ve yorgunluk sesi büyütür. Bu modül, dinlemeyi kolaylaştıran pratik taktikleri ve işitme cihazı değerlendirmesinin neden öncelikli olduğunu anlatır.',
       en: 'For people who have hearing difficulty alongside tinnitus, the effort of communication tires the day and fatigue magnifies the sound. This module covers practical tactics that make listening easier and why a hearing-aid evaluation is a priority.',
     },
     sections: [
       {
-        heading: { tr: 'İşitme kaybı ve tinnitus', en: 'Hearing loss and tinnitus' },
+        heading: { tr: 'İşitme kaybı ve çınlama', en: 'Hearing loss and tinnitus' },
         body: {
-          tr: `Tinnitusu olan kişilerin büyük bölümünde bir derece işitme kaybı vardır; çoğu bunu fark etmez çünkü kayıp genellikle yüksek frekanslarda başlar ve konuşmanın yalnızca bazı sesleri (s, f, ş gibi) kaybolur. Sonuç: kalabalıkta anlamak zorlaşır, televizyon açılır, "efendim?" sayısı artar. Beyin eksik sinyali tamamlamak için daha çok çalışır; bu çaba gün sonunda yorgunluk ve gerginlik olarak birikir.
+          tr: `Çınlaması olan kişilerin büyük bölümünde bir derece işitme kaybı vardır; çoğu bunu fark etmez çünkü kayıp genellikle yüksek frekanslarda başlar ve konuşmanın yalnızca bazı sesleri (s, f, ş gibi) kaybolur. Sonuç: kalabalıkta anlamak zorlaşır, televizyon açılır, "efendim?" sayısı artar. Beyin eksik sinyali tamamlamak için daha çok çalışır; bu çaba gün sonunda yorgunluk ve gerginlik olarak birikir.
 
-Kılavuzlar, işitme kaybı iletişimi etkiliyorsa işitme cihazı değerlendirmesini önerir; cihazlar hem konuşmayı kolaylaştırır hem de dış sesleri güçlendirerek tinnitusun zemine karışmasına yardım eder. Avrupa'da çok merkezli bir çalışmada işitme cihazı, tinnitus için tek başına uygulanan yöntemler arasında en büyük etkilerden birini gösterdi. Bu yüzden programınızda odyoloji randevusu bir "görev" olarak yer alır.`,
+Kılavuzlar, işitme kaybı iletişimi etkiliyorsa işitme cihazı değerlendirmesini önerir; cihazlar konuşmayı kolaylaştırır ve dış sesleri güçlendirerek çınlamanın arka plana karışmasına yardım edebilir. Kanıtlar henüz sınırlı olsa da işitme kaybı olan birçok kişi, cihazla çınlamanın daha az rahatsız ettiğini bildirir. Bu yüzden programınızda odyoloji randevusu bir "görev" olarak yer alır.`,
           en: `Most people with tinnitus have some degree of hearing loss; many do not realise it because the loss usually starts at high frequencies and only some speech sounds (s, f, sh) are lost. The result: understanding in crowds gets harder, the television goes up, the number of "pardon?" rises. The brain works harder to fill in the missing signal; that effort accumulates by evening as fatigue and tension.
 
-Guidelines recommend a hearing-aid evaluation when hearing loss affects communication; aids make speech easier and, by amplifying outside sounds, help tinnitus blend into the ground. In a European multicentre trial, hearing aids showed one of the largest effects among single treatments for tinnitus. That is why an audiology appointment appears as a "task" in your programme.`,
+Guidelines recommend a hearing-aid evaluation when hearing loss affects communication; aids make speech easier and, by amplifying outside sounds, can help tinnitus blend into the background. The evidence is still limited, but many people with hearing loss report that tinnitus bothers them less with aids. That is why an audiology appointment appears as a "task" in your programme.`,
         },
       },
       {
         heading: { tr: 'Ortamı düzenlemek', en: 'Arranging the setting' },
         body: {
-          tr: `- Konuşan kişinin yüzünü görün; dudak ve yüz ifadesi anlamanın yüzde otuzunu taşır. Işık konuşanın yüzüne düşsün, sizin arkanızda olmasın.
+          tr: `- Konuşan kişinin yüzünü görün; dudak ve yüz ifadesi anlamayı çok kolaylaştırır. Işık konuşanın yüzüne düşsün, sizin arkanızda olmasın.
 - Lokantada duvara yakın, köşe masası seçin; sırtınız kalabalığa dönük olsun. Hoparlör ve mutfak kapısından uzak durun.
 - Evde televizyon ya da müzik açıkken konuşma yapmayın; birini kapatın.
 - Toplantıda konuşanın karşısına değil, yanına yakın oturun; gündemi önceden isteyin.
 - Telefonda konuşurken sessiz bir odaya geçin; görüntülü arama dudak okumaya izin verir.`,
-          en: `- See the speaker's face; lips and expression carry about a third of understanding. Have the light fall on the speaker's face, not behind you.
+          en: `- See the speaker's face; lips and expression make understanding much easier. Have the light fall on the speaker's face, not behind you.
 - In a restaurant choose a corner table near a wall with your back to the crowd. Keep away from speakers and the kitchen door.
 - At home do not hold conversations with the television or music on; switch one off.
 - In meetings sit close to the speaker rather than opposite; ask for the agenda in advance.
@@ -1617,7 +1617,7 @@ Guidelines recommend a hearing-aid evaluation when hearing loss affects communic
 - "Efendim?" yerine duyduğunuz kısmı tekrarlayın: "Saat yedide buluşalım dediniz, nerede?" Böylece karşınızdaki yalnızca eksik parçayı tekrarlar.
 - Anladığınızı varsaymayın; tahmin ederek başınızı sallamak yanlış anlaşılmalara yol açar.
 - Dinleme yorgunluğu gerçektir. Uzun sosyal etkinliklerde kısa molalar planlayın; sessiz bir yere beş dakika çıkmak çoğu zaman yeter.
-- İşitme güçlüğünden söz etmek, tinnitustan söz etmekten daha kolaydır ve insanlar genellikle yardımcı olmak ister.`,
+- İşitme güçlüğünden söz etmek, çınlamadan söz etmekten daha kolaydır ve insanlar genellikle yardımcı olmak ister.`,
           en: `- Tell the other person clearly what you need: "I understand better if you face me and speak a little slower." Shouting does not improve understanding; clear, slow speech does.
 - Instead of "pardon?", repeat the part you heard: "You said let's meet at seven; where?" Then the other person repeats only the missing piece.
 - Do not assume you understood; nodding on a guess leads to misunderstandings.
@@ -1629,8 +1629,8 @@ Guidelines recommend a hearing-aid evaluation when hearing loss affects communic
         heading: { tr: 'Odyoloji randevusu', en: 'The audiology appointment' },
         kind: 'tip',
         body: {
-          tr: `Uygulamadaki işitme taraması bir tarama aracıdır; klinik odyometrinin yerine geçmez. Odyoloji randevusunda tam işitme testi, tinnitusun işitme kaybı ile ilişkisi ve işitme cihazı seçenekleri değerlendirilir. Cihaz denemesi genellikle birkaç haftalık alışma gerektirir; ilk günlerde sesler fazla keskin gelebilir, bu normaldir. Tinnitus için özel "ses üreteci" programı olan cihazlar vardır; ancak Cochrane derlemesine göre ses üreteci eklentisinin danışmanlığa ek katkısı gösterilmemiştir, karar işitme ihtiyacına göre verilmelidir.`,
-          en: `The hearing screen in the app is a screening tool; it does not replace clinical audiometry. At the audiology appointment a full hearing test, the link between tinnitus and hearing loss and hearing-aid options are assessed. A trial of aids usually needs a few weeks of adjustment; in the first days sounds may seem too sharp, which is normal. Some aids have a dedicated "sound generator" programme for tinnitus; but according to the Cochrane review the generator add-on has not been shown to add to counselling, so the decision should rest on hearing need.`,
+          tr: `Uygulamadaki işitme taraması bir ön bilgidir; tam işitme testinin (odyometri) yerine geçmez. Odyoloji randevusunda tam işitme testi, çınlamanın işitme kaybı ile ilişkisi ve işitme cihazı seçenekleri değerlendirilir. Cihaz denemesi genellikle birkaç haftalık alışma gerektirir; ilk günlerde sesler fazla keskin gelebilir, bu normaldir. Çınlama için özel "ses üreteci" programı olan cihazlar vardır; ancak Cochrane derlemesi, ses üreteçli cihazların normal işitme cihazından üstün olduğunu göstermemiştir; karar işitme ihtiyacına göre verilmelidir.`,
+          en: `The hearing screen in the app is a screening tool; it does not replace clinical audiometry. At the audiology appointment a full hearing test, the link between tinnitus and hearing loss and hearing-aid options are assessed. A trial of aids usually needs a few weeks of adjustment; in the first days sounds may seem too sharp, which is normal. Some aids have a dedicated "sound generator" programme for tinnitus; but the Cochrane review has not shown devices with a sound generator to be better than ordinary hearing aids, so the decision should rest on hearing need.`,
         },
       },
     ],
@@ -1654,7 +1654,7 @@ Guidelines recommend a hearing-aid evaluation when hearing loss affects communic
     id: 'cbt.concentration',
     title: { tr: 'Konsantrasyon yönetimi', en: 'Managing concentration' },
     intro: {
-      tr: 'Okurken satırı kaybetmek, toplantıda konuşmayı kaçırmak, bir işi yarım bırakmak: tinnitusu olan kişilerin en sık dile getirdiği yakınmalardan biri konsantrasyondur. Bu isteğe bağlı modül, dikkat egzersizlerinin üzerine çalışma düzenine dair pratik yöntemler ekler.',
+      tr: 'Okurken satırı kaybetmek, toplantıda konuşmayı kaçırmak, bir işi yarım bırakmak: çınlaması olan kişilerin en sık dile getirdiği yakınmalardan biri konsantrasyondur. Bu isteğe bağlı modül, dikkat egzersizlerinin üzerine çalışma düzenine dair pratik yöntemler ekler.',
       en: 'Losing the line while reading, missing the thread in a meeting, leaving a task half done: concentration is one of the most common complaints of people with tinnitus. This optional module adds practical methods for organising work on top of the attention exercises.',
     },
     sections: [
@@ -1675,7 +1675,7 @@ Separating these three sources separates the solutions. Look at your daily recor
           tr: `- **Kısa bloklar.** 25 dakika odaklanmış çalışma, 5 dakika mola. Molada hızlı gevşeme ve kısa bir yürüyüş. Dört bloktan sonra uzun mola.
 - **Tek görev.** Aynı anda iki iş yapmak dikkati böler; ses bu bölünmede boşluğa yerleşir. Bir seferde tek sekme, tek belge.
 - **Zor işi sabaha.** Yorgunlukla ses fark edilirliği artar; en çok dikkat isteyen işi günün en dinç saatine koyun.
-- **Ortam sesi.** Sessiz ofiste düşük düzeyde pembe gürültü ya da doğa sesi; sözlü müzik dikkati böler.
+- **Arka plan sesi.** Sessiz ofiste düşük düzeyde pembe gürültü ya da doğa sesi; sözlü müzik dikkati böler.
 - **Başlangıç ritüeli.** Her bloğun başında 30 saniye: nefes, "gevşe", göreve bakış. Bu küçük ritüel dikkati bilerek işe yöneltir.
 - **Yazılı not.** Aklınıza gelen başka işleri bir kâğıda yazıp bırakın; zihin onları tutmak zorunda kalmaz.`,
           en: `- **Short blocks.** 25 minutes of focused work, 5 minutes off. In the break, rapid relaxation and a short walk. A longer break after four blocks.
@@ -1710,7 +1710,7 @@ These three steps take 10 seconds. Repeating them twenty times a day is not a fa
         heading: { tr: 'İş yerinde', en: 'At work' },
         kind: 'tip',
         body: {
-          tr: `Tinnitus görünmez olduğu için iş yerinde anlaşılması zordur. Yöneticinize ya da ekibinize söylemek zorunda değilsiniz; ancak sessiz bir çalışma alanı, kulaklıkla düşük düzeyde ortam sesi ya da gürültülü ortamda molalar gibi küçük düzenlemeler çoğu iş yerinde kolayca sağlanır. Bunları "işitme ile ilgili bir durum" olarak istemek yeterlidir.`,
+          tr: `Çınlama görünmez olduğu için iş yerinde anlaşılması zordur. Yöneticinize ya da ekibinize söylemek zorunda değilsiniz; ancak sessiz bir çalışma alanı, kulaklıkla düşük düzeyde arka plan sesi ya da gürültülü ortamda molalar gibi küçük düzenlemeler çoğu iş yerinde kolayca sağlanır. Bunları "işitme ile ilgili bir durum" olarak istemek yeterlidir.`,
           en: `Because tinnitus is invisible it is hard to understand at work. You do not have to tell your manager or team; but small adjustments such as a quiet work area, low-level background sound through earphones, or breaks in noisy settings are easy to arrange in most workplaces. Asking for them as "a hearing-related condition" is enough.`,
         },
       },
@@ -1721,12 +1721,12 @@ These three steps take 10 seconds. Repeating them twenty times a day is not a fa
       items: [
         { tr: 'Bugün en az iki 25 dakikalık tek görev bloğu çalıştım.', en: 'Today I worked at least two 25-minute single-task blocks.' },
         { tr: 'En zor işi günün en dinç saatine koydum.', en: 'I put the hardest task in the freshest hour of the day.' },
-        { tr: 'Sessiz ortamda düşük düzeyde ortam sesi kullandım.', en: 'I used low-level background sound in the quiet setting.' },
+        { tr: 'Sessiz ortamda düşük düzeyde arka plan sesi kullandım.', en: 'I used low-level background sound in the quiet setting.' },
         { tr: 'Ses dikkatimi çektiğinde etiketle–nefes–geri dön yöntemini uyguladım.', en: 'When the sound pulled my attention I used label–breath–return.' },
       ],
     },
     keyTakeaway: {
-      tr: 'Konsantrasyon güçlüğü ses, uykusuzluk ve kaygının karışımıdır; kısa tek görev blokları, ortam sesi ve etiketle–nefes–geri dön yöntemi dikkati işe geri getirir.',
+      tr: 'Konsantrasyon güçlüğü ses, uykusuzluk ve kaygının karışımıdır; kısa tek görev blokları, arka plan sesi ve etiketle–nefes–geri dön yöntemi dikkati işe geri getirir.',
       en: 'Concentration difficulty is a mix of the sound, poor sleep and anxiety; short single-task blocks, background sound and label–breath–return bring attention back to the work.',
     },
     citations: ['beukes2018', 'fuller2020'],
@@ -1752,7 +1752,7 @@ These three steps take 10 seconds. Repeating them twenty times a day is not a fa
 - **Dikkat egzersizleri (10 dk):** Sesin dikkati sürekli çektiği dönemlerde; sessiz işlerde çalışmadan önce.
 - **Etkinlik planı:** Hayat daraldığında, ruh hâli düştüğünde; haftalık üç planlı etkinlik.
 - **Uyku kuralları:** Sabit kalkış, yatak yalnızca uyku için, 15–20 dakikada kalk; her zaman.
-- **Ses zenginleştirme:** Sessiz ortamlarda, gece; karışma noktasının altında.
+- **Rahatlatan arka plan sesi:** Sessiz ortamlarda, gece; karışma noktasının altında.
 - **İşitme taktikleri:** Kalabalık ortamlarda; odyoloji takibi.`,
           en: `- **Rapid relaxation (20–30 s):** When the sound is noticed, as tension rises, before falling asleep. 15–20 times a day.
 - **Cue-controlled breathing (2–3 min):** In the middle of a busy day, before a meeting, on waking at night.
@@ -1771,7 +1771,7 @@ These three steps take 10 seconds. Repeating them twenty times a day is not a fa
       {
         heading: { tr: 'Hangi durumda hangisi', en: 'Which one in which situation' },
         body: {
-          tr: `- **Ses aniden yükseldi:** Hızlı gevşeme → kalıp adlandırma ("duygusal akıl yürütme: yükseldi gibi hissediyorum") → gerekirse ortam sesi. Ölçmeyin.
+          tr: `- **Ses aniden yükseldi:** Hızlı gevşeme → kalıp adlandırma ("duygusal akıl yürütme: yükseldi gibi hissediyorum") → gerekirse arka plan sesi. Ölçmeyin.
 - **Gece uyandım:** Saate bakma → nefesle gevşeme yatakta → 15–20 dakika sonra kalk, loş ışık, düşük ses → uyku gelince dön.
 - **Kötü bir hafta:** Günlük derin gevşeme + bir düşünce kaydı + 10 dakika maruz kalma + bir planlı etkinlik. İki hafta sürdür.
 - **Sosyal plan öncesi kaygı:** Düşünce kaydı (falcılık?) → işitme taktikleri → plana git; iptal etmek güvenlik davranışıdır.
@@ -1796,10 +1796,10 @@ These three steps take 10 seconds. Repeating them twenty times a day is not a fa
         body: {
           tr: `Program dokuzuncu haftadan itibaren pekiştirme dönemine geçer: modül okuması azalır, uygulama sürer. Aylık kısa bir değerlendirme (THI) sizi ve uygulamayı eğilim konusunda bilgilendirir; 7 puanlık değişim anlamlı sayılır, tek bir ölçüme değil iki üç ölçümün yönüne bakın.
 
-Araç kutusu zamanla değişebilir. Üç ay sonra bu sayfaya dönüp sıralamayı güncelleyin: bazı araçlar artık otomatikleşmiş, bazıları gereksizleşmiş, yeni durumlar ortaya çıkmış olabilir. Sayfanın güncel olması, zor bir günde işe yaramasının koşuludur.`,
+Araç kutusu zamanla değişebilir. Üç ay sonra bu sayfaya dönüp sıralamayı güncelleyin: bazı araçlar artık otomatikleşmiş, bazıları gereksizleşmiş, yeni durumlar ortaya çıkmış olabilir.`,
           en: `From week nine the programme moves into a consolidation period: module reading decreases, practice continues. A brief monthly check (THI) informs you and the app about the trend; a 7-point change counts as meaningful, so look at the direction of two or three measurements rather than a single one.
 
-The toolbox can change over time. Return to this page after three months and update the ranking: some tools may have become automatic, some unnecessary, new situations may have arisen. Keeping the page current is the condition for it working on a hard day.`,
+The toolbox can change over time. Return to this page after three months and update the ranking: some tools may have become automatic, some unnecessary, new situations may have arisen.`,
         },
       },
     ],
@@ -1829,16 +1829,16 @@ const ACT: ModuleContent[] = [
     id: 'act.acceptance',
     title: { tr: 'Kabul: mücadeleyi bırakmak', en: 'Acceptance: dropping the struggle' },
     intro: {
-      tr: 'Kabul ve Kararlılık Terapisi (ACT), düşünceleri değiştirmek yerine onlarla ilişkiyi değiştirmeyi önerir. Tinnitus için internet üzerinden uygulanan ACT, randomize bir çalışmada BDT ile eşdeğer bulundu. Bu modül ilk ilkeyi ele alır: sesle mücadele, sesin kendisinden daha yorucu olabilir.',
-      en: 'Acceptance and Commitment Therapy (ACT) proposes changing the relationship with thoughts rather than the thoughts themselves. Internet-delivered ACT for tinnitus was found equivalent to CBT in a randomised trial. This module takes up the first principle: the struggle with the sound can be more exhausting than the sound.',
+      tr: 'Kabul ve Kararlılık Terapisi (ACT), düşünceleri değiştirmek yerine onlarla ilişkiyi değiştirmeyi önerir. Çınlama için internetten uygulanan ACT, bir çalışmada BDT\'ye yakın yarar gösterdi. Bu modül ilk ilkeyi ele alır: sesle mücadele, sesin kendisinden daha yorucu olabilir.',
+      en: 'Acceptance and Commitment Therapy (ACT) proposes changing the relationship with thoughts rather than the thoughts themselves. Internet-delivered ACT for tinnitus showed benefit similar to CBT in a randomised trial. This module takes up the first principle: the struggle with the sound can be more exhausting than the sound.',
     },
     sections: [
       {
         heading: { tr: 'İki ok', en: 'Two arrows' },
         body: {
-          tr: `Eski bir benzetme: bir ok size isabet ettiğinde acı duyarsınız. Sonra ikinci bir ok gelir: "Neden ben? Bu ne zaman geçecek? Dayanamıyorum." İlk ok tinnitustur; onu seçmediniz. İkinci ok, sesle kurduğunuz mücadeledir: onu bastırmaya, ölçmeye, ondan kaçmaya ve ona kızmaya harcanan enerji. ACT'nin gözlemi, ikinci okun çoğu zaman birinciden daha fazla acı verdiğidir.
+          tr: `Eski bir benzetme: bir ok size isabet ettiğinde acı duyarsınız. Sonra ikinci bir ok gelir: "Neden ben? Bu ne zaman geçecek? Dayanamıyorum." İlk ok çınlamadır; onu seçmediniz. İkinci ok, sesle kurduğunuz mücadeledir: onu bastırmaya, ölçmeye, ondan kaçmaya ve ona kızmaya harcanan enerji. ACT'nin gözlemi, ikinci okun çoğu zaman birinciden daha fazla acı verdiğidir.
 
-Mücadele doğaldır; sorun çözen bir zihnin yapması gerekeni yapmasıdır. Ancak tinnitus, çözülecek bir sorun gibi davranmaz. Ses kontrolümüzde değildir; sesle ilişkimiz ise kontrolümüzdedir. Kabul, sesi sevmek, onaylamak ya da pes etmek değildir. Kabul, değiştiremediğiniz şeyle savaşmayı bırakıp enerjiyi değiştirebildiğiniz şeylere yöneltmektir.`,
+Mücadele doğaldır; sorun çözen bir zihnin yapması gerekeni yapmasıdır. Ancak çınlama, çözülecek bir sorun gibi davranmaz. Ses kontrolümüzde değildir; sesle ilişkimiz ise kontrolümüzdedir. Kabul, sesi sevmek, onaylamak ya da pes etmek değildir. Kabul, değiştiremediğiniz şeyle savaşmayı bırakıp enerjiyi değiştirebildiğiniz şeylere yöneltmektir.`,
           en: `An old analogy: when an arrow hits you, you feel pain. Then a second arrow comes: "Why me? When will this end? I cannot bear it." The first arrow is the tinnitus; you did not choose it. The second arrow is the struggle you have built with the sound: the energy spent suppressing, measuring, escaping and resenting it. ACT's observation is that the second arrow often hurts more than the first.
 
 Struggle is natural; it is a problem-solving mind doing what it should. But tinnitus does not behave like a problem to be solved. The sound is not within our control; our relationship with it is. Acceptance is not liking the sound, approving of it or giving up. Acceptance is ceasing to fight what you cannot change and directing energy towards what you can.`,
@@ -1847,7 +1847,7 @@ Struggle is natural; it is a problem-solving mind doing what it should. But tinn
       {
         heading: { tr: 'Kontrol tuzağı', en: 'The control trap' },
         body: {
-          tr: `Şu deneyi yapın: önümüzdeki 30 saniye boyunca tinnitusu duymamaya çalışın. Ne oldu? Dikkat sese gitti. Zihin, dış dünyada işe yarayan bir kuralı ("istemediğin şeyden kurtul") iç dünyaya uyguladığında ters sonuç alır. İstenmeyen bir sesi, düşünceyi ya da duyguyu bastırma çabası onu güçlendirir.
+          tr: `Şu deneyi yapın: önümüzdeki 30 saniye boyunca çınlamayı duymamaya çalışın. Ne oldu? Dikkat sese gitti. Zihin, dış dünyada işe yarayan bir kuralı ("istemediğin şeyden kurtul") iç dünyaya uyguladığında ters sonuç alır. İstenmeyen bir sesi, düşünceyi ya da duyguyu bastırma çabası onu güçlendirir.
 
 Son aylarda sesi kontrol etmek için neler yaptığınızı düşünün: sessizlikten kaçınmak, forumlarda saatler, ilaç ve takviyeler, sesi örten yüksek müzik, sinirlenmek, kendinize kızmak. Her birinin kısa vadeli etkisi ve uzun vadeli maliyeti nedir? Çoğu kişi bu listeyi yazdığında mücadelenin bedelini görür: zaman, para, uyku, ilişkiler, keyif. Bu, mücadelede başarısız olduğunuz anlamına gelmez; kuralın bu alanda işlemediği anlamına gelir.`,
           en: `Try this: for the next 30 seconds, try not to hear the tinnitus. What happened? Attention went to the sound. When the mind applies a rule that works in the outside world ("get rid of what you do not want") to the inner world, it backfires. The effort to suppress an unwanted sound, thought or feeling strengthens it.
@@ -1929,10 +1929,10 @@ In CBT we question the thought and weigh the evidence. ACT offers a different pa
           tr: `Her birini en az bir kez deneyin; size uyan iki üçünü günlük hayata alın.
 
 - **"Şu düşünceye sahibim ki…"** Düşünceyi bu kalıpla söyleyin: "Şu düşünceye sahibim ki bu ses beni mahvedecek." Sonra: "Şu düşünceye sahip olduğumu fark ediyorum ki…" Her ek, düşünce ile aranıza bir katman koyar.
-- **Akıntıdaki yapraklar.** Gözleri kapatın, bir dere hayal edin. Her düşünce geldiğinde onu bir yaprağın üstüne koyun ve akıp gitmesini izleyin. Düşünceyi hızlandırmayın, durdurmayın. Tinnitusla ilgili düşünceler de birer yapraktır. 5 dakika.
+- **Akıntıdaki yapraklar.** Gözleri kapatın, bir dere hayal edin. Her düşünce geldiğinde onu bir yaprağın üstüne koyun ve akıp gitmesini izleyin. Düşünceyi hızlandırmayın, durdurmayın. Çınlamayla ilgili düşünceler de birer yapraktır. 5 dakika.
 - **Teşekkür et.** Zihin bir uyarı ürettiğinde: "Teşekkürler zihin, bunu daha önce de söylemiştin." Alaycı değil, nazik.
 - **Düşünceyi şarkı söyle.** En ağır cümleyi bir çocuk şarkısının melodisiyle içinizden söyleyin. Cümle aynı, gücü farklı.
-- **Yolcu benzetmesi.** Siz bir otobüs sürücüsüsünüz; tinnitus ve onunla ilgili düşünceler arkada oturan gürültücü yolcular. Bağırabilirler, yol tarif edebilirler; direksiyon sizde. Yolcuları indirmeye çalışmak otobüsü durdurur; onları arkada bırakıp sürmek sizi gideceğiniz yere götürür.`,
+- **Yolcu benzetmesi.** Siz bir otobüs sürücüsüsünüz; çınlama ve onunla ilgili düşünceler arkada oturan gürültücü yolcular. Bağırabilirler, yol tarif edebilirler; direksiyon sizde. Yolcuları indirmeye çalışmak otobüsü durdurur; onları arkada bırakıp sürmek sizi gideceğiniz yere götürür.`,
           en: `Try each at least once; take the two or three that suit you into daily life.
 
 - **"I am having the thought that…"** Say the thought in this frame: "I am having the thought that this sound will destroy me." Then: "I notice I am having the thought that…" Each addition puts a layer between you and the thought.
@@ -1960,7 +1960,7 @@ In the first days the techniques may feel artificial. That is normal; becoming a
       steps: [
         { tr: 'Gözleri kapatın. Yavaş akan bir dere hayal edin; üstünde yapraklar.', en: 'Close your eyes. Imagine a slowly flowing stream with leaves on it.', seconds: 45 },
         { tr: 'Her düşünce geldiğinde onu bir yaprağa koyun ve akıp gitmesini izleyin.', en: 'Each time a thought arrives, place it on a leaf and watch it drift away.', seconds: 90 },
-        { tr: 'Tinnitusla ilgili bir düşünce geldiğinde: o da bir yaprak. Hızlandırmayın, durdurmayın.', en: 'When a thought about tinnitus arrives: that is a leaf too. Do not speed it up or stop it.', seconds: 90 },
+        { tr: 'Çınlamayla ilgili bir düşünce geldiğinde: o da bir yaprak. Hızlandırmayın, durdurmayın.', en: 'When a thought about tinnitus arrives: that is a leaf too. Do not speed it up or stop it.', seconds: 90 },
         { tr: 'Dere durduysa ya da yaprağa bindiyseniz, fark edin ve kıyıya dönün.', en: 'If the stream has stopped or you have climbed onto a leaf, notice and return to the bank.', seconds: 90 },
         { tr: 'Son yaprakları izleyin. Gözleri açın.', en: 'Watch the last leaves. Open your eyes.', seconds: 45 },
       ],
@@ -1975,7 +1975,7 @@ In the first days the techniques may feel artificial. That is normal; becoming a
     id: 'act.values',
     title: { tr: 'Değerler: pusulayı bulmak', en: 'Values: finding the compass' },
     intro: {
-      tr: 'Tinnitus hayatın merkezine yerleştiğinde günler sesi yönetmekle geçer ve asıl önemli şeyler kenara itilir. Bu modül pusulayı yeniden kurmaya yöneliktir: sizin için gerçekten neyin önemli olduğunu adlandırmak ve sesin kıstığı alanlarda yeniden adım atmak.',
+      tr: 'Çınlama hayatın merkezine yerleştiğinde günler sesi yönetmekle geçer ve asıl önemli şeyler kenara itilir. Bu modül pusulayı yeniden kurmaya yöneliktir: sizin için gerçekten neyin önemli olduğunu adlandırmak ve sesin kıstığı alanlarda yeniden adım atmak.',
       en: 'When tinnitus settles at the centre of life, days are spent managing the sound and what really matters is pushed aside. This module is about resetting the compass: naming what truly matters to you and stepping back into the areas the sound has squeezed.',
     },
     sections: [
@@ -1984,7 +1984,7 @@ In the first days the techniques may feel artificial. That is normal; becoming a
         body: {
           tr: `Hedef, ulaşılıp bitirilen bir şeydir: bir sınavı geçmek, bir yolculuğa çıkmak. Değer ise bir yön, bir pusula ibresidir: "iyi bir anne olmak", "öğrenmeye açık kalmak", "bedenime iyi bakmak". Değere ulaşılmaz; değer yönünde yürünür. Batıya ulaşamazsınız ama batıya doğru gidebilirsiniz.
 
-Tinnitusla ilgili en sık görülen hedef "sesin yok olması"dır. Bu hedef kontrolünüzde değildir ve hayatı bekleme odasına çevirir: "Ses geçince gezeceğim, ses geçince kitabı bitireceğim." ACT bu hedefi değil, altındaki değeri sorar: Ses geçseydi hayatınızda ne yapardınız? Yanıt genellikle değerlerinizdir: bağ kurmak, yaratmak, dinlenmek, katkıda bulunmak. İyi haber, bunlara ses varken de yürüyebilmenizdir.`,
+Çınlamayla ilgili en sık görülen hedef "sesin yok olması"dır. Bu hedef kontrolünüzde değildir ve hayatı bekleme odasına çevirir: "Ses geçince gezeceğim, ses geçince kitabı bitireceğim." ACT bu hedefi değil, altındaki değeri sorar: Ses geçseydi hayatınızda ne yapardınız? Yanıt genellikle değerlerinizdir: bağ kurmak, yaratmak, dinlenmek, katkıda bulunmak. İyi haber, bunlara ses varken de yürüyebilmenizdir.`,
           en: `A goal is something reached and finished: passing an exam, taking a trip. A value is a direction, a compass needle: "being a good parent", "staying open to learning", "taking care of my body". Values are not reached; they are walked towards. You cannot arrive at west, but you can head west.
 
 The most common goal around tinnitus is "the sound disappearing". That goal is not within your control and turns life into a waiting room: "I will travel once the sound goes, I will finish the book once the sound goes." ACT asks not about this goal but about the value beneath it: if the sound went, what would you do with your life? The answer is usually your values: connection, creating, resting, contributing. The good news is that you can walk towards these while the sound is there.`,
@@ -2021,16 +2021,16 @@ Where the gap between the value score and the walking score is large, that is wh
         body: {
           tr: `Gözlerinizi kapatın ve seksen yaşınızdaki doğum gününüzü hayal edin. Sevdiğiniz insanlar oradadır ve biri ayağa kalkıp sizin hakkınızda konuşur: nasıl bir insan olduğunuzu, neleri önemsediğinizi, hayatınızı nasıl yaşadığınızı. Ne söylemesini isterdiniz?
 
-Bu konuşmada "tinnitusu olmadı" ya da "sessizlikte yaşadı" cümlelerinin yer alması pek olası değildir. Konuşmada yer alan şeyler değerlerinizdir. Bunları aşağıya yazın. Zorlanırsanız tersinden sorun: bugünkü gibi devam ederse konuşma nasıl olurdu, ve bunun neresini değiştirmek isterdiniz?`,
+Bu konuşmada "çınlaması olmadı" ya da "sessizlikte yaşadı" cümlelerinin yer alması pek olası değildir. Konuşmada yer alan şeyler değerlerinizdir. Bunları aşağıya yazın. Zorlanırsanız tersinden sorun: bugünkü gibi devam ederse konuşma nasıl olurdu, ve bunun neresini değiştirmek isterdiniz?`,
           en: `Close your eyes and imagine your eightieth birthday. The people you love are there and one of them stands up to speak about you: what kind of person you were, what you cared about, how you lived your life. What would you want them to say?
 
 That speech is unlikely to include "they never had tinnitus" or "they lived in silence". What it does include are your values. Write them below. If you struggle, ask it the other way round: if things carry on as they are today, what would the speech sound like, and which part would you want to change?`,
         },
       },
       {
-        heading: { tr: 'Değerler ve tinnitus', en: 'Values and tinnitus' },
+        heading: { tr: 'Değerler ve çınlama', en: 'Values and tinnitus' },
         body: {
-          tr: `Tinnitus bazı değerlere giden yolu gerçekten zorlaştırır: gürültülü ortamlarda sosyal olmak, sessizlikte okumak, bölünmeden uyumak. ACT bunu inkâr etmez. Sorduğu şey şudur: bu değere giden başka yollar var mı? "Arkadaşlarımla konser" zorsa "arkadaşlarımla yürüyüş" aynı değere hizmet eder. "Sessiz kütüphanede okumak" zorsa "ortam sesiyle evde okumak" da öyle.
+          tr: `Çınlama bazı değerlere giden yolu gerçekten zorlaştırır: gürültülü ortamlarda sosyal olmak, sessizlikte okumak, bölünmeden uyumak. ACT bunu inkâr etmez. Sorduğu şey şudur: bu değere giden başka yollar var mı? "Arkadaşlarımla konser" zorsa "arkadaşlarımla yürüyüş" aynı değere hizmet eder. "Sessiz kütüphanede okumak" zorsa "arka plan sesiyle evde okumak" da öyle.
 
 Değerin kendisi değişmez; ona giden yol esnektir. Sesin kapattığı kapıyı zorlamak yerine aynı odaya açılan başka bir kapı bulmak, mücadeleyi bırakıp yürümeye devam etmenin somut biçimidir.`,
           en: `Tinnitus genuinely makes the road to some values harder: being sociable in noisy places, reading in silence, sleeping without interruption. ACT does not deny this. What it asks is: are there other roads to this value? If "a concert with friends" is hard, "a walk with friends" serves the same value. If "reading in a silent library" is hard, so does "reading at home with background sound".
@@ -2070,7 +2070,7 @@ The value itself does not change; the road to it is flexible. Finding another do
         body: {
           tr: `Değer: "iyi bir arkadaş olmak." Eylem: "Cuma akşamı 19.00'da Ayşe'yi arayıp yarım saat konuşmak." Fark, eylemin ne zaman yapıldığını ve yapılıp yapılmadığını bilebilmenizdir. Büyük hedefler ("daha sosyal olmak") ertelenir; küçük eylemler yapılır.
 
-Kararlı eylemin dört özelliği vardır: bir değere bağlıdır, somuttur, bu hafta yapılabilir ve tinnitusun durumuna bağlı değildir. Sonuncusu önemlidir: "Ses iyi olursa yürüyüşe çıkarım" bir eylem planı değil, bekleme planıdır. Plan, ses ne olursa olsun geçerlidir; ses eşlik edebilir.
+Kararlı eylemin dört özelliği vardır: bir değere bağlıdır, somuttur, bu hafta yapılabilir ve çınlamanın durumuna bağlı değildir. Sonuncusu önemlidir: "Ses iyi olursa yürüyüşe çıkarım" bir eylem planı değil, bekleme planıdır. Plan, ses ne olursa olsun geçerlidir; ses eşlik edebilir.
 
 Bu haftanın üç eylemini seçerken bir kolay, bir orta, bir zorlayıcı seçin. Kolay olan yapılacak diye değil, hareketi başlatmak için oradadır.`,
           en: `Value: "being a good friend." Action: "Call Ayşe on Friday at 7 pm and talk for half an hour." The difference is that you can know when the action happens and whether it happened. Big goals ("being more sociable") get postponed; small actions get done.
@@ -2101,14 +2101,14 @@ For each action write the obstacle in advance and set an "if–then" plan: "If t
 4. Hafta içinde yapıldıkça işaretleyin. Yapılamayan eylem başarısızlık değil, bilgidir: engel neydi, plan neyi kaçırdı?
 5. Hafta sonu: ne öğrendiniz? Gelecek hafta aynı eylem mi, bir adım büyüğü mü?
 
-Bu döngü programın geri kalanında ve sonrasında devam eder. Ses hâlâ orada olabilir; hayat yine de genişler. ACT çalışmalarında tinnitus sıkıntısındaki azalmanın büyük bölümü, sesin değil, sesle mücadelenin ve kaçınmanın azalmasıyla açıklanır.`,
+Bu döngü programın geri kalanında ve sonrasında devam eder. Ses hâlâ orada olabilir; hayat yine de genişler. ACT çalışmalarında sıkıntıdaki azalma, sesin değişmesinden çok mücadele ve kaçınmanın azalmasıyla ilişkili bulunmuştur.`,
           en: `1. Sunday evening (or the start of your week): choose the two domains with the biggest gap on your values map.
 2. One action for each domain, plus one easy action. Three in total.
 3. Day, time, place. Obstacle and if–then plan.
 4. Tick them off during the week. An action not done is not a failure but information: what was the obstacle, what did the plan miss?
 5. At the end of the week: what did you learn? Next week the same action, or one step bigger?
 
-This cycle continues through the rest of the programme and beyond. The sound may still be there; life widens anyway. In ACT trials, much of the reduction in tinnitus distress is explained not by the sound but by the reduction in struggle and avoidance.`,
+This cycle continues through the rest of the programme and beyond. The sound may still be there; life widens anyway. In ACT trials, the drop in tinnitus distress was linked less to the sound changing than to less struggle and avoidance.`,
         },
       },
       {
@@ -2151,8 +2151,8 @@ const MIND: ModuleContent[] = [
     id: 'mind.bodyScan',
     title: { tr: 'Beden taraması', en: 'Body scan' },
     intro: {
-      tr: 'Beden taraması, bilinçli farkındalık temelli bilişsel terapinin (MBCT) en iyi kanıta sahip bileşenidir. Dikkati bedenin bölgelerinde sırayla dolaştırır; amaç gevşemek değil, ne varsa onu fark etmektir. Orijinal protokolde 30–40 dakikadır; bu uygulama 15 dakikalık kısaltılmış bir uyarlama sunar.',
-      en: 'The body scan is the best-evidenced component of mindfulness-based cognitive therapy (MBCT). It moves attention through the regions of the body in turn; the aim is not to relax but to notice whatever is there. In the original protocol it lasts 30–40 minutes; this app offers a shortened 15-minute adaptation.',
+      tr: 'Beden taraması, farkındalık temelli bilişsel terapinin (MBCT) temel egzersizlerinden biridir. Dikkati bedenin bölgelerinde sırayla dolaştırır; amaç gevşemek değil, ne varsa onu fark etmektir. Asıl programda 30–40 dakikadır; bu uygulama 15 dakikalık kısaltılmış bir uyarlama sunar.',
+      en: 'The body scan is one of the core exercises of mindfulness-based cognitive therapy (MBCT). It moves attention through the regions of the body in turn; the aim is not to relax but to notice whatever is there. In the original protocol it lasts 30–40 minutes; this app offers a shortened 15-minute adaptation.',
     },
     sections: [
       {
@@ -2160,10 +2160,10 @@ const MIND: ModuleContent[] = [
         body: {
           tr: `Gevşeme egzersizleri bedeni belirli bir duruma götürmeyi hedefler. Farkındalık egzersizleri hedefsizdir: bedende ne varsa (gerginlik, ağrı, uyuşma, hiçbir şey) onu olduğu gibi fark etmek. Gevşeme çoğu zaman yan ürün olarak gelir, ama gelmediğinde egzersiz başarısız olmamıştır.
 
-Bu fark tinnitus için önemlidir. McKenna ve arkadaşlarının 2017 tarihli randomize çalışmasında MBCT, gevşeme eğitimiyle karşılaştırıldı; her iki grup da iyileşti, ancak MBCT tinnitus sıkıntısını daha fazla azalttı ve etki altı ayda sürdü. Fark, muhtemelen farkındalığın sesle mücadeleyi bırakmayı öğretmesinden gelir: sesi gidermeye çalışmadan onunla birlikte olmak.`,
+Bu fark çınlama için önemlidir. McKenna ve arkadaşlarının 2017 tarihli randomize çalışmasında MBCT, gevşeme eğitimiyle karşılaştırıldı; her iki grupta da sıkıntı azaldı, ama MBCT ile daha çok azaldı ve etki altı ay sürdü. Fark, muhtemelen farkındalığın sesle mücadeleyi bırakmayı öğretmesinden gelir: sesi gidermeye çalışmadan onunla birlikte olmak.`,
           en: `Relaxation exercises aim to bring the body to a certain state. Mindfulness exercises have no goal: noticing whatever is in the body (tension, pain, numbness, nothing) as it is. Relaxation often comes as a by-product, but when it does not, the exercise has not failed.
 
-This difference matters for tinnitus. In the 2017 randomised trial by McKenna and colleagues, MBCT was compared with relaxation training; both groups improved, but MBCT reduced tinnitus distress more and the effect held at six months. The difference probably comes from mindfulness teaching you to drop the struggle with the sound: being with it without trying to make it go away.`,
+This difference matters for tinnitus. In the 2017 randomised trial by McKenna and colleagues, MBCT was compared with relaxation training; distress fell in both groups, but more with MBCT, and the effect held at six months. The difference probably comes from mindfulness teaching you to drop the struggle with the sound: being with it without trying to make it go away.`,
         },
       },
       {
@@ -2171,9 +2171,9 @@ This difference matters for tinnitus. In the 2017 randomised trial by McKenna an
         body: {
           tr: `Beden taramasında dikkat bir el feneri gibi bedende dolaşır. Her bölgede şu sorular vardır: Burada ne hissediyorum? Sıcaklık, basınç, karıncalanma, temas, hiçbir şey? Fark edilen şey iyi ya da kötü diye etiketlenmez; yalnızca fark edilir.
 
-Zihin dağılacaktır: planlar, anılar, tinnitus. Dağıldığını fark etmek egzersizin bir hatası değil, tam merkezidir; her fark ediş bir farkındalık anıdır. Zihin nereye gittiyse nazikçe not edin ("düşünme", "ses") ve dikkati kaldığınız bölgeye geri getirin. Yüz kez dağılırsa yüz kez geri getirin.
+Zihin dağılacaktır: planlar, anılar, çınlama. Dağıldığını fark etmek egzersizin bir hatası değil, tam merkezidir; her fark ediş bir farkındalık anıdır. Zihin nereye gittiyse nazikçe not edin ("düşünme", "ses") ve dikkati kaldığınız bölgeye geri getirin. Yüz kez dağılırsa yüz kez geri getirin.
 
-Tinnitus bu egzersizde özel bir yere sahip değildir; bedende fark edilen şeylerden biridir. Dikkat sese gittiğinde ona da birkaç saniye aynı merakla bakın (nerede, nasıl bir doku) ve sonra bedene dönün.`,
+Çınlama bu egzersizde özel bir yere sahip değildir; bedende fark edilen şeylerden biridir. Dikkat sese gittiğinde ona da birkaç saniye aynı merakla bakın (nerede, nasıl bir doku) ve sonra bedene dönün.`,
           en: `In the body scan, attention moves through the body like a torch. In each region the questions are: What do I feel here? Warmth, pressure, tingling, contact, nothing? What is noticed is not labelled good or bad; it is just noticed.
 
 The mind will wander: plans, memories, tinnitus. Noticing that it has wandered is not a fault in the exercise but its very centre; each noticing is a moment of mindfulness. Gently note where the mind went ("thinking", "sound") and bring attention back to the region you were on. If it wanders a hundred times, bring it back a hundred times.
@@ -2216,7 +2216,7 @@ The tinnitus has no special place in this exercise; it is one of the things noti
       ],
     },
     keyTakeaway: {
-      tr: 'Beden taramasının amacı gevşemek değil, ne varsa fark etmektir; tinnitus da bedende fark edilen şeylerden biridir ve dağılan zihni geri getirmek egzersizin kendisidir.',
+      tr: 'Beden taramasının amacı gevşemek değil, ne varsa fark etmektir; çınlama da bedende fark edilen şeylerden biridir ve dağılan zihni geri getirmek egzersizin kendisidir.',
       en: 'The aim of the body scan is not to relax but to notice whatever is there; the tinnitus is one of the things noticed in the body, and bringing back the wandering mind is the exercise itself.',
     },
     citations: ['mckenna2017'],
@@ -2225,7 +2225,7 @@ The tinnitus has no special place in this exercise; it is one of the things noti
     id: 'mind.breathingSpace',
     title: { tr: 'Üç dakikalık nefes alanı', en: 'The three-minute breathing space' },
     intro: {
-      tr: 'MBCT programının en taşınabilir egzersizi: gün içinde, özellikle zor bir anda, üç adımda dikkati toplayan kısa bir mola. Tinnitus öne çıktığında, kaygı yükseldiğinde ya da otomatik pilota kapıldığınızı fark ettiğinizde kullanılır.',
+      tr: 'MBCT programının en taşınabilir egzersizi: gün içinde, özellikle zor bir anda, üç adımda dikkati toplayan kısa bir mola. Çınlama öne çıktığında, kaygı yükseldiğinde ya da otomatik pilota kapıldığınızı fark ettiğinizde kullanılır.',
       en: 'The most portable exercise of the MBCT programme: a short pause in three steps that gathers attention during the day, especially in a hard moment. Used when the tinnitus comes forward, when anxiety rises or when you notice you have slipped onto autopilot.',
     },
     sections: [
@@ -2263,7 +2263,7 @@ The exercise puts a pause in place of the automatic reaction in hard moments (ch
           tr: `- Planlı: günde üç kez, belirli saatlerde (sabah, öğle, akşam). Bu, beceriyi kurar.
 - Tepkisel: ses öne çıktığında, bir düşünce döngüsü başladığında, uykuya dalamadığınızda. Bu, beceriyi kullanır.
 - Üç dakika bulunamadığında bir dakikalık sürüm: her adıma yirmi saniye.
-- Tinnitusu fark etmenin kendisini bir çağrı olarak kullanın: ses geldi, nefes alanı zamanı.`,
+- Çınlamayı fark etmenin kendisini bir çağrı olarak kullanın: ses geldi, nefes alanı zamanı.`,
           en: `- Planned: three times a day at set times (morning, midday, evening). This builds the skill.
 - Responsive: when the sound comes forward, when a thought loop starts, when you cannot fall asleep. This uses the skill.
 - When three minutes are not available, a one-minute version: twenty seconds per step.
@@ -2311,7 +2311,7 @@ Which option you choose depends on the moment. What matters is that the choice i
     id: 'mind.allowing',
     title: { tr: 'İzin vermek: sese bilerek yaklaşmak', en: 'Allowing: turning towards the sound' },
     intro: {
-      tr: 'MBCT programının beşinci haftasında dikkat, bilerek zor olana çevrilir. Tinnitus için bu, sese yaklaşmak demektir: ondan kaçmadan, onu değiştirmeden, ona yer açarak. Bu modül BDT\'deki maruz kalmanın farkındalık temelli karşılığıdır.',
+      tr: 'MBCT programının beşinci haftasında dikkat, bilerek zor olana çevrilir. Çınlama için bu, sese yaklaşmak demektir: ondan kaçmadan, onu değiştirmeden, ona yer açarak. Bu modül BDT\'deki maruz kalmanın farkındalık temelli karşılığıdır.',
       en: 'In week five of the MBCT programme, attention is deliberately turned towards what is difficult. For tinnitus this means approaching the sound: without escaping it, without changing it, by making room for it. This module is the mindfulness-based counterpart of exposure in CBT.',
     },
     sections: [
@@ -2331,7 +2331,7 @@ Allowing means deliberately setting resistance down. Not approving of the sound,
         kind: 'exercise',
         body: {
           tr: `1. Oturun. Birkaç dakika nefesle yerleşin.
-2. Dikkati bilerek tinnitusa çevirin. Kaçmadan, "işte burada" diyerek.
+2. Dikkati bilerek çınlamaya çevirin. Kaçmadan, "işte burada" diyerek.
 3. Sesin bedende nerede hissedildiğini bulun: kulak, başın içi, boyun, göğüs. Gerginliğin nerede toplandığını fark edin; çoğu kişide çene, omuzlar ya da karın.
 4. Nefesi o bölgeye gönderin. Her nefes alışta bölgeyi yumuşakça açın; her verişte "burada olabilir, izin veriyorum" deyin.
 5. Direnç geri geldiğinde (gelecektir) onu da fark edin: "işte direnç." Ona da yer açın.
@@ -2354,8 +2354,8 @@ Once a day, 10–12 minutes, for two weeks. Try doing the exercise at the hardes
         heading: { tr: 'Günlük hayata taşımak', en: 'Taking it into daily life' },
         kind: 'tip',
         body: {
-          tr: `Gün içinde ses öne çıktığında bu yöntemin otuz saniyelik sürümünü kullanın: fark et ("ses burada"), bedende bul, nefesle yumuşat, izin ver, devam et. Zamanla "izin vermek" sese karşı varsayılan tutum olur ve dikkat sesi tehlike olarak işaretlemeyi bırakır. MBCT çalışmasında katılımcıların sesle ilişkisindeki değişim, sesin düzeyindeki değişimden bağımsızdı; gürlük aynı kalsa da sıkıntı azaldı.`,
-          en: `When the sound comes forward during the day, use the thirty-second version of this method: notice ("the sound is here"), find it in the body, soften with the breath, allow, continue. Over time "allowing" becomes the default stance towards the sound and attention stops tagging it as danger. In the MBCT trial, the change in participants' relationship with the sound was independent of change in its level; distress fell even where loudness stayed the same.`,
+          tr: `Gün içinde ses öne çıktığında bu yöntemin otuz saniyelik sürümünü kullanın: fark et ("ses burada"), bedende bul, nefesle yumuşat, izin ver, devam et. Zamanla "izin vermek" sese karşı varsayılan tutum olur ve dikkat sesi tehlike olarak işaretlemeyi bırakır. Farkındalık çalışmalarında sıkıntı, sesin gürlüğü pek değişmese de azalabildi.`,
+          en: `When the sound comes forward during the day, use the thirty-second version of this method: notice ("the sound is here"), find it in the body, soften with the breath, allow, continue. Over time "allowing" becomes the default stance towards the sound and attention stops tagging it as danger. In mindfulness trials, distress could fall even when the loudness of the sound changed little.`,
         },
       },
       {
@@ -2415,7 +2415,7 @@ Mood shapes the content of thoughts. A tired, anxious evening interprets the sam
           tr: `1. Oturun, nefesle birkaç dakika yerleşin.
 2. Dikkati nefesten düşüncelere kaydırın. Zihni bir sinema perdesi ya da gökyüzü gibi düşünün; düşünceler perdedeki görüntüler ya da geçen bulutlardır.
 3. Bir düşünce belirdiğinde onu fark edin, kısaca etiketleyin ("plan", "anı", "ses hakkında", "endişe") ve geçmesini izleyin. Düşünceyi takip etmeyin, tartışmayın, kovmayın.
-4. Tinnitusla ilgili bir düşünce geldiğinde özellikle dikkat edin: bu bir olgu mu, yorum mu? Hangi ruh hâli bunu üretiyor? Sonra onun da geçmesini izleyin.
+4. Çınlamayla ilgili bir düşünce geldiğinde özellikle dikkat edin: bu bir olgu mu, yorum mu? Hangi ruh hâli bunu üretiyor? Sonra onun da geçmesini izleyin.
 5. Kendinizi bir düşüncenin içinde bulduğunuzda (olacaktır) bunu fark edin: "düşünceye kapıldım." Nefese dönün, sonra yeniden izlemeye başlayın.
 6. Son bir dakikada nefese dönün ve bitirin.
 
@@ -2479,10 +2479,10 @@ These questions are not meant to refute the thought; they are reminders that it 
 const CBTI: ModuleContent[] = [
   {
     id: 'cbti.education',
-    title: { tr: 'Uyku ve tinnitus: nasıl işler', en: 'Sleep and tinnitus: how it works' },
+    title: { tr: 'Uyku ve çınlama: nasıl işler', en: 'Sleep and tinnitus: how it works' },
     intro: {
-      tr: 'Tinnitusu olan kişilerin yaklaşık yarısı uykusuzluktan yakınır; klinik örneklemlerde bu oran daha yüksektir. Uykusuzluk için bilişsel davranışçı terapi (CBT-I), tinnitusa bağlı uykusuzlukta randomize bir çalışmada odyoloji temelli bakımdan daha etkili bulundu. Bu modül uykunun nasıl düzenlendiğini ve altı haftalık programın yapısını anlatır.',
-      en: 'About half of people with tinnitus report insomnia; in clinic samples the share is higher. Cognitive behavioural therapy for insomnia (CBT-I) was found more effective than audiology-based care for tinnitus-related insomnia in a randomised trial. This module explains how sleep is regulated and the structure of the six-week programme.',
+      tr: 'Çınlaması olan kişilerin yaklaşık yarısı uykusuzluktan yakınır; klinik örneklemlerde bu oran daha yüksektir. Uykusuzluk için bilişsel davranışçı terapi (kısaca uykusuzluk terapisi), çınlamaya bağlı uykusuzlukta bir çalışmada odyoloji bakımından daha etkili bulundu. Bu modül uykunun nasıl düzenlendiğini ve altı haftalık uyku derslerinin yapısını anlatır.',
+      en: 'About half of people with tinnitus report insomnia; in clinic samples the share is higher. Cognitive behavioural therapy for insomnia (CBT-I) was found more effective than audiology-based care for tinnitus-related insomnia in a randomised trial. This module explains how sleep is regulated and the structure of the six-week sleep lessons.',
     },
     sections: [
       {
@@ -2492,9 +2492,9 @@ const CBTI: ModuleContent[] = [
 
 **Biyolojik saat.** Yaklaşık 24 saatlik bir ritim, uyanıklık ve uyku zamanlarını belirler; sabah ışığı ve sabit kalkış saati ile ayarlanır. Düzensiz saatler saati şaşırtır.
 
-Üçüncü bir etken uyarılmadır: kaygı, gerginlik ve "uyumalıyım" baskısı sinir sistemini uyanık tutar. Tinnitus bu üçüncü etkeni besler: sessiz yatak odasında ses öne çıkar, dikkat sese kilitlenir, uyarılma artar. Birkaç kötü geceden sonra yatak "uyanık kalınan yer" olarak öğrenilir.
+Üçüncü bir etken uyarılmadır: kaygı, gerginlik ve "uyumalıyım" baskısı sinir sistemini uyanık tutar. Çınlama bu üçüncü etkeni besler: sessiz yatak odasında ses öne çıkar, dikkat sese kilitlenir, uyarılma artar. Birkaç kötü geceden sonra yatak "uyanık kalınan yer" olarak öğrenilir.
 
-CBT-I bu üç sistemi birlikte hedefler: uyku baskısını artırmak (uyku sıkıştırma), saati sabitlemek (kalkış saati), uyarılmayı azaltmak (uyaran kontrolü, bilişsel çalışma, gevşeme).`,
+uykusuzluk terapisi bu üç sistemi birlikte hedefler: uyku baskısını artırmak (uyku sıkıştırma), saati sabitlemek (kalkış saati), uyarılmayı azaltmak (uyaran kontrolü, bilişsel çalışma, gevşeme).`,
           en: `**Sleep pressure.** Every hour awake builds up need for sleep in the brain; sleeping discharges it. Daytime naps and sleeping late reduce this pressure and make falling asleep at night harder.
 
 **The body clock.** A roughly 24-hour rhythm sets times for wakefulness and sleep; it is set by morning light and a fixed rise time. Irregular hours confuse the clock.
@@ -2507,10 +2507,10 @@ CBT-I targets all three systems together: raising sleep pressure (sleep compress
       {
         heading: { tr: 'Altı haftalık yol', en: 'The six-week path' },
         body: {
-          tr: `- **1. hafta:** Bu modül, uyku hijyeni, uyku günlüğü, gece için ses zenginleştirme.
+          tr: `- **1. hafta:** Bu modül, iyi uyku alışkanlıkları, uyku günlüğü, gece için rahatlatan arka plan sesi.
 - **2. hafta:** Uyaran kontrolü: yatak yalnızca uyku için, 15 dakika kuralı, sabit kalkış.
 - **3. hafta:** Uyku sıkıştırma: yatakta geçen süreyi gerçek uyku süresine yaklaştırmak.
-- **4. hafta:** Uyku ve tinnitus hakkındaki düşüncelerle çalışmak.
+- **4. hafta:** Uyku ve çınlama hakkındaki düşüncelerle çalışmak.
 - **5. hafta:** Gevşeme, endişe zamanı ve yatış öncesi rutin.
 - **6. hafta:** Kazanımları korumak.
 
@@ -2532,7 +2532,7 @@ The backbone of the programme is the sleep diary: each morning, bedtime, time to
           tr: `- Herkesin sekiz saate ihtiyacı yoktur; 6–9 saat arası normal aralıktır. Gündüz işlevselliğiniz iyiyse süre yeterlidir.
 - Gece kısa uyanmalar normaldir; çoğu kişi gecede birkaç kez uyanır ve hatırlamaz.
 - Bir kötü gece ertesi günü bozar ama telafi edilir; beden ertesi gece daha derin uyur.
-- Uykusuzluğu "sesin yüzünden" diye açıklamak, uykuyu sesin düzelmesine bağlar; oysa uyku ses varken de düzelir. Marks çalışmasında CBT-I alanların yüzde seksenine yakını uykusuzluğunun düzeldiğini bildirdi.`,
+- Uykusuzluğu "sesin yüzünden" diye açıklamak, uykuyu sesin düzelmesine bağlar; oysa uyku ses varken de düzelir. Marks çalışmasında uykusuzluk terapisi alanların yüzde seksenine yakını uykusuzluğunun düzeldiğini bildirdi.`,
           en: `- Not everyone needs eight hours; 6–9 hours is the normal range. If you function well in the day, the amount is enough.
 - Brief night wakings are normal; most people wake several times a night and do not remember.
 - One bad night spoils the next day but is made up; the body sleeps more deeply the following night.
@@ -2543,7 +2543,7 @@ The backbone of the programme is the sleep diary: each morning, bedtime, time to
         heading: { tr: 'Önemli uyarı', en: 'Important notice' },
         kind: 'warning',
         body: {
-          tr: `Bu programın üçüncü haftasındaki uyku sıkıştırma, yatakta geçen süreyi geçici olarak kısaltır. Epilepsi, bipolar bozukluk, uyurgezerlik gibi parasomniler ya da güvenlik açısından kritik bir işiniz (sürücülük, ağır makine, vardiya) varsa bu adımı yalnızca bir hekim ya da uyku uzmanıyla birlikte uygulayın. Bu durumlar sizin için geçerliyse programın diğer bileşenlerine (uyaran kontrolü, bilişsel çalışma, gevşeme) devam edin ve sıkıştırma modülünü atlayın.`,
+          tr: `Bu programın üçüncü haftasındaki uyku sıkıştırma, yatakta geçen süreyi geçici olarak kısaltır. Epilepsi, bipolar bozukluk, uyurgezerlik gibi bir uyku bozukluğu ya da güvenlik açısından kritik bir işiniz (sürücülük, ağır makine, vardiya) varsa bu adımı yalnızca bir hekim ya da uyku uzmanıyla birlikte uygulayın. Bu durumlar sizin için geçerliyse programın diğer bileşenlerine (uyaran kontrolü, bilişsel çalışma, gevşeme) devam edin ve sıkıştırma modülünü atlayın.`,
           en: `Sleep compression in week three of this programme temporarily shortens time in bed. If you have epilepsy, bipolar disorder, a parasomnia such as sleepwalking, or a safety-critical job (driving, heavy machinery, shift work), apply that step only together with a doctor or sleep specialist. If any of these apply to you, continue with the other components (stimulus control, cognitive work, relaxation) and skip the compression module.`,
         },
       },
@@ -2554,13 +2554,13 @@ The backbone of the programme is the sleep diary: each morning, bedtime, time to
       items: [
         { tr: 'Uyku günlüğünü bu sabahtan başlayarak dolduruyorum.', en: 'I am filling in the sleep diary from this morning on.' },
         { tr: 'Haftanın her günü için tek bir kalkış saati belirledim.', en: 'I set one rise time for every day of the week.' },
-        { tr: 'Yatak odasında gece için düşük düzeyde ortam sesi kurdum.', en: 'I set up low-level background sound in the bedroom for the night.' },
+        { tr: 'Yatak odasında gece için düşük düzeyde arka plan sesi kurdum.', en: 'I set up low-level background sound in the bedroom for the night.' },
         { tr: 'Gündüz uykusunu bıraktım ya da 20 dakikayla sınırladım.', en: 'I stopped napping or limited naps to 20 minutes.' },
         { tr: 'Uyku sıkıştırma için uyarıdaki durumların bende olup olmadığını kontrol ettim.', en: 'I checked whether any of the conditions in the notice about sleep compression apply to me.' },
       ],
     },
     keyTakeaway: {
-      tr: 'Uyku baskısı, biyolojik saat ve uyarılma uykuyu belirler; tinnitus uyarılmayı besler ama uyku, ses varken de uyku günlüğü ve altı haftalık CBT-I ile yeniden kurulabilir.',
+      tr: 'Uyku baskısı, biyolojik saat ve uyarılma uykuyu belirler; çınlama uyarılmayı besler ama uyku, ses varken de uyku günlüğü ve altı haftalık uyku dersleriyle yeniden kurulabilir.',
       en: 'Sleep pressure, the body clock and arousal determine sleep; tinnitus feeds arousal, but sleep can be rebuilt while the sound is there through the sleep diary and six weeks of CBT-I.',
     },
     citations: ['marks2023', 'espie2014'],
@@ -2569,17 +2569,17 @@ The backbone of the programme is the sleep diary: each morning, bedtime, time to
     id: 'cbti.stimulusControl',
     title: { tr: 'Uyaran kontrolü', en: 'Stimulus control' },
     intro: {
-      tr: 'Uykusuzluk için en güçlü kanıta sahip tek davranışsal yöntem. Amaç, yatak ile uyku arasındaki bağı yeniden kurmak ve yatak ile uyanıklık, endişe ve tinnitus dinleme arasındaki bağı koparmaktır. Kurallar basit, uygulama iki üç hafta sabır ister.',
-      en: 'The single behavioural method with the strongest evidence for insomnia. The aim is to rebuild the link between bed and sleep and to break the link between bed and wakefulness, worry and listening to tinnitus. The rules are simple; applying them takes two to three weeks of patience.',
+      tr: 'Uykusuzlukta en iyi incelenmiş davranış yöntemlerinden biri. Amaç, yatak ile uyku arasındaki bağı yeniden kurmak ve yatak ile uyanıklık, endişe ve çınlama dinleme arasındaki bağı koparmaktır. Kurallar basit, uygulama iki üç hafta sabır ister.',
+      en: 'One of the best-studied behavioural methods for insomnia. The aim is to rebuild the link between bed and sleep and to break the link between bed and wakefulness, worry and listening to tinnitus. The rules are simple; applying them takes two to three weeks of patience.',
     },
     sections: [
       {
         heading: { tr: 'Yatak neyi öğrendi', en: 'What the bed has learned' },
         body: {
-          tr: `Haftalarca yatakta uyanık kalıp sesi dinlemek, kaygılanmak ya da telefona bakmak, yatağı bir koşullu uyaran hâline getirir: yatağa girmek uykuyu değil uyanıklığı çağırır. Pek çok kişi "kanepede uyuyakalıyorum ama yatağa geçince uyanıyorum" der; bu, öğrenmenin kanıtıdır.
+          tr: `Haftalarca yatakta uyanık kalıp sesi dinlemek, kaygılanmak ya da telefona bakmak, yatağı bir uyanıklık işaretine çevirir: yatağa girmek uykuyu değil uyanıklığı çağırır. Pek çok kişi "kanepede uyuyakalıyorum ama yatağa geçince uyanıyorum" der; bu, öğrenmenin kanıtıdır.
 
-Uyaran kontrolü bu öğrenmeyi tersine çevirir. Yatakta yalnızca uyunursa ve uyanıklık her seferinde yataktan dışarı taşınırsa, birkaç hafta içinde yatak yeniden uykuyu çağırır. Yöntem Bootzin tarafından 1970'lerde geliştirilmiş, o zamandan beri onlarca çalışmada doğrulanmıştır; Marks ve arkadaşlarının tinnitus çalışmasında da CBT-I paketinin temel parçasıydı.`,
-          en: `Weeks of lying awake in bed listening to the sound, worrying or looking at the phone turn the bed into a conditioned cue: getting into bed calls up wakefulness, not sleep. Many people say "I fall asleep on the sofa but wake up when I move to bed"; that is the evidence of learning.
+Uyaran kontrolü bu öğrenmeyi tersine çevirir. Yatakta yalnızca uyunursa ve uyanıklık her seferinde yataktan dışarı taşınırsa, birkaç hafta içinde yatak yeniden uykuyu çağırır. Yöntem Bootzin tarafından 1970'lerde geliştirilmiş, o zamandan beri onlarca çalışmada doğrulanmıştır; Marks ve arkadaşlarının çınlama çalışmasında da uykusuzluk terapisi paketinin temel parçasıydı.`,
+          en: `Weeks of lying awake in bed listening to the sound, worrying or looking at the phone turn the bed into a cue for wakefulness: getting into bed calls up wakefulness, not sleep. Many people say "I fall asleep on the sofa but wake up when I move to bed"; that is the evidence of learning.
 
 Stimulus control reverses this learning. If the bed is used only for sleep and wakefulness is carried out of the bed every time, within a few weeks the bed calls up sleep again. The method was developed by Bootzin in the 1970s and confirmed in dozens of studies since; it was a core part of the CBT-I package in the Marks tinnitus trial too.`,
         },
@@ -2589,12 +2589,12 @@ Stimulus control reverses this learning. If the bed is used only for sleep and w
         kind: 'exercise',
         body: {
           tr: `1. **Yalnızca uykunuz gelince yatın.** Yorgunluk ile uykululuk farklıdır; uykululuk göz kapaklarının ağırlaşması, esnemedir.
-2. **Yatak yalnızca uyku ve yakınlık için.** Okuma, telefon, televizyon, yemek, planlama, tinnitusu dinleme: hiçbiri yatakta değil.
+2. **Yatak yalnızca uyku ve yakınlık için.** Okuma, telefon, televizyon, yemek, planlama, çınlamayı dinleme: hiçbiri yatakta değil.
 3. **15 dakika kuralı.** Yaklaşık 15–20 dakika içinde uyuyamadıysanız kalkın. Başka bir odaya geçin, loş ışıkta sakin bir şey yapın (kitap, hafif müzik, gevşeme). Uykunuz gelince yatağa dönün. Gerekirse tekrarlayın; ilk gecelerde üç dört kez olabilir.
 4. **Gece uyanınca da aynı.** 15–20 dakika içinde uyuyamıyorsanız kalkın.
 5. **Sabit kalkış saati.** Ne kadar uyuduğunuzdan bağımsız, her gün aynı saat. Alarm kurun, ertelemeyin.
 
-**Tinnitusa uyarlama:** Kalktığınızda gittiğiniz yerde de düşük ortam sesi olsun; yatak odasındaki ses sabit ve aralıksız olsun. Yatakta uyanıkken sesi "ölçmeyin"; fark ettiğiniz anda bu, kalkma kuralını uygulamanın işaretidir.`,
+**Çınlamaya uyarlama:** Kalktığınızda gittiğiniz yerde de düşük arka plan sesi olsun; yatak odasındaki ses sabit ve aralıksız olsun. Yatakta uyanıkken sesi "ölçmeyin"; fark ettiğiniz anda bu, kalkma kuralını uygulamanın işaretidir.`,
           en: `1. **Go to bed only when sleepy.** Tiredness and sleepiness differ; sleepiness is heavy eyelids, yawning.
 2. **The bed is for sleep and intimacy only.** Reading, phone, television, food, planning, listening to the tinnitus: none of it in bed.
 3. **The 15-minute rule.** If you have not fallen asleep in about 15–20 minutes, get up. Move to another room, do something calm in dim light (a book, soft music, relaxation). Return to bed when sleepy. Repeat if needed; in the first nights it may be three or four times.
@@ -2623,7 +2623,7 @@ Return to bed when sleepiness arrives, not when you feel "I have been up long en
         heading: { tr: 'Güvenlik', en: 'Safety' },
         kind: 'warning',
         body: {
-          tr: `Gece kalkarken düşme riski olan kişiler (ileri yaş, denge sorunu, baş dönmesi) yolu aydınlatmalı ve gerekirse yatakta oturarak uyanıklığı geçirmelidir; ışığı açıp oturmak da yatak ile uyku bağını korumaya yardımcı olur. Gündüz belirgin uykululuk gelişirse araç kullanmayın ve kalkış saatini kademeli olarak 15 dakika ileri alın.`,
+          tr: `Gece kalkarken düşme riski olan kişiler (ileri yaş, denge sorunu, baş dönmesi) yolu aydınlatmalı ve gerekirse yatakta oturarak uyanıklığı geçirmelidir; ışığı açıp oturmak da yatak ile uyku bağını korumaya yardımcı olur. Gündüz belirgin uykululuk gelişirse araç kullanmayın ve kalkış saatini 15'er dakika geciktirin.`,
           en: `People at risk of falling when getting up at night (older age, balance problems, dizziness) should light the way and, if needed, sit up in bed to pass the wakefulness; turning on the light and sitting up also helps protect the bed–sleep link. If marked daytime sleepiness develops, do not drive and move the rise time later by 15 minutes in steps.`,
         },
       },
@@ -2649,8 +2649,8 @@ Return to bed when sleepiness arrives, not when you feel "I have been up long en
     id: 'cbti.compression',
     title: { tr: 'Uyku sıkıştırma', en: 'Sleep compression' },
     intro: {
-      tr: 'Uykusuzluk yaşayan kişiler genellikle yatakta uyuduklarından çok daha uzun süre geçirir; bu uzun süre uykuyu seyreltir ve yüzeyselleştirir. Uyku sıkıştırma, yatakta geçen süreyi gerçek uyku süresine yaklaştırarak uykuyu yoğunlaştırır. Bu, CBT-I\'nin en etkili ve en zor bileşenidir.',
-      en: 'People with insomnia usually spend far longer in bed than they sleep; that long span dilutes sleep and makes it shallow. Sleep compression brings time in bed closer to actual sleep time and so concentrates sleep. It is the most effective and the hardest component of CBT-I.',
+      tr: 'Uykusuzluk yaşayan kişiler genellikle yatakta uyuduklarından çok daha uzun süre geçirir; bu uzun süre uykuyu seyreltir ve yüzeyselleştirir. Uyku sıkıştırma, yatakta geçen süreyi gerçek uyku süresine yaklaştırarak uykuyu yoğunlaştırır. Bu, uykusuzluk terapisinin en etkili ama en zor bileşenlerinden biridir.',
+      en: 'People with insomnia usually spend far longer in bed than they sleep; that long span dilutes sleep and makes it shallow. Sleep compression brings time in bed closer to actual sleep time and so concentrates sleep. It is one of the most effective and hardest components of CBT-I.',
     },
     sections: [
       {
@@ -2661,7 +2661,7 @@ Return to bed when sleepiness arrives, not when you feel "I have been up long en
 
 - Epilepsi veya nöbet öyküsü
 - Bipolar bozukluk
-- Uyurgezerlik, uyku terörü gibi parasomniler
+- Uyurgezerlik, gece korkusu gibi uyku bozuklukları (parasomni)
 - Güvenlik açısından kritik iş: profesyonel sürücülük, ağır makine, gece vardiyası, sağlık nöbetleri
 - Gebelik, kontrolsüz bir tıbbi durum ya da uyku apnesi şüphesi
 
@@ -2682,7 +2682,7 @@ In these cases continue with stimulus control, cognitive work and relaxation; sk
         body: {
           tr: `Diyelim ki saat 23.00'te yatıyor, 07.30'da kalkıyorsunuz: yatakta 8,5 saat. Günlüğünüz ortalama 6 saat uyuduğunuzu gösteriyor. Uyku verimliliği 6 ÷ 8,5 = yüzde 70. Geri kalan 2,5 saat uyanık, sesle ve endişeyle geçiyor ve yatağı uyanıklığa bağlıyor.
 
-Uyku sıkıştırma yatakta geçen süreyi uyku süresine indirir. Uyku baskısı yükselir, uykuya dalma hızlanır, gece uyanmaları azalır ve uyku derinleşir. İlk hafta toplam uyku biraz azalabilir; ama verimlilik yükselir ve sonra pencere adım adım genişletilir. Marks çalışmasında bu yöntem CBT-I paketinin merkezindeydi ve katılımcıların yüzde doksan dördü programı tamamladı.`,
+Uyku sıkıştırma yatakta geçen süreyi uyku süresine indirir. Uyku baskısı yükselir, uykuya dalma hızlanır, gece uyanmaları azalır ve uyku derinleşir. İlk hafta toplam uyku biraz azalabilir; ama verimlilik yükselir ve sonra pencere adım adım genişletilir. Marks çalışmasında bu yöntem uykusuzluk terapisi paketinin merkezindeydi ve katılımcıların yüzde doksan dördü programı tamamladı.`,
           en: `Say you go to bed at 11 pm and get up at 7.30 am: 8.5 hours in bed. Your diary shows you sleep 6 hours on average. Sleep efficiency is 6 ÷ 8.5 = 70 per cent. The remaining 2.5 hours are spent awake, with the sound and with worry, and they bind the bed to wakefulness.
 
 Sleep compression reduces time in bed to sleep time. Sleep pressure rises, falling asleep gets faster, night wakings fall and sleep deepens. In the first week total sleep may dip a little; but efficiency rises and the window is then widened step by step. In the Marks trial this method was at the centre of the CBT-I package and ninety-four per cent of participants completed the programme.`,
@@ -2722,7 +2722,7 @@ The tool below calculates the window when you enter your average sleep time and 
         body: {
           tr: `- Yatış saatine kadar uyanık kalmak zor olabilir: ayakta kalın, loş ama yeterli ışıkta hafif bir uğraş bulun, kanepede uyuyakalmayın.
 - Gündüz uykululuk gelirse kısa yürüyüş, gün ışığı, soğuk su. Gündüz uyumayın; uyku baskısı gece için saklanır.
-- Yorgunlukla tinnitus daha belirgin gelebilir. Bu geçicidir; uyku düzelince geriler.
+- Yorgunlukla çınlama daha belirgin gelebilir. Bu geçicidir; uyku düzelince geriler.
 - Pencereyi "cezalandırıcı" olarak görmeyin; bu, uykunun yoğunlaştırıldığı kısa bir dönemdir ve her hafta genişler.`,
           en: `- Staying awake until bedtime can be hard: stay on your feet, find a light activity in dim but sufficient light, do not fall asleep on the sofa.
 - If daytime sleepiness comes: a short walk, daylight, cold water. Do not nap; the sleep pressure is saved for the night.
@@ -2733,16 +2733,16 @@ The tool below calculates the window when you enter your average sleep time and 
     ],
     practice: { kind: 'sleepWindow', minutes: 5 },
     keyTakeaway: {
-      tr: 'Yatakta geçen süre = ortalama uyku + 30 dakika, en az 5,5 saat; verimlilik yüzde 85\'e ulaştıkça pencere her hafta 15 dakika genişler. Epilepsi, bipolar bozukluk, parasomni ya da güvenlik açısından kritik işte yalnızca uzmanla uygulanır.',
+      tr: 'Yatakta geçen süre = ortalama uyku + 30 dakika, en az 5,5 saat; verimlilik yüzde 85\'e ulaştıkça pencere her hafta 15 dakika genişler. Epilepsi, bipolar bozukluk, uyurgezerlik ya da güvenlik açısından kritik bir işte yalnızca uzmanla uygulanır.',
       en: 'Time in bed = average sleep + 30 minutes, never under 5.5 hours; as efficiency reaches 85 per cent the window widens by 15 minutes each week. With epilepsy, bipolar disorder, parasomnia or a safety-critical job, only under specialist supervision.',
     },
     citations: ['marks2023'],
   },
   {
     id: 'cbti.cognitions',
-    title: { tr: 'Uyku ve tinnitus hakkındaki düşünceler', en: 'Thoughts about sleep and tinnitus' },
+    title: { tr: 'Uyku ve çınlama hakkındaki düşünceler', en: 'Thoughts about sleep and tinnitus' },
     intro: {
-      tr: '"Bu sesle asla uyuyamam." "Yarın mahvolacağım." "Sekiz saat uyumalıyım." Uykuyla ilgili düşünceler gece yatakta en yüksek sesle konuşur ve uyanıklığı besler. Bu modül, uyku ve tinnitus hakkındaki felaketleştirici inançları tanımayı ve onlara gece yarısı değil, gündüz yanıt vermeyi öğretir.',
+      tr: '"Bu sesle asla uyuyamam." "Yarın mahvolacağım." "Sekiz saat uyumalıyım." Uykuyla ilgili düşünceler gece yatakta en yüksek sesle konuşur ve uyanıklığı besler. Bu modül, uyku ve çınlama hakkındaki felaketleştirici inançları tanımayı ve onlara gece yarısı değil, gündüz yanıt vermeyi öğretir.',
       en: '"I can never sleep with this sound." "Tomorrow will be ruined." "I must get eight hours." Thoughts about sleep speak loudest in bed at night and feed wakefulness. This module teaches recognising catastrophic beliefs about sleep and tinnitus and answering them in the day, not at midnight.',
     },
     sections: [
@@ -2751,7 +2751,7 @@ The tool below calculates the window when you enter your average sleep time and 
         body: {
           tr: `Gece yarısı zihin farklı çalışır: yorgunluk yargıyı zayıflatır, karanlık belirsizliği artırır, sessizlik sesi büyütür. Gündüz gülüp geçeceğiniz bir düşünce ("asla uyuyamayacağım") gece bir olgu gibi gelir. Bu düşünce kaygıyı, kaygı uyarılmayı, uyarılma uyanıklığı artırır ve düşünce kendini doğrular.
 
-Uykuyla ilgili düşüncelerin üç kalıbı vardır: uykunun sonuçlarını felaketleştirme ("yarın hiçbir şey yapamam"), uyku hakkında katı kurallar ("sekiz saat şart") ve tinnitusa teslimiyet ("ses varken uyku imkânsız"). Üçü de yanlışlanabilir; ama gece değil, gündüz.`,
+Uykuyla ilgili düşüncelerin üç kalıbı vardır: uykunun sonuçlarını felaketleştirme ("yarın hiçbir şey yapamam"), uyku hakkında katı kurallar ("sekiz saat şart") ve çınlamaya teslimiyet ("ses varken uyku imkânsız"). Üçü de yanlışlanabilir; ama gece değil, gündüz.`,
           en: `At midnight the mind works differently: fatigue weakens judgement, darkness increases uncertainty, silence magnifies the sound. A thought you would laugh off in daytime ("I will never sleep") arrives at night like a fact. The thought raises anxiety, anxiety raises arousal, arousal raises wakefulness, and the thought confirms itself.
 
 Thoughts about sleep come in three patterns: catastrophising the consequences of sleep ("I will not be able to do anything tomorrow"), rigid rules about sleep ("eight hours are essential") and surrender to the tinnitus ("sleep is impossible with the sound"). All three can be tested; but in the day, not at night.`,
@@ -2782,10 +2782,10 @@ Write the balanced sentences on a card or a phone note. When the thought comes a
         body: {
           tr: `Uyku, çabayla gelmeyen tek şeylerden biridir. "Uyumalıyım" düşüncesi performans kaygısı yaratır ve uyanıklığı artırır. Bazı kişiler için tam tersi işe yarar: yatakta rahatça uzanıp "uyanık kalmaya" niyetlenmek. Buna paradoksal niyet denir ve uykuya dalma kaygısı yüksek kişilerde kanıt vardır. Deneyin: gözler açık, karanlıkta, "biraz daha uyanık kalayım" diye düşünerek sakince uzanın. Uyku çoğu zaman kendi gelir.
 
-Tinnitus için benzer bir paradoks geçerlidir: sesi duymamaya çalışmak sesi büyütür; sese "orada olabilirsin" demek onu küçültür. İzin vermek (bilinçli farkındalık modülü) ve ses zenginleştirme bu tutumun araçlarıdır.`,
+Çınlama için benzer bir paradoks geçerlidir: sesi duymamaya çalışmak sesi büyütür; sese "orada olabilirsin" demek çoğu zaman onu daha az rahatsız edici kılar. İzin vermek (bilinçli farkındalık modülü) ve rahatlatan arka plan sesi bu tutumun araçlarıdır.`,
           en: `Sleep is one of the few things that does not come with effort. The thought "I must sleep" creates performance anxiety and increases wakefulness. For some people the opposite works: lying comfortably in bed intending to "stay awake". This is called paradoxical intention and has evidence in people with high sleep-onset anxiety. Try it: eyes open, in the dark, lying calmly while thinking "let me stay awake a little longer". Sleep usually comes on its own.
 
-A similar paradox holds for tinnitus: trying not to hear the sound magnifies it; telling the sound "you can be there" shrinks it. Allowing (the mindfulness module) and sound enrichment are the tools of this stance.`,
+A similar paradox holds for tinnitus: trying not to hear the sound magnifies it; telling the sound "you can be there" often makes it less bothersome. Allowing (the mindfulness module) and sound enrichment are the tools of this stance.`,
         },
       },
       {
@@ -2812,7 +2812,7 @@ You write the card not to read at night but to remember. After a week or two the
     ],
     practice: { kind: 'thoughtRecord', minutes: 10 },
     keyTakeaway: {
-      tr: 'Gece zihni uyku ve tinnitus hakkında felaketleştirir; dengeli cümleleri gündüz hazırlayıp gece tartışmadan hatırlamak ve uyku çabasını bırakmak uyanıklığı azaltır.',
+      tr: 'Gece zihni uyku ve çınlama hakkında felaketleştirir; dengeli cümleleri gündüz hazırlayıp gece tartışmadan hatırlamak ve uyku çabasını bırakmak uyanıklığı azaltır.',
       en: 'The night mind catastrophises about sleep and tinnitus; preparing balanced sentences in the day, recalling them at night without arguing and dropping the effort to sleep reduce wakefulness.',
     },
     citations: ['marks2023', 'fuller2020'],
@@ -2830,7 +2830,7 @@ You write the card not to read at night but to remember. After a week or two the
         body: {
           tr: `Zihin, çözülmemiş sorunları gece yatakta açar çünkü gün içinde onlara zaman ayrılmamıştır. Endişe zamanı, bu işe gündüz belirli bir yer verir: akşam yemeğinden sonra, yataktan en az iki saat önce, 15–20 dakika. Bir kâğıda aklınızdaki endişeleri yazın; her birinin yanına "yapılacak bir şey var mı, varsa ilk adım ne?" sorusunun cevabını ekleyin. Yapılacak bir şey yoksa yanına "şimdilik yapılacak bir şey yok" yazın. Kâğıdı kapatın.
 
-Gece bir endişe geldiğinde: "Bunu yazdım; yarın endişe zamanında bakacağım." Tartışmayın, çözmeye çalışmayın. Zihin, endişenin bir yeri olduğunu öğrendiğinde yatakta onu açmaya daha az ihtiyaç duyar. Tinnitusla ilgili endişeler ("ses kötüleşiyor mu?") de bu kâğıda yazılır; ilk adım genellikle "programa devam, sabah kaydı yap"tır.`,
+Gece bir endişe geldiğinde: "Bunu yazdım; yarın endişe zamanında bakacağım." Tartışmayın, çözmeye çalışmayın. Zihin, endişenin bir yeri olduğunu öğrendiğinde yatakta onu açmaya daha az ihtiyaç duyar. Çınlamayla ilgili endişeler ("ses kötüleşiyor mu?") de bu kâğıda yazılır; ilk adım genellikle "programa devam, sabah kaydı yap"tır.`,
           en: `The mind opens unsolved problems in bed at night because no time was given to them during the day. Worry time gives this work a set place in the day: after dinner, at least two hours before bed, 15–20 minutes. Write the worries on your mind on a sheet of paper; beside each add the answer to "is there something to do, and if so what is the first step?" If there is nothing to do, write "nothing to do for now". Close the sheet.
 
 When a worry comes at night: "I have written this down; I will look at it tomorrow in worry time." Do not argue, do not try to solve. When the mind learns that worry has a place, it needs to open it in bed less often. Worries about tinnitus ("is the sound getting worse?") go on the sheet too; the first step is usually "continue the programme, do the morning record".`,
@@ -2845,7 +2845,7 @@ When a worry comes at night: "I have written this down; I will look at it tomorr
 - **−90 dk:** Ekranlar kapanır ya da gece moduna geçer. İş e-postası yok. Işıklar kısılır.
 - **−60 dk:** Hafif bir uğraş: kitap, hafif müzik, örgü, bulmaca. Kafein ve alkol yok; ağır yemek yok.
 - **−45 dk:** Ilık duş ya da ayak banyosu; bedenin ardından soğuması uykuya yardım eder.
-- **−30 dk:** Yatak odasında ortam sesi açılır (uyku zamanlayıcısı en az 90 dakika). Yarın için küçük hazırlıklar.
+- **−30 dk:** Yatak odasında arka plan sesi açılır (uyku zamanlayıcısı en az 90 dakika). Yarın için küçük hazırlıklar.
 - **−15 dk:** Gevşeme: yalnızca bırakma ya da nefesle işaretli gevşeme, yatağın dışında bir koltukta.
 - **0:** Uyku geldiğinde yatağa; pencerenin başlangıcından önce değil.
 
@@ -2905,7 +2905,7 @@ The routine need not be long; order and repetition matter. Within three or four 
       {
         heading: { tr: 'Kalıcı kurallar ve esnek kurallar', en: 'Permanent rules and flexible rules' },
         body: {
-          tr: `**Kalıcı tutulacaklar:** sabit kalkış saati (hafta sonu en fazla bir saat sapma), yatakta yalnızca uyku, uyuyamayınca kalkmak, gündüz uyumamak, yatak odasında ortam sesi. Bunlar alışkanlık olmalı; programın bittiği anlamına gelmez.
+          tr: `**Kalıcı tutulacaklar:** sabit kalkış saati (hafta sonu en fazla bir saat sapma), yatakta yalnızca uyku, uyuyamayınca kalkmak, gündüz uyumamak, yatak odasında arka plan sesi. Bunlar alışkanlık olmalı; programın bittiği anlamına gelmez.
 
 **Esnetilebilecekler:** uyku penceresi (artık doğal sürenize ulaştınız; iyi dönemlerde pencereyi izlemeye gerek yoktur), yatış öncesi rutinin ayrıntıları, günlük tutma (haftada bir gözden geçirme yeterlidir).
 
@@ -2922,17 +2922,17 @@ The routine need not be long; order and repetition matter. Within three or four 
         body: {
           tr: `Bir kötü gece normaldir ve telafi edilir. Ertesi gün yapılmaması gerekenler: erken yatmak, gündüz uyumak, geç kalkmak, "telafi etmeye" çalışmak. Bunlar uyku baskısını dağıtır ve bir kötü geceyi üç kötü geceye çevirir. Yapılacak: aynı saatte kalkmak, gün ışığı, hareket, akşam rutinine sadık kalmak. Beden ertesi gece daha derin uyur.
 
-Kötü bir dönem (bir haftadan uzun) başladığında nedeni arayın: seyahat, hastalık, yeni bir stres, kafein artışı, tinnitusta geçici bir alevlenme. Nedene yönelik basit bir düzeltme ve iki haftalık mini program çoğu zaman yeterlidir. Uykusuzluk dört haftadan uzun sürerse ve gündüz işlevselliğinizi bozuyorsa bir uyku uzmanına başvurun; uyku apnesi, huzursuz bacak ya da başka bir neden olabilir.`,
+Kötü bir dönem (bir haftadan uzun) başladığında nedeni arayın: seyahat, hastalık, yeni bir stres, kafein artışı, çınlamada geçici bir alevlenme. Nedene yönelik basit bir düzeltme ve iki haftalık mini program çoğu zaman yeterlidir. Uykusuzluk dört haftadan uzun sürerse ve gündüz işlevselliğinizi bozuyorsa bir uyku uzmanına başvurun; uyku apnesi, huzursuz bacak ya da başka bir neden olabilir.`,
           en: `One bad night is normal and gets made up. What not to do the next day: go to bed early, nap, sleep in, try to "catch up". These dissipate sleep pressure and turn one bad night into three. What to do: get up at the same time, daylight, movement, keep to the evening routine. The body sleeps more deeply the following night.
 
 When a bad period (longer than a week) starts, look for the cause: travel, illness, new stress, more caffeine, a temporary flare of tinnitus. A simple correction aimed at the cause plus the two-week mini programme is usually enough. If insomnia lasts longer than four weeks and impairs daytime functioning, see a sleep specialist; sleep apnoea, restless legs or another cause may be present.`,
         },
       },
       {
-        heading: { tr: 'Uyku ve tinnitus birlikte', en: 'Sleep and tinnitus together' },
+        heading: { tr: 'Uyku ve çınlama birlikte', en: 'Sleep and tinnitus together' },
         kind: 'tip',
         body: {
-          tr: `Uyku düzeldikçe tinnitus gündüz de daha az rahatsız eder; Marks çalışmasında CBT-I alan grupta tinnitus sıkıntısı ve psikolojik sıkıntı da azaldı. Tersi de doğrudur: tinnitus programındaki beceriler (gevşeme, düşünce kaydı, izin verme) uykuyu korur. İki programı birbirinden ayrı görmeyin; aynı sinir sistemine aynı yönden yaklaşırlar.
+          tr: `Uyku düzeldikçe çınlama gündüz de daha az rahatsız eder; Marks çalışmasında uykusuzluk terapisi alan grupta çınlama sıkıntısı ve psikolojik sıkıntı da azaldı. Tersi de doğrudur: çınlama programındaki beceriler (gevşeme, düşünce kaydı, izin verme) uykuyu korur. İki programı birbirinden ayrı görmeyin; aynı sinir sistemine aynı yönden yaklaşırlar.
 
 Aşağıdaki plan, uyku için kişisel bakım planınızdır. Yazın ve görünür bir yerde tutun.`,
           en: `As sleep improves, tinnitus bothers you less in the day too; in the Marks trial the CBT-I group also showed reduced tinnitus distress and psychological distress. The reverse holds as well: the skills from the tinnitus programme (relaxation, thought records, allowing) protect sleep. Do not see the two programmes as separate; they approach the same nervous system from the same direction.
@@ -2945,7 +2945,7 @@ The plan below is your personal maintenance plan for sleep. Write it and keep it
         body: {
           tr: `- **Tatilde ne olur?** Kalkış saatini en fazla bir saat kaydırın; döndüğünüzde ilk günden eski saate geçin. İki üç gecelik sapma telafi edilir.
 - **Uyku ilacı kullanıyorum.** Programdaki kurallar ilaçla birlikte de uygulanır; azaltma ya da bırakma kararını yalnızca hekiminizle verin.
-- **Eşim farklı saatlerde uyuyor.** Kalkış saati kişiseldir; yatış saati farklı olabilir. Yatak odasındaki ortam sesi her ikinize de uygun düşük bir düzeyde olsun.
+- **Eşim farklı saatlerde uyuyor.** Kalkış saati kişiseldir; yatış saati farklı olabilir. Yatak odasındaki arka plan sesi her ikinize de uygun düşük bir düzeyde olsun.
 - **Günlüğü bırakabilir miyim?** Evet; haftada bir hafızadan gözden geçirme yeterlidir. Kötü bir dönemde yeniden başlatın.`,
           en: `- **What about holidays?** Shift the rise time by at most one hour; on your return go back to the old time from the first day. A deviation of two or three nights is made up.
 - **I take sleep medication.** The rules in the programme apply alongside medication; decide on reducing or stopping it only with your doctor.
@@ -2981,17 +2981,17 @@ const HYPER: ModuleContent[] = [
     id: 'hyper.education',
     title: { tr: 'Ses hassasiyeti: ne olur, ne yardımcı olur', en: 'Sound sensitivity: what happens and what helps' },
     intro: {
-      tr: 'Hiperakuzi, çoğu kişinin rahat bulduğu gündelik seslerin rahatsız edici, hatta ağrılı gelmesidir: tabak sesleri, trafik, çocuk sesleri, bir kapının çarpması. Tinnitusu olan kişilerin önemli bir bölümünde görülür. Bu modül mekanizmayı, kaçınmanın rolünü ve kademeli ses programının mantığını anlatır.',
+      tr: 'Ses hassasiyeti (hiperakuzi), çoğu kişinin rahat bulduğu gündelik seslerin rahatsız edici, hatta ağrılı gelmesidir: tabak sesleri, trafik, çocuk sesleri, bir kapının çarpması. Çınlaması olan kişilerin önemli bir bölümünde görülür. Bu modül mekanizmayı, kaçınmanın rolünü ve kademeli ses programının mantığını anlatır.',
       en: 'Hyperacusis is when everyday sounds most people find comfortable are unpleasant or even painful: crockery, traffic, children\'s voices, a door slamming. It affects a sizeable share of people with tinnitus. This module explains the mechanism, the role of avoidance and the rationale of the graded sound programme.',
     },
     sections: [
       {
         heading: { tr: 'Kazanç ayarı', en: 'The gain setting' },
         body: {
-          tr: `İşitme sistemi, gelen sesin düzeyine göre kendi "kazancını" ayarlar; tıpkı bir mikrofon ön yükselticisi gibi. Uzun süre sessizlikte kalındığında ya da kulak tıkacıyla sesler azaltıldığında sistem kazancı yükseltir: zayıf sesleri duyabilmek için. Sonra normal bir ses geldiğinde yükseltilmiş kazançla işlenir ve çok yüksek algılanır. Bu, hiperakuziyi sürdüren temel mekanizmadır ve iyi haberi şudur: kazanç ayarı değiştirilebilir.
+          tr: `İşitme sistemi, gelen sesin düzeyine göre kendi "kazancını" ayarlar; tıpkı bir radyonun ses düğmesi gibi. Uzun süre sessizlikte kalındığında ya da kulak tıkacıyla sesler azaltıldığında sistem kazancı yükseltir: zayıf sesleri duyabilmek için. Sonra normal bir ses geldiğinde yükseltilmiş kazançla işlenir ve çok yüksek algılanır. Bunun ses hassasiyetini sürdüren temel mekanizma olduğu düşünülür. İyi haber şu: kazanç ayarı değiştirilebilir.
 
 Bunun üstüne psikolojik bir katman biner. Rahatsız edici bir ses deneyiminden sonra benzer sesler tehdit olarak işaretlenir; beden gerilir, dikkat sese kilitlenir, ses "daha da yüksek" gelir. Ses korkusu ile kaçınma birbirini besler: kaçındıkça kazanç yükselir, kazanç yükseldikçe sesler daha rahatsız eder, daha çok kaçınılır.`,
-          en: `The hearing system sets its own "gain" according to the level of incoming sound, like a microphone preamplifier. After long periods in silence, or when sounds are reduced with earplugs, the system turns the gain up in order to hear faint sounds. When a normal sound then arrives, it is processed at the raised gain and perceived as far too loud. This is the core mechanism maintaining hyperacusis, and the good news is that the gain setting can be changed.
+          en: `The hearing system sets its own "gain" according to the level of incoming sound, like the volume knob on a radio. After long periods in silence, or when sounds are reduced with earplugs, the system turns the gain up in order to hear faint sounds. When a normal sound then arrives, it is processed at the raised gain and perceived as far too loud. This is thought to be the core mechanism maintaining hyperacusis. The good news: the gain setting can be changed.
 
 A psychological layer sits on top. After an unpleasant sound experience, similar sounds get tagged as threats; the body tenses, attention locks onto the sound, the sound seems "even louder". Fear of sound and avoidance feed each other: the more you avoid, the higher the gain; the higher the gain, the more sounds hurt; the more you avoid.`,
         },
@@ -2999,12 +2999,12 @@ A psychological layer sits on top. After an unpleasant sound experience, similar
       {
         heading: { tr: 'Ne yardımcı olur', en: 'What helps' },
         body: {
-          tr: `İki yaklaşımın randomize çalışmalarda kanıtı vardır ve birlikte kullanılır:
+          tr: `İki yaklaşımın kontrollü çalışmalarda kanıtı vardır ve birlikte kullanılır:
 
 - **Kademeli ses:** Düşük düzeyde pembe gürültüyü her gün dinlemek ve düzeyi haftalar içinde yavaşça artırmak. Formby ve arkadaşlarının çalışmasında danışmanlıkla birlikte düşük düzeyli ses, rahatsızlık eşiğini yaklaşık 10 desibel yükseltti. Sistemin kazancı, güvenli ve kontrollü ses ile aşağı ayarlanır.
-- **Bilişsel davranışçı terapi:** Jüris ve arkadaşlarının 2014 tarihli çalışmasında hiperakuzi için BDT, ses toleransı ve hiperakuzi anketlerinde orta–büyük etki gösterdi ve etki 12 ayda korundu. BDT bileşenleri: ses korkusunu anlamak, güvenlik davranışlarını (kulak tıkacı, kaçınma) bırakmak ve bir ses hiyerarşisi üzerinden kademeli maruz kalma.
+- **Bilişsel davranışçı terapi:** Jüris ve arkadaşlarının 2014 tarihli çalışmasında ses hassasiyeti için BDT, ses toleransı ve ses hassasiyeti anketlerinde orta–büyük etki gösterdi ve etki 12 ayda korundu. BDT bileşenleri: ses korkusunu anlamak, güvenlik davranışlarını (kulak tıkacı, kaçınma) bırakmak ve bir ses hiyerarşisi üzerinden kademeli maruz kalma.
 
-Bu programda ikisi birlikte yürür: her gün pembe gürültü oturumu (Sesler bölümündeki hiperakuzi ön ayarı) ve iki haftada bir bir BDT modülü.`,
+Bu programda ikisi birlikte yürür: her gün pembe gürültü oturumu (Sesler bölümündeki "Ses toleransı alıştırması") ve iki haftada bir yeni modül.`,
           en: `Two approaches have evidence from randomised trials and are used together:
 
 - **Graded sound:** Listening to low-level pink noise every day and raising the level slowly over weeks. In the trial by Formby and colleagues, low-level sound combined with counselling raised the discomfort threshold by about 10 decibels. The system's gain is turned down with safe, controlled sound.
@@ -3016,7 +3016,7 @@ In this programme the two run together: a daily pink-noise session (the hyperacu
       {
         heading: { tr: 'Misofoni farkı', en: 'The difference from misophonia' },
         body: {
-          tr: `Hiperakuzide sorun sesin **yüksekliğidir**; birçok ses türü rahatsız eder. Misofonide ise sorun **belirli** seslerdir: çiğneme, nefes, klavye tıkırtısı; ses düzeyi düşük olsa da öfke, iğrenme ya da panik doğurur. İkisi farklı durumlardır ve farklı ele alınır: misofoni için ses programı önerilmez, psikolojik yaklaşımlar ve uzman değerlendirmesi önerilir. Rahatsızlığınız belirli seslere ve belirli kişilere bağlıysa bu program yerine bir uzmanla görüşün.`,
+          tr: `Ses hassasiyetinde sorun sesin **yüksekliğidir**; birçok ses türü rahatsız eder. Misofonide ise sorun **belirli** seslerdir: çiğneme, nefes, klavye tıkırtısı; ses düzeyi düşük olsa da öfke, iğrenme ya da panik doğurur. İkisi farklı durumlardır ve farklı ele alınır: misofoni için ses programı önerilmez, psikolojik yaklaşımlar ve uzman değerlendirmesi önerilir. Rahatsızlığınız belirli seslere ve belirli kişilere bağlıysa bu program yerine bir uzmanla görüşün.`,
           en: `In hyperacusis the problem is the **loudness** of sound; many kinds of sound are unpleasant. In misophonia the problem is **specific** sounds: chewing, breathing, keyboard clicks; even at low level they trigger anger, disgust or panic. The two are different conditions and are handled differently: the sound programme is not recommended for misophonia; psychological approaches and specialist assessment are. If your distress is tied to specific sounds and specific people, talk to a specialist instead of following this programme.`,
         },
       },
@@ -3024,7 +3024,7 @@ In this programme the two run together: a daily pink-noise session (the hyperacu
         heading: { tr: 'Kademeli ses programı', en: 'The graded sound programme' },
         kind: 'exercise',
         body: {
-          tr: `- **Ses:** Pembe gürültü (Sesler bölümünde "hiperakuzi" ön ayarı). Doğa sesleri de uygundur; aniden değişen sesler değil.
+          tr: `- **Ses:** Pembe gürültü (Sesler bölümündeki "Ses toleransı alıştırması"). Doğa sesleri de uygundur; aniden değişen sesler değil.
 - **Başlangıç düzeyi:** Açıkça rahat, hatta "fazla kısık" gelen düzey. Hiçbir zaman rahatsız edici olmamalıdır.
 - **Artış:** Her hafta düzeyi bir adım (yaklaşık 2–3 desibel) artırın; rahatsızlık olursa bir önceki düzeyde bir hafta daha kalın.
 - **Süre:** Günde iki kez 30–60 dakika ile başlayın; birkaç hafta içinde mümkünse günün büyük kısmına yayın.
@@ -3044,14 +3044,14 @@ In this programme the two run together: a daily pink-noise session (the hyperacu
       minutes: 4,
       items: [
         { tr: 'Rahatsız eden seslerin belirli sesler değil, yüksek sesler olduğunu doğruladım (misofoni değil).', en: 'I confirmed that the sounds that bother me are loud sounds rather than specific sounds (not misophonia).' },
-        { tr: 'Sesler bölümünde hiperakuzi ön ayarını açıp rahat bir başlangıç düzeyi seçtim.', en: 'I opened the hyperacusis preset in the Sounds section and chose a comfortable starting level.' },
+        { tr: 'Sesler bölümünde "Ses toleransı alıştırması"nı açıp rahat bir başlangıç düzeyi seçtim.', en: 'I opened the hyperacusis preset in the Sounds section and chose a comfortable starting level.' },
         { tr: 'Bugün iki kez 30 dakika pembe gürültü dinledim.', en: 'Today I listened to pink noise for 30 minutes twice.' },
         { tr: 'Günlük kayıtta en rahatsız eden sesi ve rahatsızlık düzeyini not ettim.', en: 'In the daily record I noted the most unpleasant sound and the level of discomfort.' },
       ],
     },
     keyTakeaway: {
-      tr: 'Hiperakuzi, sessizlik ve kaçınmayla yükselen bir kazanç ayarıdır; kademeli düşük düzeyli ses ve BDT birlikte kazancı düşürür ve toleransı artırır.',
-      en: 'Hyperacusis is a gain setting that rises with silence and avoidance; graded low-level sound and CBT together turn the gain down and raise tolerance.',
+      tr: 'Ses hassasiyeti, sessizlik ve kaçınmayla yükselen bir kazanç ayarıdır; kademeli, kısık ses ve BDT birlikte kazancı düşürebilir ve toleransı artırabilir.',
+      en: 'Hyperacusis is a gain setting that rises with silence and avoidance; graded low-level sound and CBT together can turn the gain down and raise tolerance.',
     },
     citations: ['juris2014', 'formby2015', 'khalfa2002'],
   },
@@ -3066,7 +3066,7 @@ In this programme the two run together: a daily pink-noise session (the hyperacu
       {
         heading: { tr: 'Neden hiyerarşi', en: 'Why a hierarchy' },
         body: {
-          tr: `Ses korkusu, diğer korkular gibi işler: kaçınıldıkça büyür, kontrollü biçimde karşılaşıldıkça küçülür. Ancak "karşılaşma" rastgele ya da aniden olmamalıdır; bir düğünde hoparlörün yanında oturmak maruz kalma değil, kötü bir deneyimdir. Kademeli maruz kalma, zorluk basamaklarını önceden belirler ve her basamakta kaygı düşene kadar kalır. Jüris ve arkadaşlarının BDT protokolünde bu, tedavinin merkezidir.
+          tr: `Ses korkusu, diğer korkular gibi işler: kaçınıldıkça büyür, kontrollü biçimde karşılaşıldıkça küçülür. Ancak "karşılaşma" rastgele ya da aniden olmamalıdır; bir düğünde hoparlörün yanında oturmak maruz kalma değil, kötü bir deneyimdir. Kademeli maruz kalma, zorluk basamaklarını önceden belirler ve her basamakta kaygı düşene kadar kalır. Jüris ve arkadaşlarının BDT programında bu, tedavinin merkezidir.
 
 Hiyerarşi kişiseldir: biri için lokanta 3, konser 9 iken; bir başkası için çocuk parkı 7, otobüs 4 olabilir. Önemli olan sıralamanın sizin kaygı puanlarınıza dayanmasıdır.`,
           en: `Fear of sound works like other fears: it grows with avoidance and shrinks with controlled encounters. But the "encounter" should not be random or sudden; sitting next to the speaker at a wedding is not exposure but a bad experience. Graded exposure sets the rungs of difficulty in advance and stays on each rung until anxiety drops. In the CBT protocol of Jüris and colleagues this is the centre of treatment.
@@ -3112,11 +3112,11 @@ As tolerance grows, the pink-noise level in the sound programme can rise too; th
         },
       },
       {
-        heading: { tr: 'Tinnitus ve hiperakuzi birlikte', en: 'Tinnitus and hyperacusis together' },
+        heading: { tr: 'Çınlama ve ses hassasiyeti birlikte', en: 'Tinnitus and hyperacusis together' },
         body: {
-          tr: `Hiperakuzisi olan kişilerde ses zenginleştirme kuralı değişir: tinnitus için önerilen "karışma noktasının altı" ilkesi yerine, hiperakuzi için "açıkça rahat düzey" ilkesi geçerlidir ve bu genellikle daha düşüktür. Ses yükseldiğinde tinnitusun arttığını hissederseniz düzeyi düşürün; hassasiyet azaldıkça tinnitus için uygun düzeye zamanla yaklaşırsınız.
+          tr: `Ses hassasiyeti olan kişilerde rahatlatan arka plan sesi kuralı değişir: çınlama için önerilen "karışma noktasının altı" ilkesi yerine, ses hassasiyeti için "açıkça rahat düzey" ilkesi geçerlidir ve bu genellikle daha düşüktür. Ses yükseldiğinde çınlamanın arttığını hissederseniz düzeyi düşürün; hassasiyet azaldıkça çınlama için uygun düzeye zamanla yaklaşırsınız.
 
-BDT programındaki "sese bilinçli maruz kalma" modülü tinnitus sesine kulak vermeyi hedefler, dış seslere değil; hiperakuzide dış seslere yaklaşma bu hiyerarşi üzerinden yapılır. İkisini karıştırmayın: tinnitusa kulak verirken ortam sesi kapalı, hiyerarşi basamaklarında ise gerçek ortam sesi vardır.`,
+BDT programındaki "sese bilinçli maruz kalma" modülü çınlama sesine kulak vermeyi hedefler, dış seslere değil; ses hassasiyetinde dış seslere yaklaşma bu hiyerarşi üzerinden yapılır. İkisini karıştırmayın: çınlamaya kulak verirken arka plan sesi kapalı, hiyerarşi basamaklarında ise gerçek çevre sesleri vardır.`,
           en: `For people with hyperacusis the sound enrichment rule changes: instead of the "below the mixing point" principle recommended for tinnitus, the "clearly comfortable level" principle for hyperacusis applies, and that is usually lower. If you feel the tinnitus increase when the sound is turned up, lower the level; as sensitivity falls you gradually approach the level suited to tinnitus.
 
 The "deliberate exposure to the sound" module in the CBT programme is about listening to the tinnitus, not to outside sounds; in hyperacusis, approaching outside sounds is done through this hierarchy. Do not mix the two: while listening to the tinnitus the background sound is off; on the hierarchy rungs there is real ambient sound.`,
@@ -3144,8 +3144,8 @@ The "deliberate exposure to the sound" module in the CBT programme is about list
     id: 'hyper.earplugs',
     title: { tr: 'Kulak tıkaçları: ne zaman, ne zaman değil', en: 'Earplugs: when and when not' },
     intro: {
-      tr: 'Kulak tıkacı, hiperakuzide en sık görülen ve en çok zarar veren güvenlik davranışıdır. Gürültülü ortamlarda işitmeyi korur; gündelik ortamlarda ise işitme sisteminin kazancını yükseltir ve hassasiyeti artırır. Bu kısa modül aradaki çizgiyi netleştirir ve bırakma planı sunar.',
-      en: 'Earplugs are the most common and most damaging safety behaviour in hyperacusis. In loud settings they protect hearing; in everyday settings they raise the gain of the hearing system and increase sensitivity. This short module draws the line and offers a weaning plan.',
+      tr: 'Kulak tıkacı, ses hassasiyetinde en sık görülen güvenlik davranışlarından biridir. Gürültülü ortamlarda işitmeyi korur; gündelik ortamlarda ise işitme sisteminin kazancını yükseltip hassasiyeti artırabilir. Bu kısa modül aradaki çizgiyi netleştirir ve bırakma planı sunar.',
+      en: 'Earplugs are one of the most common safety behaviours in hyperacusis. In loud settings they protect hearing; in everyday settings they can raise the gain of the hearing system and increase sensitivity. This short module draws the line and offers a weaning plan.',
     },
     sections: [
       {
@@ -3153,10 +3153,10 @@ The "deliberate exposure to the sound" module in the CBT programme is about list
         body: {
           tr: `İşitme için tehlike, ses düzeyi ile süreye bağlıdır. Kabaca: 85 desibel ve üstü seslere günde sekiz saatten uzun maruz kalmak işitmeye zarar verebilir; düzey her 3 desibel arttığında güvenli süre yarıya iner. Konser, gece kulübü, matkap, motosiklet, havai fişek: bunlar koruma gerektirir. Lokanta, çarşı, ofis, otobüs, çocuk parkı, bulaşık: bunlar değil. Bu ortamların ses düzeyi genellikle 60–75 desibel arasındadır ve işitme için zararsızdır; rahatsız edici gelmesi hassasiyetin, tehlikenin değil, göstergesidir.
 
-Gündelik ortamda tıkaç takmak üç şey yapar: işitme sisteminin kazancını yükseltir (sesler çıkınca daha da yüksek gelir), beyne "bu ortam tehlikeli" mesajı verir ve kademeli ses programının etkisini siler. Hiperakuzi protokollerinin ortak kuralı budur: gündelik ortamlarda tıkaç kullanımını bırakmak.`,
+Gündelik ortamda tıkaç takmak üç şey yapabilir: işitme sisteminin kazancını yükseltir (sesler çıkınca daha da yüksek gelir), beyne "bu ortam tehlikeli" mesajı verir ve kademeli ses programının etkisini siler. Ses hassasiyeti programlarının ortak kuralı budur: gündelik ortamlarda tıkaç kullanımını bırakmak.`,
           en: `Danger to hearing depends on level and duration. Roughly: exposure to 85 decibels and above for more than eight hours a day can damage hearing; for every 3-decibel rise the safe time halves. Concerts, nightclubs, drills, motorcycles, fireworks: these call for protection. Restaurants, markets, offices, buses, playgrounds, washing up: these do not. Their levels are usually 60–75 decibels and harmless to hearing; if they feel unpleasant, that is a sign of sensitivity, not of danger.
 
-Wearing plugs in everyday settings does three things: it raises the gain of the hearing system (sounds seem even louder when they come off), it tells the brain "this setting is dangerous" and it erases the effect of the graded sound programme. This is the shared rule of hyperacusis protocols: stop earplug use in ordinary environments.`,
+Wearing plugs in everyday settings can do three things: it raises the gain of the hearing system (sounds seem even louder when they come off), it tells the brain "this setting is dangerous" and it erases the effect of the graded sound programme. This is the shared rule of hyperacusis protocols: stop earplug use in ordinary environments.`,
         },
       },
       {
@@ -3185,8 +3185,8 @@ Instead of plugs: sitting away from the speaker, short breaks in noisy settings,
         heading: { tr: 'Geceleri', en: 'At night' },
         kind: 'warning',
         body: {
-          tr: `Tıkaçla uyumak hem tinnitusu hem hiperakuziyi kötüleştirir: tam sessizlikte kazanç en yüksek düzeye çıkar ve sabah her ses daha sert gelir. Gece için tıkaç yerine düşük düzeyde ortam sesi kullanın; eşinizin horlaması gibi bir sorun varsa tıkaç yerine beyaz gürültü ya da ayrı oda seçeneğini değerlendirin. Kulaklıkla ses dinleyerek uyumayın; hoparlör tercih edin.`,
-          en: `Sleeping with plugs worsens both tinnitus and hyperacusis: in complete silence the gain rises to its highest and every sound in the morning hits harder. Use low-level background sound for the night instead of plugs; if a partner's snoring is the issue, consider white noise or a separate room rather than plugs. Do not sleep with earphones in; prefer a speaker.`,
+          tr: `Tıkaçla uyumak hem çınlamayı hem ses hassasiyetini kötüleştirebilir: tam sessizlikte kazanç en yüksek düzeye çıkar ve sabah her ses daha sert gelir. Gece için tıkaç yerine düşük düzeyde arka plan sesi kullanın; eşinizin horlaması gibi bir sorun varsa tıkaç yerine beyaz gürültü ya da ayrı oda seçeneğini değerlendirin. Kulaklıkla ses dinleyerek uyumayın; hoparlör tercih edin.`,
+          en: `Sleeping with plugs can worsen both tinnitus and hyperacusis: in complete silence the gain rises to its highest and every sound in the morning hits harder. Use low-level background sound for the night instead of plugs; if a partner's snoring is the issue, consider white noise or a separate room rather than plugs. Do not sleep with earphones in; prefer a speaker.`,
         },
       },
       {
@@ -3220,11 +3220,11 @@ A sound meter app on your phone gives a rough idea; precise measurement needs a 
         { tr: 'Gündelik ortamları (ev, kafe, çarşı, otobüs, ofis) tıkaçsız girilecekler listesine aldım.', en: 'I listed everyday settings (home, café, market, bus, office) as settings to enter without plugs.' },
         { tr: 'Gerçekten yüksek ortamları (konser, inşaat, motosiklet) koruma gerektirenler listesine aldım.', en: 'I listed genuinely loud settings (concert, building site, motorcycle) as settings that need protection.' },
         { tr: 'Bu hafta tıkaçları kulağımda değil cebimde taşıdım.', en: 'This week I carried the plugs in my pocket, not in my ears.' },
-        { tr: 'Gece tıkaç yerine düşük düzeyde ortam sesi kullandım.', en: 'At night I used low-level background sound instead of plugs.' },
+        { tr: 'Gece tıkaç yerine düşük düzeyde arka plan sesi kullandım.', en: 'At night I used low-level background sound instead of plugs.' },
       ],
     },
     keyTakeaway: {
-      tr: 'Tıkaç yalnızca gerçekten yüksek (85 desibel üstü) ortamlar içindir; gündelik ortamlarda ve gece kullanmak kazancı yükseltir ve hassasiyeti sürdürür, bu yüzden dört haftalık planla bırakılır.',
+      tr: 'Tıkaç yalnızca gerçekten yüksek (85 desibel üstü) ortamlar içindir; gündelik ortamlarda ve gece kullanmak kazancı yükseltip hassasiyeti sürdürebilir; bu yüzden dört haftalık planla bırakılır.',
       en: 'Plugs are only for genuinely loud (over 85 decibel) settings; using them in everyday settings and at night raises the gain and maintains sensitivity, so they are dropped over a four-week plan.',
     },
     citations: ['juris2014', 'formby2015', 'chandrasekhar2019'],

@@ -190,7 +190,7 @@ export const mindStrings = {
     'unit.cbt.relax1': 'Derin gevşeme 1: kas gevşetme',
     'unit.cbt.relax2': 'Derin gevşeme 2: yalnızca bırakma',
     'unit.cbt.relax3': 'Derin gevşeme 3: nefesle gevşeme',
-    'unit.cbt.relax4': 'Derin gevşeme 4: fark eden gevşeme',
+    'unit.cbt.relax4': 'Derin gevşeme 4: seçici gevşeme',
     'unit.cbt.relax5': 'Derin gevşeme 5: hızlı gevşeme',
     'unit.cbt.relax6': 'Derin gevşeme 6: uygulamalı gevşeme',
     'unit.cbt.soundEnrichment': 'Ses neden rahatlatır?',
