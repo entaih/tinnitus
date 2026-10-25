@@ -6,3 +6,4 @@ export { WelcomeArt } from './WelcomeArt';
 export { HeadphonesArt, type HeadphonesArtProps, type HeadphoneSide } from './HeadphonesArt';
 export { TrackArt, TRACK_KINDS, type TrackArtProps, type TrackKind } from './TrackArt';
 export type { IllustrationProps, IllustrationLocale } from './shared';
+export { ExercisePose, hasExercisePose, isSidedPose, EXERCISE_POSE_IDS, type ExercisePoseProps } from './exercise/ExercisePose';

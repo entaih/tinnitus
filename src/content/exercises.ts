@@ -84,8 +84,8 @@ export const EXERCISES: Record<ExerciseId, ExerciseProgramme> = {
         id: 'rotation', mode: 'reps', reps: 10, perSide: true,
         name: { tr: 'Boyun hareketi: dönme', en: 'Neck mobility: rotation' },
         instruction: {
-          tr: 'Oturun, omuzlar gevşek. Başı yavaşça sağa, rahat hissettiğiniz son noktaya kadar çevirin; zorlamayın. Bir saniye bekleyin, ortaya dönün. Her yöne 10 tekrar. Çınlama değişirse not edip sürdürün; ağrı ya da baş dönmesi olursa durun.',
-          en: 'Sit with shoulders relaxed. Turn the head slowly to the right as far as feels comfortable; do not force. Pause a second, return to centre. 10 repetitions each way. If the tinnitus changes, note it and continue; stop if you feel pain or dizziness.',
+          tr: 'Oturun, omuzlar gevşek. Başı yavaşça {dir}, rahat hissettiğiniz son noktaya kadar çevirin; zorlamayın. Bir saniye bekleyin, ortaya dönün. 10 tekrar. Çınlama değişirse not edip sürdürün; ağrı ya da baş dönmesi olursa durun.',
+          en: 'Sit with shoulders relaxed. Turn the head slowly {dir} as far as feels comfortable; do not force. Pause a second, return to centre. 10 repetitions. If the tinnitus changes, note it and continue; stop if you feel pain or dizziness.',
         },
       },
       {
@@ -132,16 +132,16 @@ export const EXERCISES: Record<ExerciseId, ExerciseProgramme> = {
         id: 'stretchTrap', mode: 'timer', seconds: 30, sets: 3, perSide: true,
         name: { tr: 'Germe: omuz-boyun kası', en: 'Stretch: upper trapezius' },
         instruction: {
-          tr: 'Oturun, sağ elinizle sandalyenin altını tutun. Başı sola eğin ve hafifçe öne çevirin; sol el başın üstünde yalnızca ağırlık olarak dursun, çekmesin. Sağ omuz ile boyun arasında germe. 30 saniye, 3 tekrar, iki taraf. Ağrı ya da kolda uyuşma olursa bırakın.',
-          en: 'Sit and hold the underside of the chair with your right hand. Tilt the head to the left and turn it slightly forward; the left hand rests on the head as weight only, no pulling. Feel the stretch between right shoulder and neck. 30 seconds, 3 repetitions, both sides. Ease off if you feel pain or arm numbness.',
+          tr: 'Oturun, {other} elinizle sandalyenin altını tutun. Başı {dir} eğin ve hafifçe öne çevirin; {same} el başın üstünde yalnızca ağırlık olarak dursun, çekmesin. {Other} omuz ile boyun arasında germe. 30 saniye, 3 tekrar, iki taraf. Ağrı ya da kolda uyuşma olursa bırakın.',
+          en: 'Sit and hold the underside of the chair with your {other} hand. Tilt the head {dir} and turn it slightly forward; the {same} hand rests on the head as weight only, no pulling. Feel the stretch between {other} shoulder and neck. 30 seconds, 3 repetitions, both sides. Ease off if you feel pain or arm numbness.',
         },
       },
       {
         id: 'stretchLevator', mode: 'timer', seconds: 30, sets: 3, perSide: true,
         name: { tr: 'Germe: kürek kemiği kası', en: 'Stretch: levator scapulae' },
         instruction: {
-          tr: 'Sağ elle sandalyeyi tutun. Burnunuzu sol koltuk altına doğru çevirip indirin; sol el başın üstünde ağırlık olarak. Sağ kürek kemiğinin üst köşesinde germe. 30 saniye, 3 tekrar, iki taraf. Ağrı ya da kolda uyuşma olursa bırakın.',
-          en: 'Hold the chair with the right hand. Turn and lower your nose towards the left armpit; left hand on the head as weight. Feel the stretch at the upper corner of the right shoulder blade. 30 seconds, 3 repetitions, both sides. Ease off if you feel pain or arm numbness.',
+          tr: '{Other} elle sandalyeyi tutun. Burnunuzu {same} koltuk altına doğru çevirip indirin; {same} el başın üstünde ağırlık olarak. {Other} kürek kemiğinin üst köşesinde germe. 30 saniye, 3 tekrar, iki taraf. Ağrı ya da kolda uyuşma olursa bırakın.',
+          en: 'Hold the chair with the {other} hand. Turn and lower your nose towards the {same} armpit; {same} hand on the head as weight. Feel the stretch at the upper corner of the {other} shoulder blade. 30 seconds, 3 repetitions, both sides. Ease off if you feel pain or arm numbness.',
         },
       },
       {
@@ -216,8 +216,8 @@ export const EXERCISES: Record<ExerciseId, ExerciseProgramme> = {
         id: 'lateral', mode: 'reps', reps: 10, perSide: true,
         name: { tr: 'Yana hareket', en: 'Lateral movement' },
         instruction: {
-          tr: 'Dişler hafif aralık. Alt çeneyi yavaşça sağa kaydırın, bir saniye tutun, ortaya dönün. Rahat sınırda kalın; tıkırtı olabilir, ağrı olursa durun. Her yöne 10 tekrar.',
-          en: 'Teeth slightly apart. Slide the lower jaw slowly to the right, hold a second, return to centre. Stay within comfort; a click may occur, but stop if it hurts. 10 repetitions each way.',
+          tr: 'Dişler hafif aralık. Alt çeneyi yavaşça {dir} kaydırın, bir saniye tutun, ortaya dönün. Rahat sınırda kalın; tıkırtı olabilir, ağrı olursa durun. 10 tekrar.',
+          en: 'Teeth slightly apart. Slide the lower jaw slowly {dir}, hold a second, return to centre. Stay within comfort; a click may occur, but stop if it hurts. 10 repetitions.',
         },
       },
       {
@@ -326,6 +326,17 @@ export const EXERCISES: Record<ExerciseId, ExerciseProgramme> = {
 export const getExercise = (id: string): ExerciseProgramme | undefined => (EXERCISES as Record<string, ExerciseProgramme>)[id];
 
 /** Minutes a step takes (for progress and session logging). */
+/**
+ * Per-side steps carry {dir} (movement direction), {same} / {other} (hand or body side) and {Other} (capitalised)
+ * so the text always matches the side the screen shows ("Sol taraf" first, then "Sağ taraf") and the drawing.
+ */
+export function sideText(text: string, side: 0 | 1, locale: 'tr' | 'en'): string {
+  const L = locale === 'en'
+    ? { dir: ['to the left', 'to the right'], same: ['left', 'right'], other: ['right', 'left'], Other: ['Right', 'Left'] }
+    : { dir: ['sola', 'sağa'], same: ['sol', 'sağ'], other: ['sağ', 'sol'], Other: ['Sağ', 'Sol'] };
+  return text.replace(/\{dir\}/g, L.dir[side]).replace(/\{same\}/g, L.same[side]).replace(/\{other\}/g, L.other[side]).replace(/\{Other\}/g, L.Other[side]);
+}
+
 export function stepSeconds(s: ExerciseStep): number {
   const sides = s.perSide ? 2 : 1;
   const sets = s.sets ?? 1;

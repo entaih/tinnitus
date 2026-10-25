@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, View, useWindowDimensions } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useKeepAwake } from 'expo-keep-awake';
@@ -9,8 +9,22 @@ import { useTheme } from '@/theme';
 import { useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { useAssessmentId } from '@/hooks/useProfile';
-import { EXERCISES, SELF_TEST, getExercise, selfTestPositive, stepSeconds, type ExerciseStep, type ModulationRating } from '@/content/exercises';
+import { EXERCISES, SELF_TEST, getExercise, selfTestPositive, sideText, stepSeconds, type ExerciseStep, type ModulationRating } from '@/content/exercises';
 import { citation } from '@/content/citations';
+import { ExercisePose, hasExercisePose } from '@/components/illustrations';
+
+/** Movement drawing for a step, on a card-coloured panel; nothing when the step has no drawing. */
+function PoseCard({ id, side }: { id: string; side?: 'left' | 'right' }) {
+  const { colors, radius, space } = useTheme();
+  const { width } = useWindowDimensions();
+  if (!hasExercisePose(id)) return null;
+  const w = Math.min(340, Math.max(240, width - 2 * space[6]));
+  return (
+    <View style={{ alignItems: 'center', backgroundColor: colors.card, borderRadius: radius.lg, paddingVertical: space[2], borderWidth: 1, borderColor: colors.border }}>
+      <ExercisePose id={id} side={side} width={w} />
+    </View>
+  );
+}
 
 /** Somatic exercise player for somatic.* ids, plus the somatic-modulation self-test at /exercise/selftest. */
 export default function ExerciseScreen() {
@@ -146,7 +160,8 @@ function Player({ id, taskKey }: { id: keyof typeof EXERCISES; taskKey?: string 
         <Text variant="caption" tone="secondary">{t('somatic.step', { i: index + 1, n: ex.steps.length })}{step.perSide ? ` · ${side === 0 ? t('somatic.side.left') : t('somatic.side.right')}` : ''}</Text>
         <Text variant="h2" accessibilityRole="header">{step.name[locale]}</Text>
         {step.mode !== 'read' ? <Chip label={meta(step)} tone="primary" /> : null}
-        <Card variant="tinted"><Text variant="body">{step.instruction[locale]}</Text></Card>
+        <PoseCard key={`${step.id}-${side}`} id={step.id} side={side === 0 ? 'left' : 'right'} />
+        <Card variant="tinted"><Text variant="body">{sideText(step.instruction[locale], step.perSide && side === 1 ? 1 : 0, locale)}</Text></Card>
 
         {step.mode === 'timer' ? (
           <View style={{ alignItems: 'center', gap: space[3] }}>
@@ -259,6 +274,7 @@ function SelfTest() {
         {i === 0 && !ratings[m.id] ? <Text variant="bodySmall" tone="secondary">{SELF_TEST.intro[locale]}</Text> : null}
         <Text variant="caption" tone="secondary">{t('somatic.step', { i: i + 1, n: SELF_TEST.manoeuvres.length })}</Text>
         <Text variant="h2" accessibilityRole="header">{m.name[locale]}</Text>
+        <PoseCard id={m.id} />
         <Card variant="tinted"><Text variant="body">{m.instruction[locale]}</Text></Card>
         <View style={{ alignItems: 'center', gap: space[2] }}>
           <Text variant="numeric" accessibilityLiveRegion="polite">{remaining > 0 ? remaining : m.seconds}</Text>

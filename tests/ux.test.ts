@@ -27,3 +27,15 @@ test('the most urgent referral wins; self-care only gives none', async () => {
   assert.equal(topReferral(['triage.selfHarm', 'triage.suddenHL'])?.when, 'now');
   assert.equal(topReferral(['triage.neverTested'])?.when, 'routine');
 });
+
+test('per-side exercise text follows the side shown on screen', async () => {
+  const { sideText, EXERCISES } = await import('../src/content/exercises.ts');
+  const list = Object.values(EXERCISES);
+  const rot = list.find((e) => e.id === 'somatic.cervical')!.steps.find((s) => s.id === 'rotation')!;
+  assert.match(sideText(rot.instruction.tr, 0, 'tr'), /Başı yavaşça sola/);
+  assert.match(sideText(rot.instruction.tr, 1, 'tr'), /Başı yavaşça sağa/);
+  assert.match(sideText(rot.instruction.en, 1, 'en'), /to the right/);
+  for (const e of list) for (const s of e.steps) for (const loc of ['tr', 'en'] as const) {
+    for (const side of [0, 1] as const) assert.ok(!/\{(dir|same|other|Other)\}/.test(sideText(s.instruction[loc], side, loc)), `${s.id} ${loc}`);
+  }
+});
