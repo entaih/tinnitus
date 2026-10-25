@@ -57,7 +57,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   const pitchHz = assessment?.psycho?.pitchHz;
   const mp = useMixingPoint();
   const eng = useSoundEngine();
-  const now = useTicker(eng.isPlaying || !!eng.timerEndsAt);
+  const now = useTicker(eng.isPlaying || eng.hasLayers || !!eng.timerEndsAt);
   const { open, sheet } = useCitation();
   const androidNote = useOnceFlag('androidBgNote');
   const dimHint = useOnceFlag('nightDimHint');
@@ -116,19 +116,20 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   // 2 s tolerance: the sleep timer stops playback at exactly the target, and the 1 s ticker may have logged slightly less.
   const targetReached = target != null && played.current.sec >= target * 60 - 2;
 
-  const loadPreset = (opts: { tuneHz?: number } = { tuneHz }) => {
-    if (!presetName) return;
+  const loadPreset = (opts: { tuneHz?: number } = { tuneHz }): Promise<boolean> => {
+    if (!presetName) return Promise.resolve(false);
     const resolved = resolveNamedPreset(presetName, {
       pitchHz, octaves, customSpec, customId: params.id, mixingPoint: mp.value,
       tuneHz: opts.tuneHz, tuneLevel: TUNE_BAND_LEVEL, hyperVolume: hyperStartRef.current,
     });
-    if (!resolved) { setMissingPitch(presetName === 'notched' || presetName === 'ri'); return; }
+    if (!resolved) { setMissingPitch(presetName === 'notched' || presetName === 'ri'); return Promise.resolve(false); }
     setMissingPitch(false);
     setLoading(true);
     // Night timer (Sprint 3 C3): the sleep preset opened inside the quiet hours starts with a 45-minute timer. The trial has no timer; it stops itself at 60 s.
     const timer = trial ? null : presetName === 'hyperacusis' && target != null ? target : sleepTimerFor(presetName, new Date().getHours(), nightStart, nightEnd, resolved.timerMinutes);
-    void mixer.load(resolved.layers, Math.min(resolved.volume, maxVolume), timer, resolved.titleKey, resolved.presetId ?? null)
-      .catch((e) => console.warn('player load failed', e))
+    return mixer.load(resolved.layers, Math.min(resolved.volume, maxVolume), timer, resolved.titleKey, resolved.presetId ?? null)
+      .then(() => true)
+      .catch((e) => { console.warn('player load failed', e); return false; })
       .finally(() => setLoading(false));
   };
 
@@ -140,7 +141,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
     const key = `${presetName}|${params.spec ?? ''}|${params.id ?? ''}|${octaves ?? ''}`;
     if (loadedFor.current === key) return;
     loadedFor.current = key;
-    loadPreset();
+    void loadPreset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [presetName, params.spec, params.id, octaves, mp.loaded]);
 
@@ -162,17 +163,26 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   useEffect(() => () => { flush(); if (trial) void mixer.stopAll(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sprint 3 C1 — trial: single "Başlat", 60 s countdown, stops itself, logs `{ type: 'sound', minutes: 1, detail: 'trial' }`, completes no task.
+  // The countdown runs on its own clock, started when the sound has actually loaded. It must not depend on the engine's
+  // `isPlaying` flag (expo-audio flips it asynchronously without an event) nor on the mixer's accumulated play time
+  // (which carries seconds from earlier sounds in the same app session).
   const [trialPhase, setTrialPhase] = useState<'idle' | 'playing' | 'done'>('idle');
-  const trialElapsed = trial && trialPhase === 'playing' ? mixer.elapsedSec() : 0;
+  const [trialStartedAt, setTrialStartedAt] = useState<number | null>(null);
+  const [trialError, setTrialError] = useState(false);
+  const trialNow = useTicker(trial && trialPhase === 'playing' && trialStartedAt != null, 250);
+  const trialElapsed = trial && trialStartedAt != null ? Math.max(0, (trialNow - trialStartedAt) / 1000) : 0;
   const trialRemaining = Math.max(0, TRIAL_SECONDS - Math.floor(trialElapsed));
-  const startTrial = () => { setTrialPhase('playing'); loadPreset(); };
+  const startTrial = () => {
+    setTrialPhase('playing'); setTrialError(false);
+    void loadPreset().then((ok) => { if (ok) setTrialStartedAt(Date.now()); else { setTrialPhase('idle'); setTrialError(true); } });
+  };
   useEffect(() => {
-    if (!trial || trialPhase !== 'playing' || !trialFinished(mixer.elapsedSec())) return;
+    if (!trial || trialPhase !== 'playing' || trialStartedAt == null || !trialFinished(trialElapsed)) return;
     void mixer.stopAll();
     setTrialPhase('done');
     logSession({ type: 'sound', minutes: 1, detail: TRIAL_DETAIL });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [now, trial, trialPhase]);
+  }, [trialNow, trial, trialPhase, trialStartedAt]);
 
   // Sprint 3 C1 — headphone check once before the first real sound (`settings.headphoneCheckedAt`); never for the trial.
   // Coming back from /assess/headphone-check (`hp`/`ok` params present) counts as checked, passed or skipped.
@@ -198,7 +208,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   const onPlayPress = () => {
     if (eng.isPlaying) { mixer.pause(); flush(); return; }
     if (eng.hasLayers) { mixer.resume(); return; }
-    if (presetName) loadPreset();
+    if (presetName) void loadPreset();
     else setSheetOpen(true);
   };
   const onStop = () => { flush(); void mixer.stopAll(); };
@@ -239,6 +249,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
             {trialPhase === 'playing' ? (
               <Text variant="numeric" accessibilityLabel={t('sound.trial.remaining', { s: trialRemaining })} accessibilityLiveRegion="polite">{formatClock(trialRemaining)}</Text>
             ) : null}
+            {trialError ? <Banner tone="warning" title={t('sound.trial.error')} /> : null}
             {trialPhase === 'idle' ? (
               <Button title={t('sound.trial.start')} icon={<Play size={20} color={colors.onPrimary} />} loading={loading} onPress={startTrial} accessibilityLabel={t('sound.trial.a11y.start')} />
             ) : null}

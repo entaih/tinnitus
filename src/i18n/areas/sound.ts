@@ -5,6 +5,7 @@
  */
 export const soundStrings = {
   tr: {
+    'sound.trial.error': 'Ses başlatılamadı. Telefonun sessiz modunu ve ses düzeyini kontrol edip tekrar deneyin.',
     // --- Preset names / descriptions ---
     'preset.name.am40': '40 Hz modüle gürültü',
     'preset.name.notched': 'Çentikli pembe gürültü',
@@ -296,6 +297,7 @@ export const soundStrings = {
   } as Record<string, string>,
 
   en: {
+    'sound.trial.error': 'The sound could not start. Check the silent switch and volume, then try again.',
     'preset.name.am40': '40 Hz modulated noise',
     'preset.name.notched': 'Notched pink noise',
     'preset.name.narrowband': 'Narrow-band noise at your pitch',
