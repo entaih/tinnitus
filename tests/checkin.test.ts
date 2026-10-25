@@ -175,7 +175,8 @@ const program: Program = {
 test('planForToday: short option, tomorrow task skips check-in and sound, nothing after the last day', () => {
   const full = planForToday(program, { week: 1, day: 1, dayIndex: 0 });
   assert.equal(full.short, false);
-  assert.equal(full.shown.filter((x) => !isBackground(x)).length, 4); // diary, mixing point, welcome (core), causes (measurement)
+  assert.equal(full.shown.filter((x) => !isBackground(x)).length, 3); // mixing point, welcome (core), causes (measurement); a legacy check-in task is hidden
+  assert.ok(!full.tasks.some((x) => x.id === 'diary.daily'));
   const short = planForToday(program, { week: 1, day: 1, dayIndex: 0 }, undefined, { short: true });
   assert.equal(short.short, true);
   assert.ok(short.shown.filter((x) => !isBackground(x)).length <= 2);

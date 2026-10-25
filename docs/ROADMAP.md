@@ -104,3 +104,9 @@ Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
 ## 9. Kişiler (Ekim 2026, sahip isteği)
 - ✅ Ayarlar → Kişiler: yeni kişi oluştur (adını girince her şey o kişi için sıfırdan başlar ve güvenlik taramasına gidilir), kişi değiştir, kişi sil (verileri cihazdan silinir; son kişi silinemez, verileri temizlenir).
 - Her kişinin klinik verisi, büyüme sayaçları ve modül ilerlemesi ayrı AsyncStorage anahtarlarında tutulur (`src/store/profileRules.ts`, `profiles.ts`, `profileSwitch.ts`); ilk kişi eski anahtarları kullandığı için mevcut kurulumlar veri kaybetmez. Dil, tema, hatırlatma ve ses güvenliği ayarları cihaz genelidir.
+
+## 10. Sahip kararları (Ekim 2026)
+- ✅ Testlerden sonra sade, adım adım sonuç akışı: 1) sonuç (renkli daire + tek cümle), 2) doktor (yalnızca gerekiyorsa: kime, ne zaman), 3) olası neden (gündelik dille, kesinlik), 4) program (günde kaç dakika, kaç hafta, ne içeriyor) ve tek "Programı başlat" düğmesi. Teknik ayrıntılar "Ayrıntılı rapor (doktor için)" altında.
+- ✅ "Programı başlat" artık onay kutusu beklemiyor; 2. kademe sevkte hatırlatma ekranda yazar. Acil durumlarda program yerine "Önce doktora gidin" gösterilir.
+- ✅ Yalnızca takip amaçlı sorular kaldırıldı: günlük check-in görevi ve ana ekran puanlama kartı, 4. hafta THI, 8/12. hafta kaygı ve uyku tekrarları. Tedaviyi veya güvenliği değiştirenler kaldı: 8. hafta ve program sonu THI, ruh hali taraması, 3 soruluk kırmızı bayrak kontrolü, bakım modunda 4 haftada bir THI (tazeleme kararı).
+- ✅ Uyku sorularında seçenekler şıklarda; sorular arasında kayma geçişi; ek ruh hali sorularının nedeni ve ayrı "Ek soru" sayacı; 60 sn deneme sayacı düzeltildi.

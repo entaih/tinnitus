@@ -5,12 +5,12 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Share2, FileText, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react-native';
 import { Screen, Text, Card, Button, Chip, EvidenceChip, Banner, Disclaimer, useCitation } from '@/components';
-import { Gauge, useInfoSheet, ReferralList, CauseList, DiagnosisCard } from '@/components/assess';
+import { Gauge, useInfoSheet, ReferralList, CauseList, DiagnosisCard, ResultsSteps } from '@/components/assess';
 import { compareDxSnapshot, diagnose, diagnosisStatement, snapshotOf, type DxDelta } from '@/clinical/diagnosis';
 import { journeyRemaining } from '@/clinical/journey';
 import { useJourney } from '@/hooks/useJourney';
 import { programGate } from '@/components/assess/programGate';
-import { CheckRow, Collapsible, GlossaryTerm, useGlossary } from '@/components/home';
+import { Collapsible, GlossaryTerm, useGlossary } from '@/components/home';
 import { useTheme } from '@/theme';
 import { rankCauses, confirmatoryTests } from '@/clinical/causes';
 import { computeTriage } from '@/clinical/engine';
@@ -49,16 +49,17 @@ export default function ResultsScreen() {
   const glossary = useGlossary();
   const [pdfBusy, setPdfBusy] = useState(false);
   const [pdfError, setPdfError] = useState(false);
-  const [acked, setAcked] = useState(false);
   /** `?preview=1`: the "ön sonuç" card after the THI (sprint 3 A2); `?raised=1`: back from a diagnosis-card measurement. */
   const params = useLocalSearchParams<{ preview?: string; raised?: string }>();
   const preview = params.preview === '1';
   const raised = params.raised === '1';
   const { journey, go } = useJourney();
+  /** First view after the tests: plain, one-message-per-screen steps. The detailed report is one tap away. */
+  const [simple, setSimple] = useState(() => !raised && !useClinical.getState().program);
 
   const tier = assessment ? computeTriage(assessment).tier : null;
   const gate = programGate(profile, tier);
-  const canStart = !gate.blocked && (!gate.needsAck || acked);
+  const canStart = !gate.blocked;
 
   /** Preliminary diagnosis + its comparison with the snapshot taken the last time this screen opened ("kesinlik arttı"). */
   const dx = useMemo(() => (assessment ? diagnose(assessment) : null), [assessment]);
@@ -80,12 +81,14 @@ export default function ResultsScreen() {
   }, [program, profile, prefs]);
   const determinants = useMemo(() => profileConsequences(assessment ?? null, 5), [assessment]);
 
-  const startProgram = () => {
+  const doStart = () => {
     if (!profile || !canStart) return;
     setProgramPrefs(prefs);
     setProgram(generateProgram(profile, prefs));
     router.replace('/(tabs)');
   };
+  /** Tier 2 / pulsatile: the programme may start alongside the referral; a one-tap reminder replaces the old checkbox gate. */
+  const startProgram = doStart;
 
   const thi = useMemo(() => {
     const r = assessment?.questionnaires.find((q) => q.id === 'THI');
@@ -205,15 +208,40 @@ export default function ResultsScreen() {
     <Button title={t('results.program.goToday')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={() => router.replace('/(tabs)')} />
   ) : (
     <View style={{ gap: space[1] }}>
-      {gate.needsAck ? <CheckRow checked={acked} label={t('results.program.ack')} hint={acked ? undefined : t('setup.ack.hint')} onToggle={() => setAcked((v) => !v)} /> : null}
-      <Button title={t('results.program.start')} icon={<ArrowRight size={18} color={canStart ? colors.onPrimary : colors.textMuted} />} onPress={startProgram} disabled={!canStart} />
-      {gate.blocked ? <Text variant="caption" tone="danger">{t('results.program.blocked')}</Text> : null}
+      {gate.blocked ? (
+        <Text variant="bodySmall" tone="danger" center>{t('simple.blocked.body')}</Text>
+      ) : (
+        <>
+          {gate.needsAck ? <Text variant="bodySmall" tone="warning" center>{t('simple.ack.inline')}</Text> : null}
+          <Button title={t('simple.start')} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={startProgram} />
+        </>
+      )}
     </View>
   );
+
+  if (simple && !program) {
+    return (
+      <>
+        <Stack.Screen options={{ title: t('results.title') }} />
+        <ResultsSteps
+          thi={thi ? { total: thi.total, band: thi.band } : null}
+          dx={dx ?? diagnose(assessment)}
+          assessment={assessment}
+          profile={profile}
+          gate={gate}
+          plan={plan ? { weeks: plan.weeks, min: plan.min } : null}
+          onStart={doStart}
+          onDetails={() => setSimple(false)}
+        />
+        {sheet}
+      </>
+    );
+  }
 
   return (
     <Screen footer={footer}>
       <Stack.Screen options={{ title: t('results.title') }} />
+      {!program ? <Button variant="ghost" size="sm" title={t('simple.backToSimple')} onPress={() => setSimple(true)} /> : null}
 
       {/* Layer 1 — score shown once, one-line meaning, triage line */}
       <Card style={{ alignItems: 'center', gap: space[3] }}>

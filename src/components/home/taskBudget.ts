@@ -192,7 +192,8 @@ export function tomorrowTask(program: Program, pos: { week: number; day: number 
 
 /** Today's plan for Home and the session runner: budgeted or short list plus the overflow. */
 export function planForToday(program: Program, pos: { week: number; day: number; dayIndex: number }, budget = DEFAULT_MINUTES_PER_DAY, opts?: { short?: boolean }) {
-  const tasks = tasksForDay(program, pos.week, pos.day);
+  // Programmes generated before Oct 2026 still carry a daily check-in task; it is tracking only, so it is hidden.
+  const tasks = tasksForDay(program, pos.week, pos.day).filter((x) => x.id !== 'diary.daily');
   const reentry = isReentry(program, pos);
   const short = reentry || !!opts?.short;
   const { shown, more } = splitByBudget(tasks, budget, short);

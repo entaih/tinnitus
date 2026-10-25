@@ -163,15 +163,15 @@ export function measurementTasksFor(week: number, day: number, opts: { acute: bo
     if (day === 7) return ['assess.thi'];
     return [];
   }
-  if (week === 4) {
-    if (day === 5) return ['assess.mood'];
-    if (day === 7) return ['assess.thi'];
-    return [];
-  }
+  // Owner decision (Oct 2026): only measurements that change the treatment or protect safety are scheduled.
+  //  - week 4: mood screen (PHQ item 9 safety, referral) — no THI (its only output was advice text);
+  //  - week 8 / end of a 12-week programme: red flags (3 items), mood, THI (strategy change / maintenance decision);
+  //  - no anxiety or sleep re-measurement (tracking only).
+  void insomnia; void light;
+  if (week === 4) return day === 5 ? ['assess.mood'] : [];
   if (week === 8 || (week === 12 && totalWeeks >= 12)) {
     if (day === 4) return ['assess.redflagsShort'];
-    if (day === 5) return light ? ['assess.mood'] : ['assess.mood', 'assess.anxiety'];
-    if (day === 6) return [...(light ? ['assess.anxiety'] : []), ...(insomnia ? ['assess.sleep'] : [])];
+    if (day === 5) return ['assess.mood'];
     if (day === 7) return ['assess.thi'];
   }
   return [];
@@ -295,8 +295,8 @@ function buildWeeks(profile: Profile, prefs: ProgramPrefs, dose: Dose): { weeks:
       /** Candidates for the single core of the day, in precedence order: day-1 sound step, module, first core measurement. */
       const coreCandidates: ProgramTask[] = [];
       const firstDay = w === 1 && day === 1;
-      // 1. Daily check-in (one tap)
-      tasks.push(task('diary.daily'));
+      // 1. No daily check-in task: owner decision (Oct 2026) — tracking-only questions are not scheduled; the
+      //    diary stays available from the progress tab for people who want it.
       // 2. Day 1 "find your sound": mixing point right after the check-in so sound starts playing before the welcome module.
       //    Hyperacusis arm (sprint 3 E2): "find your comfortable sound" is a numbered core step on day 1, not a background row.
       if (firstDay && soundEnrichmentOn) { const mp = task('sound.mixingPoint'); tasks.push(mp); coreCandidates.push(mp); }
@@ -502,7 +502,7 @@ export function buildMaintenanceWeeks(profile: Profile, prefs: ProgramPrefs, n =
     const refresherWeek = !!opts.refresher && i < REFRESHER_WEEKS;
     const days: ProgramDay[] = [];
     for (let day = 1; day <= 7; day++) {
-      const tasks: ProgramTask[] = [task('diary.daily')];
+      const tasks: ProgramTask[] = [];
       let core: ProgramTask | null = null;
       if (refresherWeek) {
         const slot = REFRESHER_SLOTS.findIndex(([w, d]) => w === i + 1 && d === day);

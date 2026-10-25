@@ -4,3 +4,4 @@ export * from './InfoSheet';
 export * from './ReferralList';
 export * from './CauseList';
 export * from './DiagnosisCard';
+export { ResultsSteps, topReferral } from './ResultsSteps';

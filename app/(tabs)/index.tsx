@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2, Share2, Trophy } from 'lucide-react-native';
 import { Banner, Button, Card, Screen, Text } from '@/components';
-import { BackgroundSoundRow, JourneyCard, QuickCheckIn, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, programFinished, refresherActive, structuredWeeks, taskIcon, taskMeta, taskTitle, totalActiveDays, weekActiveDays, weeklyGoalOf } from '@/components/home';
+import { BackgroundSoundRow, JourneyCard, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, programFinished, refresherActive, structuredWeeks, taskIcon, taskMeta, taskTitle, totalActiveDays, weekActiveDays, weeklyGoalOf } from '@/components/home';
 import { ClinicCodeLine, thiSeries } from '@/components/growth';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
@@ -218,7 +218,6 @@ export default function HomeScreen() {
         <Banner tone="info" title={t('home.refresher.title')} body={t('home.refresher.body', { date: formatDate(`${program.refresherUntil}T12:00:00`, locale) })} />
       ) : null}
 
-      <QuickCheckIn />
 
       <View style={{ flexDirection: 'row', gap: space[3] }}>
         {tile(<AudioWaveform size={22} color={colors.primary} />, t('home.quickSound'), t('home.quickSound.short'), () => router.push('/sound/player?preset=enrichment'), colors.primarySoft)}
