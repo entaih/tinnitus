@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -9,6 +9,7 @@ import { useSettings } from '@/store/settings';
 import { useT } from '@/i18n';
 import { getLocales } from 'expo-localization';
 import { installNotificationHandler } from '@/notifications';
+import { bootProfiles } from '@/store/profileSwitch';
 
 function Navigator() {
   const { colors, isDark } = useTheme();
@@ -36,6 +37,9 @@ function Navigator() {
 
 export default function RootLayout() {
   const { locale, onboarded, setLocale } = useSettings();
+  // People profiles: load the active person's stores before the first screen renders (a few ms from AsyncStorage).
+  const [profilesReady, setProfilesReady] = useState(false);
+  useEffect(() => { void bootProfiles().finally(() => setProfilesReady(true)); }, []);
   useEffect(() => {
     installNotificationHandler();
     // First launch: follow the device language if it is one we support.
@@ -49,7 +53,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <Navigator />
+          {profilesReady ? <Navigator /> : null}
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

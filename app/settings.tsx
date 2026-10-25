@@ -3,13 +3,14 @@ import { Alert, Pressable, Switch, TextInput, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import Constants from 'expo-constants';
 import Slider from '@react-native-community/slider';
-import { BookOpen, Gauge, RotateCcw, Share2 } from 'lucide-react-native';
+import { BookOpen, Gauge, RotateCcw, Share2, Users } from 'lucide-react-native';
 import { Button, Card, Disclaimer, Row, Screen, SectionHeader, Stepper, Text } from '@/components';
 import { Segmented } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
+import { selectActiveProfile, useProfiles } from '@/store/profiles';
 import { cancelReminders, reminderHourBlocked, scheduleWeekdayReminders } from '@/notifications';
 import { localDateISO, normalizeReminderDays, programDayDate, programEndDate, reminderWeekdays } from '@/notificationRules';
 import { programPosition } from '@/clinical/program';
@@ -26,6 +27,7 @@ export default function SettingsScreen() {
   // Quiet hours (settings nightStart–nightEnd, default 22:00–06:00): a reminder inside them is refused with an explanation (C4).
   const quietBlocked = reminderHourBlocked(hour);
   const [name, setName] = useState(s.displayName);
+  const activePerson = useProfiles(selectActiveProfile);
   const [vol, setVol] = useState(s.maxVolume);
   const [exporting, setExporting] = useState(false);
   const reminderOn = s.reminderHour != null;
@@ -76,6 +78,10 @@ export default function SettingsScreen() {
     <>
       <Stack.Screen options={{ title: t('settings.title') }} />
       <Screen>
+        <SectionHeader title={t('settings.people')} />
+        <Card>
+          <Row icon={<Users size={20} color={colors.primary} />} title={t('settings.people.row')} subtitle={t('settings.people.sub', { name: activePerson.name || s.displayName || t('profiles.unnamed') })} onPress={() => router.push('/profiles')} />
+        </Card>
         <SectionHeader title={t('settings.language')} />
         <Card>
           <Segmented options={[{ value: 'tr', label: t('settings.language.tr') }, { value: 'en', label: t('settings.language.en') }]} value={s.locale} onChange={s.setLocale} accessibilityLabel={t('settings.language')} />

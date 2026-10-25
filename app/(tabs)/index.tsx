@@ -9,6 +9,7 @@ import { ClinicCodeLine, thiSeries } from '@/components/growth';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
+import { selectActiveProfile, useProfiles } from '@/store/profiles';
 import { today, useClinical } from '@/store/clinical';
 import { useProfile } from '@/hooks/useProfile';
 import { programPosition, taskKey } from '@/clinical/program';
@@ -25,7 +26,9 @@ export default function HomeScreen() {
   const { colors, space, radius, shadow } = useTheme();
   const t = useT();
   const locale = useLocale();
-  const displayName = useSettings((s) => s.displayName);
+  const settingsName = useSettings((s) => s.displayName);
+  const personName = useProfiles(selectActiveProfile).name;
+  const displayName = personName || settingsName;
   const { profile } = useProfile();
   // Separate selectors (sprint 3 E11): a diary change re-renders Home but does not recompute the programme-dependent plan.
   const program = useClinical((s) => s.program);

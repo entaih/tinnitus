@@ -100,3 +100,7 @@ Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
 | C2 | Bakım hatırlatmaları haftada 3; program bitti bildirimi; izin-sonra-değer | ✅ |
 | C3 | Hafif doz/bakım ses hedefleri; sessiz saatte uyku sesi 45 dk zamanlayıcı | ✅ |
 | C4 | Ayarlar "Programım" (durum, doz, yeniden başlat, hatırlatma günleri) | ✅ |
+
+## 9. Kişiler (Ekim 2026, sahip isteği)
+- ✅ Ayarlar → Kişiler: yeni kişi oluştur (adını girince her şey o kişi için sıfırdan başlar ve güvenlik taramasına gidilir), kişi değiştir, kişi sil (verileri cihazdan silinir; son kişi silinemez, verileri temizlenir).
+- Her kişinin klinik verisi, büyüme sayaçları ve modül ilerlemesi ayrı AsyncStorage anahtarlarında tutulur (`src/store/profileRules.ts`, `profiles.ts`, `profileSwitch.ts`); ilk kişi eski anahtarları kullandığı için mevcut kurulumlar veri kaybetmez. Dil, tema, hatırlatma ve ses güvenliği ayarları cihaz genelidir.

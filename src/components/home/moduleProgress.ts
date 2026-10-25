@@ -11,6 +11,7 @@ interface ModuleProgressState {
   progress: Record<string, number>;
   setProgress: (moduleId: string, sectionIndex: number) => void;
   clearProgress: (moduleId: string) => void;
+  clearAll: () => void;
 }
 
 export const useModuleProgress = create<ModuleProgressState>()(
@@ -24,6 +25,7 @@ export const useModuleProgress = create<ModuleProgressState>()(
         delete next[moduleId];
         return { progress: next };
       }),
+      clearAll: () => set({ progress: {} }),
     }),
     { name: 'dingin.moduleProgress', storage: createJSONStorage(() => AsyncStorage) },
   ),
