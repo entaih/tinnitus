@@ -135,7 +135,7 @@ export const psychoStrings = {
     'psy.pitch.method.afc': 'ikili karşılaştırma',
     'psy.pitch.method.adjust': 'ayarlama',
     'psy.pitch.result.use': 'Bu değer çentikli ses ve maskeleme ayarlarında kullanılabilir (perde ≤ 8 kHz ve güven düşük değil).',
-    'psy.pitch.evidence': 'Tekrarlı özyinelemeli eşleme, oturumlar arasında yaklaşık 0,4 oktav tutarlılık sağlar.',
+    'psy.pitch.evidence': 'Birkaç tur tekrarlandığı için sonuç güvenilirdir.',
     'psy.pitch.continueLoudness': 'Gürlük eşlemeye geç',
 
     // loudness match
@@ -450,7 +450,7 @@ export const psychoStrings = {
     'psy.pitch.method.afc': 'two-alternative comparison',
     'psy.pitch.method.adjust': 'adjustment',
     'psy.pitch.result.use': 'This value can be used for notched sound and masking settings (pitch ≤ 8 kHz and confidence not low).',
-    'psy.pitch.evidence': 'Repeated recursive matching gives about 0.4-octave consistency across sessions.',
+    'psy.pitch.evidence': 'Repeating a few rounds makes the result reliable.',
     'psy.pitch.continueLoudness': 'Go to loudness matching',
 
     'psy.loud.title': 'Loudness match',

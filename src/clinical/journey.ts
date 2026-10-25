@@ -115,3 +115,20 @@ export const REFERRAL: Record<string, { who: string; when: 'now' | 'h24' | 'w2' 
   'triage.mentalHealth': { who: 'who.psych', when: 'w2' },
   'triage.selfcare': { who: 'who.none', when: 'none' },
 };
+
+const WHEN_ORDER = ['now', 'h24', 'w2', 'routine'] as const;
+type When = (typeof WHEN_ORDER)[number];
+
+/** The single most urgent referral among the triage reasons (null when self-care only). Used by the simple results steps. */
+export function topReferral(reasons: string[]): { reason: string; who: string; when: When } | null {
+  let best: { reason: string; who: string; when: When } | null = null;
+  for (const r of reasons) {
+    const ref = REFERRAL[r];
+    if (!ref || ref.when === 'none') continue;
+    const when = ref.when as When;
+    if (!best || WHEN_ORDER.indexOf(when) < WHEN_ORDER.indexOf(best.when)) best = { reason: r, who: ref.who, when };
+  }
+  return best;
+}
+
+

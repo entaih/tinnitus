@@ -205,7 +205,7 @@ export const coreStrings = {
     // --- Diary ---
     'diary.title': 'Günlük kontrol',
     'diary.intro': 'Yaklaşık 10 saniye sürer. Bugünkü durumunuzu işaretleyin.',
-    'diary.loudness': 'Tinnitus şiddeti',
+    'diary.loudness': 'Çınlama şiddeti',
     'diary.annoyance': 'Rahatsızlık düzeyi',
     'diary.sleep': 'Uyku kalitesi (isteğe bağlı)',
     'diary.sleep.add': 'Uyku kalitesi ekle',

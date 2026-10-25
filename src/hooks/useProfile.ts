@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import { useClinical, mergedLatest, newId } from '@/store/clinical';
 import { buildProfile } from '@/clinical/engine';
 import type { Profile, Assessment } from '@/clinical/types';
@@ -18,8 +18,8 @@ export function useProfile(): { assessment: Assessment | null; profile: Profile 
  */
 export function useAssessmentId(): string {
   const assessments = useClinical((s) => s.assessments);
-  const fresh = useRef(newId());
+  const [fresh] = useState(newId);
   const today = new Date().toISOString().slice(0, 10);
   const existing = assessments.find((a) => a.date.slice(0, 10) === today);
-  return existing ? existing.id : fresh.current;
+  return existing ? existing.id : fresh;
 }

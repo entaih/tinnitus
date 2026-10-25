@@ -7,7 +7,8 @@ import { Screen, Text, Button } from '@/components';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
-import { REFERRAL } from '@/clinical/journey';
+import { topReferral } from '@/clinical/journey';
+export { topReferral };
 import { diagnosisActions, type Diagnosis } from '@/clinical/diagnosis';
 import type { Assessment, Profile } from '@/clinical/types';
 import type { SeverityBand } from '@/theme/tokens';
@@ -15,21 +16,6 @@ import type { ProgramGate } from './programGate';
 import { CauseIllustration } from '@/components/illustrations';
 
 type StepId = 'score' | 'doctor' | 'cause' | 'program';
-const WHEN_ORDER = ['now', 'h24', 'w2', 'routine'] as const;
-type When = (typeof WHEN_ORDER)[number];
-
-/** The single most urgent referral among the triage reasons (null when self-care only). */
-export function topReferral(reasons: string[]): { reason: string; who: string; when: When } | null {
-  let best: { reason: string; who: string; when: When } | null = null;
-  for (const r of reasons) {
-    const ref = REFERRAL[r];
-    if (!ref || ref.when === 'none') continue;
-    const when = ref.when as When;
-    if (!best || WHEN_ORDER.indexOf(when) < WHEN_ORDER.indexOf(best.when)) best = { reason: r, who: ref.who, when };
-  }
-  return best;
-}
-
 /** Up to three plain "what is in your programme" lines, from the profile drivers. */
 function programParts(profile: Profile): { key: string; Icon: typeof Volume2 }[] {
   const d = profile.drivers;

@@ -248,7 +248,7 @@ export default function ProgramScreen() {
       </Screen>
 
       <Modal visible={showWhy} transparent animationType="slide" onRequestClose={() => setShowWhy(false)}>
-        <Pressable style={{ flex: 1, backgroundColor: colors.overlay }} onPress={() => setShowWhy(false)} accessibilityLabel={t('common.close')} />
+        <Pressable accessibilityRole="button" style={{ flex: 1, backgroundColor: colors.overlay }} onPress={() => setShowWhy(false)} accessibilityLabel={t('common.close')} />
         <View style={{ backgroundColor: colors.elevated, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: space[5], gap: space[3], maxHeight: '75%' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text variant="h3">{t('prog.why.title')}</Text>

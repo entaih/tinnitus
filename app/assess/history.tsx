@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import { ClipboardList, CircleCheck } from 'lucide-react-native';
 import { Screen, Text, Card, Button, OptionCard, EvidenceChip, useCitation } from '@/components';
 import { QuestionStep } from '@/components/assess';

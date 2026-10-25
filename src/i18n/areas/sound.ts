@@ -7,7 +7,7 @@ export const soundStrings = {
   tr: {
     'sound.trial.error': 'Ses başlatılamadı. Telefonun sessiz modunu ve ses düzeyini kontrol edip tekrar deneyin.',
     // --- Preset names / descriptions ---
-    'preset.name.am40': '40 Hz modüle gürültü',
+    'preset.name.am40': 'Dalgalı gürültü (deneysel)',
     'preset.name.notched': 'Çentikli pembe gürültü',
     'preset.name.narrowband': 'Perdenizde dar bant gürültü',
     'preset.name.binaural': 'Binaural vuru (6 Hz)',
@@ -298,7 +298,7 @@ export const soundStrings = {
 
   en: {
     'sound.trial.error': 'The sound could not start. Check the silent switch and volume, then try again.',
-    'preset.name.am40': '40 Hz modulated noise',
+    'preset.name.am40': 'Pulsing noise (experimental)',
     'preset.name.notched': 'Notched pink noise',
     'preset.name.narrowband': 'Narrow-band noise at your pitch',
     'preset.name.binaural': 'Binaural beat (6 Hz)',

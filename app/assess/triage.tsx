@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Linking, View } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { Phone, ShieldAlert } from 'lucide-react-native';
 import { Screen, Text, Card, Button, OptionCard, Banner, EvidenceChip, useCitation, Disclaimer } from '@/components';
 import { QuestionStep, ReferralList } from '@/components/assess';
