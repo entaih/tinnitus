@@ -126,3 +126,10 @@ Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
 - ✅ Program ekranı: görev satırının tamamı dokunulabilir, ad kesilmiyor; tek "Süreyi ve tarzı değiştir" düğmesi.
 - ✅ İlerleme: üstte "Programım" (hafta, bitirilen ders, etkin gün); boş grafikler gizleniyor. Haftalık kartta boş rahatsızlık kartı gizleniyor.
 - ✅ Sade dil: seans açıklamaları, kısaltmalar (BDT-U, SCI-8, HQ-14, Temel BDT) gündelik dile çevrildi.
+
+## 13. Kullanıcı testi gerektirmeyen son iyileştirmeler (Ekim 2026)
+- ✅ Boyun, çene ve duruş egzersizlerinin 35 adımının tamamı için hareket çizimi; tek taraflı adımlarda metin, etiket ve çizim aynı tarafı gösteriyor.
+- ✅ İçerik incelemesi (hekim, odyolog, sade dil editörü): kanıt ifadeleri yumuşatıldı, ani işitme kaybı ve nabız gibi atan çınlama uyarıları güçlendirildi, egzersizlere "ağrı/baş dönmesinde durun" eklendi, "çınlama" ve sade Türkçe her yerde.
+- ✅ Koyu tema tüm ekranlarda kontrol edildi; ekran okuyucu rolleri tamamlandı; telefon testleri ve ses adları sadeleştirildi.
+- ✅ Mağaza ekran görüntüsü taslakları (`docs/store-screenshots/`).
+- 🧪 Uzman onayı bekleyenler: içerik incelemesinin "klinisyene sorulacaklar" listesi (akut/kronik süre eşikleri, uyku sıkıştırma, doğrulanamayan bazı sayılar, kulak tıkacı önerisi).

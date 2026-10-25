@@ -25,7 +25,7 @@ Güncelleme: 25 Ekim 2026 · sürüm 1.0.0 · Expo SDK 58
 2. **Veri sorumlusu bilgisi:** `app.json` → `expo.extra.legal.controller` (şirket unvanı) ve `contact` (destek e-postası). `docs/store-listing.md` ve `docs/privacy-policy.md` içindeki `[İLETİŞİM]` / `[VERİ SORUMLUSU]` alanları.
 3. **Gizlilik politikası adresi:** `docs/privacy-policy.md` dosyasını herkese açık bir adreste yayımlayın (şirket sitesi veya GitHub Pages). Bu adres iki mağazada da zorunludur.
 4. **THI kullanım izni:** Tinnitus Handikap Envanteri'nin ticari kullanımı için yazar/yayıncı izni (README notu).
-5. **Ekran görüntüleri:** `docs/store-listing.md` §3'teki 6 kare (iPhone 6,9" ve Android telefon).
+5. **Ekran görüntüleri:** taslaklar hazır (`docs/store-screenshots/`, 6 kare). Yayından önce gerçek bir iPhone'dan aynı ekranlarla yenilemeniz önerilir.
 6. **App Store bağlantısı:** uygulama App Store'da oluşturulunca adresini `app.json` → `extra.storeUrls.ios` alanına yazın (davet mesajında görünür).
 
 ## 3. Komutlar (proje klasöründe, sırayla)

@@ -68,14 +68,16 @@ Dil kuralı: mağaza metni "ön değerlendirme" der; "tedavi eder, iyileştirir,
 
 ## 3. Ekran görüntüleri (6 kare, portre)
 
+Hazır taslaklar: `docs/store-screenshots/` (1290×2796, App Store 6,7" ve Google Play telefon için uygun). Web derlemesinden alındı; yayından önce gerçek bir iPhone'dan aynı ekranlarla yenilenmesi önerilir (yazı tipi ve durum çubuğu birebir olur).
+
 | # | Ekran | Başlık (TR) | Caption (EN) |
 |---|---|---|---|
-| 1 | Sonuç adımı 1 (renkli daire) | Çınlamanız sizi ne kadar etkiliyor? | How much does tinnitus affect you? |
-| 2 | Sonuç adımı "Doktor" | Hangi doktora, ne zaman. | Which doctor, and when. |
-| 3 | Sonuç adımı "Olası neden" | Olası nedeni, sade dille. | The likely cause, in plain words. |
-| 4 | "Programınız hazır" | Size özel program, günde 15 dakika. | Your programme, 15 minutes a day. |
-| 5 | Ana sayfa "Bugünün tek şeyi" | Her gün tek bir adım. | One step a day. |
-| 6 | Ses oynatıcı "Çınlamanıza göre ayarlandı" | Çınlamanıza göre ayarlanan sesler. | Sounds tuned to your tinnitus. |
+| 1 | `1-sonuc.png` · sonuç adımı (renkli daire) | Çınlamanız sizi ne kadar etkiliyor? | How much does tinnitus affect you? |
+| 2 | `2-neden.png` · olası neden (kulak şeması) | Olası nedeni, sade dille. | The likely cause, in plain words. |
+| 3 | `3-program.png` · "Programınız hazır" | Size özel program, günde 15 dakika. | Your programme, 15 minutes a day. |
+| 4 | `4-bugun.png` · ana sayfa "Bugünün tek şeyi" | Her gün tek bir adım. | One step a day. |
+| 5 | `5-egzersiz.png` · boyun programı, çizimli adım | Hareketler çizimlerle. | Movements shown in drawings. |
+| 6 | `6-ses.png` · ses oynatıcı | Rahatlatan sesler, zamanlayıcıyla. | Soothing sounds with a timer. |
 
 Kurallar: gerçek kullanıcı verisi yok (demo verisi); her karede "hekim muayenesinin yerine geçmez" altbilgisi; hekim veya klinik adı yok; öncesi/sonrası etkililik görseli yok.
 
