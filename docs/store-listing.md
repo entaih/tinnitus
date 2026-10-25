@@ -1,84 +1,88 @@
 # Dingin — Mağaza metni (App Store / Google Play)
 
-*Kaynak: `docs/reviews/marketing.md` §5 ve §7 (iddia kontrol listesi). Her cümle "tanı koymaz, tıbbi cihaz değildir" sınırı içindedir. Yasak sözcükler: tedavi eder, iyileştirir, çınlamayı geçirir, tanı koyar, klinik olarak kanıtlanmış uygulama.*
+Güncelleme: 25 Ekim 2026. Uygulamanın şimdiki akışına göre yazıldı (tek ekran giriş → güvenlik → çınlama ölçeği → kısa öykü → ruh hali → adım adım sonuç → program).
+
+Dil kuralı: mağaza metni "ön değerlendirme" der; "tedavi eder, iyileştirir, çınlamayı geçirir, kesin tanı" denmez. Uygulama içindeki "Ön tanı" ifadesi kalıcı "hekim muayenesinin yerine geçmez" notuyla birlikte gösterilir. Gerekçe: Apple App Store Yönergesi 1.4.1 ve Google Play sağlık uygulamaları politikası, düzenleyici onayı olmayan tanı iddialarını reddetme nedeni sayar. Ayrıntı: `docs/RELEASE.md` §5.
+
+`[İLETİŞİM]` yazan yerlere gerçek destek e-postası yazılmadan mağazaya gönderilmez.
 
 ## 1. Türkçe
 
 | Alan | Metin | Sınır |
 |---|---|---|
-| Başlık | **Dingin: Kulak Çınlaması** | 30 |
-| Alt başlık (iOS) / Kısa açıklama (Play) | **Tinnitus testi ve 12 haftalık program** | 30 / 80 |
-| Anahtar kelimeler (iOS) | `kulak çınlaması,tinnitus,çınlama,işitme testi,hiperakuzi,uyku,beyaz gürültü,kbb,odyoloji,kaygı` | 100 |
-| Tanıtım metni (iOS) | Kulak çınlamasını ölçün, anlayın, yönetin. Türkçe, kanıta dayalı; verileriniz telefonunuzda kalır. | 170 |
+| Ad | **Dingin: Kulak Çınlaması** | 30 |
+| Alt başlık (iOS) | **Çınlama testi ve kişisel program** | 30 |
+| Kısa açıklama (Play) | **Kulak çınlaması için ön değerlendirme, doktor yönlendirmesi ve kişisel program.** | 80 |
+| Anahtar kelimeler (iOS) | `kulak çınlaması,tinnitus,çınlama,işitme testi,hiperakuzi,uyku,beyaz gürültü,kbb,odyoloji` | 100 |
+| Tanıtım metni (iOS) | Kulak çınlamanızı birkaç dakikada değerlendirin, hangi doktora gideceğinizi öğrenin, size özel programa başlayın. Verileriniz telefonunuzda kalır. | 170 |
 
 **Açıklama (TR)**
 
-> Kulak çınlaması (tinnitus) için Türkçe, kanıta dayalı değerlendirme ve öz yönetim uygulaması. 10 dakikada güvenlik taraması, THI ve psikoakustik ölçümlerle olası profilinizi öğrenin; size göre kurulan 12 haftalık programı takip edin. Dingin tıbbi cihaz değildir, tanı koymaz; KBB ve odyoloji değerlendirmesinin yerini tutmaz.
+> Kulak çınlaması (tinnitus) için Türkçe, kanıta dayalı bir uygulama. Birkaç dakikalık sorularla çınlamanızın hayatınızı ne kadar etkilediğini ve olası nedenini öğrenin; gerekiyorsa hangi doktora, ne zaman gitmeniz gerektiğini görün; size göre hazırlanan programa tek dokunuşla başlayın.
 >
-> **Önce ölçün.** Klinikte kullanılan ölçekler cebinizde: Tinnitus Handikap Envanteri (THI, Türkçe geçerlilik Aksoy 2007), hiperakuzi anketi, uyku ve ruh hali taramaları, boyun-çene (somatosensoriyel) taraması. Perde eşleme, gürlük ve karışma noktası ölçümleri; kulaklıkla işitme taraması (klinik odyometri yerine geçmez).
+> **Kolay.** Her ekranda tek soru, büyük düğmeler. Sonuçlar sade dille ve adım adım gösterilir.
 >
-> **Önce güvenlik.** 12 soruluk tarama, kılavuz ölçütlerine (NICE NG155, AAO-HNS) göre hangi uzmana ne zaman gitmeniz gerektiğini söyler: acil, 24 saat, 2 hafta ya da rutin. Doktorunuza götürebileceğiniz PDF özet hazırlar.
+> **Önce güvenlik.** Kısa güvenlik taraması, kılavuz ölçütlerine (NICE NG155, AAO-HNS) göre acil, 24 saat, 2 hafta ya da rutin muayene gerekip gerekmediğini söyler. Doktorunuza götürebileceğiniz bir rapor (PDF) hazırlar.
 >
-> **Sonra kişiselleştirin.** Sonuçlarınıza göre kurulan 12 haftalık program: bilişsel davranışçı beceriler, ses zenginleştirme, uyku için BDT-I, ses hassasiyeti için kademeli alıştırma, gerekirse boyun ve çene egzersizleri. Her gün tek bir sonraki adım.
+> **Size özel program.** Günde yaklaşık 15 dakika, 6–12 hafta: rahatlatan sesler (çınlamanızın perdesine göre ayarlanır), bilişsel-davranışçı beceriler, uyku desteği, ses hassasiyetinde kademeli alışma, gerekirse boyun ve çene egzersizleri. Her gün "bugünün tek şeyi". Program bitince bakım modu devam eder.
 >
-> **Her zaman kanıtla.** Her önerinin yanında kanıt düzeyi ve kaynağı (Cochrane, NICE, AAO-HNS). Deneysel yöntemler açıkça "deneysel" olarak işaretlenir; önerilmeyenler (takviyeler, betahistin, ginkgo) de yazılıdır.
+> **Telefonla ölçümler.** Perde eşleme, gürlük, kulaklıkla işitme taraması ve kendi kendine muayene adımları. Bunlar tahmindir, klinik odyometrinin yerini tutmaz.
 >
-> **Neler ücretsiz:** güvenlik taraması, tüm ölçekler ve sonuç raporu, doktor özeti PDF, temel sesler, programın 1. haftası.
+> **Kanıtla.** Her önerinin yanında kanıt düzeyi ve kaynağı var. Önerilmeyen yöntemler (takviyeler, betahistin, ginkgo) da açıkça yazılı.
 >
-> **Verileriniz telefonunuzda kalır.** Hesap yok, sunucu yok. Kayıtlarınız yalnızca sizin başlattığınız paylaşımla cihazdan çıkar (KVKK).
+> **Verileriniz telefonunuzda kalır.** Hesap yok, sunucu yok, reklam yok. Bir telefonu birden fazla kişi ayrı ayrı kullanabilir.
 >
-> Dingin bir kriz hizmeti değildir. Kendinize zarar verme riski varsa 112'yi arayın ya da en yakın acil servise gidin.
+> Dingin hekim veya odyolog muayenesinin yerine geçmez. Ani işitme kaybı, şiddetli baş dönmesi ya da kendinize zarar verme düşüncesi varsa 112'yi arayın.
 >
-> İletişim: destek@dingin.app
-
-Google Play notu: "kulak çınlaması" ve "tinnitus" açıklamada doğal biçimde 4–5 kez geçer; "tedavi" yalnızca "tedavi seçeneklerini öğrenin" bağlamında kullanılır (yukarıdaki metinde hiç kullanılmadı).
+> İletişim: [İLETİŞİM]
 
 ## 2. English
 
 | Field | Text | Limit |
 |---|---|---|
-| Title | **Dingin: Tinnitus Relief Plan** | 30 |
-| Subtitle / Short description | **Assessment, sound and CBT program** | 30 / 80 |
+| Name | **Dingin: Tinnitus** | 30 |
+| Subtitle (iOS) | **Tinnitus check and personal plan** | 30 |
+| Short description (Play) | **Preliminary tinnitus assessment, doctor guidance and a personal programme.** | 80 |
 | Keywords (iOS) | `tinnitus,ringing ears,hearing test,hyperacusis,white noise,sleep,cbt,sound therapy,audiology` | 100 |
-| Promotional text (iOS) | Measure, understand and manage tinnitus. Evidence-based; your data stays on your phone. | 170 |
+| Promotional text (iOS) | Check your tinnitus in a few minutes, learn which doctor to see, and start a programme made for you. Your data stays on your phone. | 170 |
 
 **Description (EN)**
 
-> An evidence-based assessment and self-management app for tinnitus (ringing in the ears). In about 10 minutes, complete a safety screen, the Tinnitus Handicap Inventory and psychoacoustic measurements to see your likely profile; then follow a 12-week programme built from your results. Dingin is not a medical device and does not diagnose; it does not replace an ENT or audiology evaluation.
+> An evidence-based app for tinnitus (ringing in the ears). A few minutes of simple questions show how much tinnitus affects your life and its likely cause; if needed, which doctor to see and when; and a programme made for you that starts with one tap.
 >
-> **Measure first.** Clinic-grade scales on your phone: THI, hyperacusis questionnaire, sleep and mood screens, neck-jaw (somatosensory) screen. Pitch matching, loudness and mixing-point measurements; a headphone hearing screen (not a substitute for clinical audiometry).
+> **Easy.** One question per screen, large buttons. Results in plain words, step by step.
 >
-> **Safety first.** A 12-question screen tells you which specialist to see and when, following guideline criteria (NICE NG155, AAO-HNS): immediate, 24 hours, 2 weeks or routine. It prepares a PDF summary you can take to your doctor.
+> **Safety first.** A short safety screen follows guideline criteria (NICE NG155, AAO-HNS) to tell you whether you need care immediately, within 24 hours, within 2 weeks or routinely, and prepares a PDF report for your doctor.
 >
-> **Then personalise.** A 12-week programme built from your results: cognitive-behavioural skills, sound enrichment, CBT for insomnia, graded sound-tolerance practice, and neck and jaw exercises when relevant. One next step each day.
+> **Your programme.** About 15 minutes a day for 6–12 weeks: soothing sounds tuned to your tinnitus pitch, cognitive-behavioural skills, sleep support, gradual sound-tolerance practice and neck and jaw exercises when relevant. One thing to do each day, and a maintenance mode afterwards.
 >
-> **Always with evidence.** Every recommendation shows its evidence level and source (Cochrane, NICE, AAO-HNS). Experimental methods are labelled "experimental"; what is not recommended (supplements, betahistine, ginkgo) is stated too.
+> **Phone-based measurements.** Pitch matching, loudness, a headphone hearing screen and guided self-checks. These are estimates and do not replace clinical audiometry.
 >
-> **What is free:** the safety screen, all scales and the results report, the doctor summary PDF, basic sounds, week 1 of the programme.
+> **With evidence.** Every recommendation shows its evidence level and source; methods that are not recommended are stated too.
 >
-> **Your data stays on your phone.** No account, no server. Records leave the device only through a share you start yourself.
+> **Your data stays on your phone.** No account, no server, no ads. Several people can use one phone separately.
 >
-> Dingin is not a crisis service. If you are at risk of harming yourself, call your local emergency number or go to the nearest emergency department.
+> Dingin does not replace an examination by a doctor or audiologist. In an emergency call your local emergency number.
 >
-> Contact: support@dingin.app
+> Contact: [CONTACT]
 
-## 3. Ekran görüntüsü storyboard'u (6 kare, portre, DESIGN.md paleti)
+## 3. Ekran görüntüleri (6 kare, portre)
 
-| # | Ekran | Başlık (TR) | Caption (EN) | Demo verisi |
-|---|---|---|---|---|
-| 1 | Ana sayfa, "Bugünün seansı" kartı | Her gün tek bir sonraki adım. | One next step, every day. | Hafta 3, gün 2; 3 adım, 14 dk |
-| 2 | Güvenlik taraması sonucu | Önce güvenlik: hangi uzmana, ne zaman. | Safety first: which specialist, and when. | Kademe "2 hafta içinde KBB" |
-| 3 | Perde eşleme ekranı | Çınlamanızın perdesini ve şiddetini ölçün. | Measure the pitch and loudness of your tinnitus. | 6 kHz, 8 dB SL |
-| 4 | THI sonucu + kanıt rozeti | Klinikte kullanılan ölçekler, cebinizde. | Clinic-grade scales, in your pocket. | THI 48 (orta), "Valide ölçek" rozeti |
-| 5 | Program haftası görünümü | Size göre kurulan 12 haftalık program. | A 12-week programme built around you. | Hafta 4 teması: "Dikkati yeniden yönlendirme" |
-| 6 | İlerleme grafiği + "Doktoruma gönder" | İlerlemenizi görün, hekiminizle paylaşın. | See your progress, share it with your clinician. | THI 48 → 36 (orta → hafif), 4 hafta |
+| # | Ekran | Başlık (TR) | Caption (EN) |
+|---|---|---|---|
+| 1 | Sonuç adımı 1 (renkli daire) | Çınlamanız sizi ne kadar etkiliyor? | How much does tinnitus affect you? |
+| 2 | Sonuç adımı "Doktor" | Hangi doktora, ne zaman. | Which doctor, and when. |
+| 3 | Sonuç adımı "Olası neden" | Olası nedeni, sade dille. | The likely cause, in plain words. |
+| 4 | "Programınız hazır" | Size özel program, günde 15 dakika. | Your programme, 15 minutes a day. |
+| 5 | Ana sayfa "Bugünün tek şeyi" | Her gün tek bir adım. | One step a day. |
+| 6 | Ses oynatıcı "Çınlamanıza göre ayarlandı" | Çınlamanıza göre ayarlanan sesler. | Sounds tuned to your tinnitus. |
 
-Kurallar: gerçek kullanıcı verisi yok (deterministik demo seed'i); her karede "tanı değildir" altbilgisi; hekim/klinik adı yok; öncesi/sonrası hasta görseli yok. Kare 6'daki "48 → 36" örneği kişisel veri gösterimidir, etkililik iddiası değildir.
+Kurallar: gerçek kullanıcı verisi yok (demo verisi); her karede "hekim muayenesinin yerine geçmez" altbilgisi; hekim veya klinik adı yok; öncesi/sonrası etkililik görseli yok.
 
-## 4. Mağaza "sağlık" beyanları
+## 4. Mağaza beyanları
 
-- Kategori: Sağlık ve Fitness (Medical değil).
-- "Tıbbi cihaz değildir; tanı, tedavi amacı yoktur; eğitim, öz izlem ve yönlendirme" beyanı açıklamada ve uygulama içinde (Ayarlar → Hakkında, Kanıt sayfası).
-- Veri güvenliği formu (Play) / Gizlilik etiketi (iOS): veri toplanmaz, üçüncü tarafla paylaşılmaz; sağlık verisi yalnızca cihazda.
-- İzinler: bildirim (yerel hatırlatıcı), mikrofon (ortam gürültüsü ölçümü, yalnızca işitme taramasında).
-- Lisans: THI ticari kullanım izni lansmandan önce alınır (README notu).
+- Kategori: Sağlık ve Fitness (iOS: Health & Fitness, Play: Health & Fitness).
+- Yaş sınırı: 18+ (içerik: sağlık bilgisi, ruh hali taraması).
+- Gizlilik etiketi / Veri güvenliği: veri toplanmaz, paylaşılmaz, takip yok (ayrıntı `docs/RELEASE.md` §4).
+- İzinler: bildirim (yerel hatırlatma), mikrofon (yalnız ortam gürültüsü ölçümü, kayıt yok), hareket algılayıcısı (denge kaydı), arka planda ses çalma.
+- Gizlilik politikası adresi: `docs/privacy-policy.md` yayımlanmış bir adreste (ör. GitHub Pages veya şirket sitesi).

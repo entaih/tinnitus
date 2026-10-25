@@ -9,7 +9,7 @@ import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { useGrowth } from '@/store/growth';
-import { ProgressCardView, STORE_ANDROID, STORE_IOS, buildCardHtml, buildShareText, computeProgressStats, inviteLink, shareCardImage, thiBandKey } from '@/components/growth';
+import { ProgressCardView, STORE_ANDROID, STORE_IOS, storeLinesText, buildCardHtml, buildShareText, computeProgressStats, shareCardImage, thiBandKey } from '@/components/growth';
 
 /**
  * Shareable progress card + "invite a friend". The card is captured from the on-screen View with
@@ -73,7 +73,7 @@ export default function ShareScreen() {
   };
 
   const invite = async () => {
-    const message = t('growth.invite.message', { link: inviteLink(inviteCode), ios: STORE_IOS, android: STORE_ANDROID });
+    const message = t('growth.invite.message', { stores: storeLinesText(STORE_IOS, STORE_ANDROID) });
     try { await Share.share({ message, title: t('growth.invite.title') }); } catch { /* user dismissed */ }
   };
 
@@ -98,7 +98,6 @@ export default function ShareScreen() {
         <SectionHeader title={t('growth.invite.title')} />
         <Card variant="tinted">
           <Text variant="body" tone="secondary">{t('growth.invite.body')}</Text>
-          <Text variant="caption" tone="muted">{t('growth.invite.code', { code: inviteCode })}</Text>
           <Button title={t('growth.invite.cta')} icon={<Gift size={18} color={colors.onPrimary} />} onPress={() => { void invite(); }} />
         </Card>
 

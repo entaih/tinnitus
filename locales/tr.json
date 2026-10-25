@@ -1,0 +1,5 @@
+{
+  "CFBundleDisplayName": "Dingin",
+  "NSMicrophoneUsageDescription": "İşitme testinden önce ortamın yeterince sessiz olup olmadığını ölçmek için mikrofon kullanılır. Ses kaydedilmez ve cihazdan çıkmaz.",
+  "NSMotionUsageDescription": "Denge kaydında telefonun hareket algılayıcısı kullanılır. Veriler cihazdan çıkmaz."
+}

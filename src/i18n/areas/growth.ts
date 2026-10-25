@@ -41,7 +41,7 @@ export const growthStrings = {
     'growth.invite.body': 'Kulak çınlamasıyla yaşayan bir tanıdığınız varsa Dingin\'i önerebilirsiniz. Davet bağlantısı yalnızca uygulamayı açar; kişisel veri taşımaz.',
     'growth.invite.cta': 'Davet gönder',
     'growth.invite.code': 'Davet kodunuz: {code}',
-    'growth.invite.message': 'Kulak çınlaması (tinnitus) için Türkçe, kanıta dayalı bir öz yönetim uygulaması kullanıyorum: Dingin. Ölçer, izler, yönlendirir; tanı koymaz.\n\nUygulamada aç: {link}\nApp Store: {ios}\nGoogle Play: {android}',
+    'growth.invite.message': 'Kulak çınlaması için Türkçe, kanıta dayalı bir uygulama kullanıyorum: Dingin. Kısa testlerle ön değerlendirme yapıyor ve kişisel bir program hazırlıyor.\n\n{stores}',
 
     // --- Crisis card ---
     'growth.crisis.title': 'Acil yardım',
@@ -215,7 +215,7 @@ export const growthStrings = {
     'growth.invite.body': 'If someone you know lives with tinnitus, you can recommend Dingin. The invite link only opens the app; it carries no personal data.',
     'growth.invite.cta': 'Send invite',
     'growth.invite.code': 'Your invite code: {code}',
-    'growth.invite.message': 'I am using Dingin, a Turkish evidence-based self-management app for tinnitus. It measures, tracks and refers; it does not diagnose.\n\nOpen in the app: {link}\nApp Store: {ios}\nGoogle Play: {android}',
+    'growth.invite.message': 'I am using Dingin, an evidence-based app for tinnitus. Short tests give a preliminary assessment and a personal programme.\n\n{stores}',
 
     // --- Crisis card ---
     'growth.crisis.title': 'Urgent help',

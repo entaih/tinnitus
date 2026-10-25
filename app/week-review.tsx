@@ -4,7 +4,7 @@ import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { ArrowRight, Check, Gift, Share2 } from 'lucide-react-native';
 import { Button, Card, Disclaimer, Screen, Text } from '@/components';
 import { WeeklyGoalRing, activeTasks, formatAvg, isBackground, isMaintenance, maintenanceWeek, planForToday, programFinished, programWeekWindow, taskTitle, weekActiveDays, weekCompare, weeklyGoalOf } from '@/components/home';
-import { ProgressCardView, STORE_ANDROID, STORE_IOS, ShareMomentCard, computeProgressStats, inviteLink, shareCardImage, shareMoments, thiSeries } from '@/components/growth';
+import { ProgressCardView, STORE_ANDROID, STORE_IOS, storeLinesText, ShareMomentCard, computeProgressStats, shareCardImage, shareMoments, thiSeries } from '@/components/growth';
 import { useTheme } from '@/theme';
 import { useLocale, useT } from '@/i18n';
 import { today, useClinical } from '@/store/clinical';
@@ -33,7 +33,6 @@ export default function WeekReviewScreen() {
   const assessments = useClinical((s) => s.assessments);
   const completeTask = useClinical((s) => s.completeTask);
   const track = useGrowth((s) => s.track);
-  const inviteCode = useGrowth((s) => s.inviteCode);
   const lastShareMomentAt = useGrowth((s) => s.lastShareMomentAt);
   const lastShareMomentId = useGrowth((s) => s.lastShareMomentId);
   const date = today();
@@ -97,7 +96,7 @@ export default function WeekReviewScreen() {
     try { await shareCardImage(cardRef, { fileName: 'dingin-week', dialogTitle: t('week.title'), fallbackText: lines.join('\n') }); } catch { /* dismissed */ } finally { setBusy(false); }
   };
   const invite = async () => {
-    const message = t('growth.invite.message', { link: inviteLink(inviteCode), ios: STORE_IOS, android: STORE_ANDROID });
+    const message = t('growth.invite.message', { stores: storeLinesText(STORE_IOS, STORE_ANDROID) });
     try { await Share.share({ message, title: t('growth.invite.title') }); } catch { /* dismissed */ }
   };
 

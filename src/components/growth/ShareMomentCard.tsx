@@ -9,7 +9,8 @@ import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useGrowth } from '@/store/growth';
 import { localDay, type ShareMoment } from './shareMoments';
-import { STORE_ANDROID, STORE_IOS, inviteLink } from './shareRules';
+import { storeLinesText } from './shareRules';
+import { STORE_ANDROID, STORE_IOS } from './storeLinks';
 
 /**
  * The share-moment card (PM sprint 3 §B3): headline with the user's own numbers, "Kartı paylaş" (opens /share with the
@@ -21,7 +22,6 @@ export function ShareMomentCard({ moment }: { moment: ShareMoment }) {
   const t = useT();
   const track = useGrowth((s) => s.track);
   const markShareMoment = useGrowth((s) => s.markShareMoment);
-  const inviteCode = useGrowth((s) => s.inviteCode);
   const marked = useRef(false);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function ShareMomentCard({ moment }: { moment: ShareMoment }) {
   };
   const invite = async () => {
     track('shareMomentUsed');
-    const message = t('growth.invite.message', { link: inviteLink(inviteCode), ios: STORE_IOS, android: STORE_ANDROID });
+    const message = t('growth.invite.message', { stores: storeLinesText(STORE_IOS, STORE_ANDROID) });
     try { await Share.share({ message, title: t('growth.invite.title') }); } catch { /* dismissed */ }
   };
 

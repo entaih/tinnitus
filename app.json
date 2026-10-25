@@ -14,11 +14,49 @@
       "backgroundColor": "#0B0F1A"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.aiheartech.tinnova",
       "infoPlist": {
-        "UIBackgroundModes": ["audio"],
-        "NSMicrophoneUsageDescription": "Ortam gürültüsünü ölçerek işitme testinin sessiz bir ortamda yapıldığını doğrulamak için mikrofon kullanılır."
+        "UIBackgroundModes": [
+          "audio"
+        ],
+        "NSMicrophoneUsageDescription": "İşitme testinden önce ortamın yeterince sessiz olup olmadığını ölçmek için mikrofon kullanılır. Ses kaydedilmez ve cihazdan çıkmaz.",
+        "NSMotionUsageDescription": "Denge kaydında telefonun hareket algılayıcısı kullanılır. Veriler cihazdan çıkmaz.",
+        "CFBundleAllowMixedLocalizations": true
+      },
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "35F9.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "E174.1"
+            ]
+          }
+        ],
+        "NSPrivacyTracking": false,
+        "NSPrivacyCollectedDataTypes": []
       }
     },
     "android": {
@@ -29,8 +67,22 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "permissions": ["RECORD_AUDIO", "POST_NOTIFICATIONS"],
-      "predictiveBackGestureEnabled": false
+      "permissions": [
+        "RECORD_AUDIO",
+        "POST_NOTIFICATIONS",
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED",
+        "MODIFY_AUDIO_SETTINGS"
+      ],
+      "predictiveBackGestureEnabled": false,
+      "versionCode": 1,
+      "blockedPermissions": [
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "allowBackup": false
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -39,11 +91,53 @@
     "plugins": [
       "expo-router",
       "expo-localization",
-      ["expo-audio", { "microphonePermission": "Ortam gürültüsünü ölçmek için mikrofon izni gerekir." }],
-      ["expo-splash-screen", { "backgroundColor": "#0B0F1A", "image": "./assets/splash-icon.png", "imageWidth": 160 }],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "İşitme testinden önce ortamın yeterince sessiz olup olmadığını ölçmek için mikrofon kullanılır. Ses kaydedilmez ve cihazdan çıkmaz."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0B0F1A",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 160
+        }
+      ],
       "expo-font",
-      "expo-notifications"
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#4F46E5"
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Denge kaydında telefonun hareket algılayıcısı kullanılır. Veriler cihazdan çıkmaz."
+        }
+      ]
     ],
-    "experiments": { "typedRoutes": false }
+    "experiments": {
+      "typedRoutes": false
+    },
+    "description": "Çınlama için ön değerlendirme ve kişisel, kanıta dayalı öz yönetim programı.",
+    "primaryColor": "#4F46E5",
+    "locales": {
+      "tr": "./locales/tr.json",
+      "en": "./locales/en.json"
+    },
+    "extra": {
+      "storeUrls": {
+        "ios": null,
+        "android": "https://play.google.com/store/apps/details?id=com.aiheartech.tinnova"
+      },
+      "legal": {
+        "controller": "",
+        "contact": ""
+      }
+    }
   }
 }

@@ -177,7 +177,11 @@ export default function SettingsScreen() {
         <GrowthSettingsRows />
 
         <SectionHeader title={t('settings.privacy')} />
-        <Card><Text variant="body" tone="secondary">{t('settings.privacy.body')}</Text></Card>
+        <Card>
+          <Text variant="body" tone="secondary">{t('settings.privacy.body')}</Text>
+          <Row title={t('onb.consent.kvkk')} onPress={() => router.push('/privacy')} />
+          <Row title={t('onb.consent.terms')} onPress={() => router.push('/privacy?doc=terms')} />
+        </Card>
 
         <SectionHeader title={t('settings.about')} />
         <Card>

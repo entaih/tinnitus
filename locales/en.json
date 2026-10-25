@@ -1,0 +1,5 @@
+{
+  "CFBundleDisplayName": "Dingin",
+  "NSMicrophoneUsageDescription": "The microphone measures whether your room is quiet enough before the hearing test. Nothing is recorded or leaves your device.",
+  "NSMotionUsageDescription": "The motion sensor is used for the balance recording. The data never leaves your device."
+}

@@ -59,8 +59,10 @@ export function computeJourney(a: Assessment | null, program: Program | null, ct
   const steps: JourneyStep[] = [
     { id: 'safety', route: '/assess/triage', minutes: 2, done: !!a?.redFlags, whyKey: 'journey.why.safety', questions: 12 },
   ];
-  // "Sesi dene": optional one-minute trial right after the safety screen (first value before any scale); never on an urgent tier.
-  if (!urgent) steps.push({ id: 'soundTry', route: SOUND_TRY_ROUTE, minutes: 1, done: soundTryDone(ctx.sessions) || !!a?.soundTryAt, whyKey: 'journey.why.soundTry', optional: true, questions: 0 });
+  // The one-minute "Sesi dene" trial was removed from the journey (owner decision, Oct 2026): sound before the history
+  // does not know about sound sensitivity, and the tinnitus may not be audible at that moment. Sound comes on
+  // programme day 1 with "Sesinizi bulun", tuned to the user's own tinnitus. The trial player stays available.
+  void urgent; void ctx;
   steps.push({ id: 'thi', route: '/assess/questionnaire/THI', minutes: 4, done: has(a, 'THI'), whyKey: 'journey.why.thi', questions: 25 });
   // Preview card right after the THI (band + programme length). Users who already finished the mood screen never see it.
   steps.push({ id: 'preview', route: '/assess/results?preview=1', minutes: 0, done: !!a?.previewSeenAt || has(a, 'PHQ9'), whyKey: 'journey.why.preview', questions: 0 });

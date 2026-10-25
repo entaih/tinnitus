@@ -66,8 +66,8 @@ export default function Onboarding() {
       <Card>
         <CheckRow checked={consent} label={t('onb.consent.single')} onToggle={() => setConsent((v) => !v)} />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[4] }}>
-          {link(t('onb.consent.kvkk'), () => router.push('/evidence'))}
-          {link(t('onb.consent.terms'), () => router.push('/evidence'))}
+          {link(t('onb.consent.kvkk'), () => router.push('/privacy'))}
+          {link(t('onb.consent.terms'), () => router.push('/privacy?doc=terms'))}
         </View>
       </Card>
 
