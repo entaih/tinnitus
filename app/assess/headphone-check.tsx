@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { HeadphonesArt } from '@/components/illustrations';
 import { View } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { RecordingPresets, requestRecordingPermissionsAsync, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from 'expo-audio';
@@ -148,6 +149,7 @@ export default function HeadphoneCheckScreen() {
 
       {phase === 'intro' && (
         <>
+          <View style={{ alignItems: 'center' }}><HeadphonesArt width={240} accessibilityLabel={t('psy.hp.step.headphones')} /></View>
           <Text variant="h1">{t('psy.hp.intro.title')}</Text>
           <Text variant="body" tone="secondary">{t('psy.hp.intro.body')}</Text>
           <Card>

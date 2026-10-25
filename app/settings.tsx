@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Pressable, Switch, TextInput, View } from 'react-native';
+import { Alert, Pressable, Switch, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import Constants from 'expo-constants';
 import Slider from '@react-native-community/slider';
@@ -26,7 +26,6 @@ export default function SettingsScreen() {
   const [hour, setHour] = useState(s.reminderHour ?? 20);
   // Quiet hours (settings nightStart–nightEnd, default 22:00–06:00): a reminder inside them is refused with an explanation (C4).
   const quietBlocked = reminderHourBlocked(hour);
-  const [name, setName] = useState(s.displayName);
   const activePerson = useProfiles(selectActiveProfile);
   const [vol, setVol] = useState(s.maxVolume);
   const [exporting, setExporting] = useState(false);
@@ -85,12 +84,6 @@ export default function SettingsScreen() {
         <SectionHeader title={t('settings.language')} />
         <Card>
           <Segmented options={[{ value: 'tr', label: t('settings.language.tr') }, { value: 'en', label: t('settings.language.en') }]} value={s.locale} onChange={s.setLocale} accessibilityLabel={t('settings.language')} />
-          <Text variant="bodyStrong">{t('settings.name')}</Text>
-          <TextInput
-            value={name} onChangeText={setName} onEndEditing={() => s.setDisplayName(name.trim())} maxLength={40} autoCapitalize="words"
-            placeholder={t('onb.consent.namePlaceholder')} placeholderTextColor={colors.textMuted} accessibilityLabel={t('settings.name')}
-            style={{ minHeight: 48, borderWidth: 1, borderColor: colors.borderStrong, borderRadius: radius.md, paddingHorizontal: space[3], color: colors.text, fontSize: 17, backgroundColor: colors.card }}
-          />
         </Card>
 
         <SectionHeader title={t('settings.reminder')} />

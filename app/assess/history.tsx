@@ -57,10 +57,10 @@ export default function HistoryScreen() {
   const saveHistory = useClinical((s) => s.saveHistory);
   const existing = useClinical((s) => mergedLatest(s.assessments)?.history);
   const redFlags = useClinical((s) => mergedLatest(s.assessments)?.redFlags);
-  const { finish } = useJourney();
+  const { finish, inJourney } = useJourney();
   const { open, sheet } = useCitation();
 
-  const [phase, setPhase] = useState<'intro' | 'items' | 'done'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'items' | 'done'>(() => (inJourney ? 'items' : 'intro'));
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Draft>(() => ({ ...(existing ?? {}) }));
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -137,6 +137,7 @@ export default function HistoryScreen() {
           index={Math.min(step, steps.length - 1)}
           total={steps.length}
           stem={t(`history.q.${current.key}`)}
+          hint={inJourney && step === 0 ? t('history.intro.body') : undefined}
           onBack={back}
         >
           {current.kind === 'choice' ? (

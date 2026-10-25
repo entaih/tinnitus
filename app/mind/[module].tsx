@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { TrackArt, type TrackKind } from '@/components/illustrations';
 import { ScrollView, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
@@ -21,6 +22,17 @@ import { UNITS } from '@/content/registry';
  * `summaryOnlyUsed`. With `?summary=1` (short session) the full text stays folded until "Tam modülü oku".
  * The section the reader reached is persisted (dingin.moduleProgress) so a half-read module reopens where it was.
  */
+/** Header art for a lesson, from its id. */
+function trackArtFor(id: string): TrackKind {
+  if (id.startsWith('cbti.') || id === 'cbt.sleepGuidelines') return 'sleep';
+  if (id.includes('relax') || id.startsWith('mind.') || id === 'cbt.positiveImagery') return 'relax';
+  if (id === 'cbt.soundEnrichment' || id.startsWith('hyper.') || id === 'cbt.exposure') return 'sound';
+  if (id === 'cbt.hearingTactics') return 'hearing';
+  if (id.startsWith('somatic.')) return 'neck';
+  if (id === 'cbt.welcome' || id === 'cbt.psychoeducation' || id === 'cbt.relapse' || id === 'cbt.toolbox') return 'learn';
+  return 'thoughts';
+}
+
 export default function ModuleScreen() {
   const { module: id, taskKey, summary: summaryParam } = useLocalSearchParams<{ module: string; taskKey?: string; summary?: string }>();
   const { colors, space, radius } = useTheme();
@@ -128,9 +140,11 @@ export default function ModuleScreen() {
 
   const summaryCard = (
     <Card variant="tinted" overline={t('module.summary.title')} title={mod.title[locale]}>
+      <View style={{ alignItems: 'center' }}><TrackArt track={trackArtFor(mod.id)} width={150} accessibilityLabel={mod.title[locale]} /></View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2], alignItems: 'center' }}>
         <Chip label={t('mind.module.minutes', { n: SUMMARY_MINUTES })} />
-        {mod.citations.map((c) => { const cit = citation(c); return cit ? <EvidenceChip key={c} level={cit.level} onPress={() => open(c)} /> : null; })}
+        {/* One evidence chip per distinct level (three identical "Kılavuz önerisi" chips read as noise). */}
+        {Array.from(new Map(mod.citations.map((c) => [citation(c)?.level, c] as const)).values()).map((c) => { const cit = citation(c); return cit ? <EvidenceChip key={c} level={cit.level} onPress={() => open(c)} /> : null; })}
       </View>
       <View style={{ gap: space[2] }} accessibilityRole="list">
         {bullets.map((b, i) => (

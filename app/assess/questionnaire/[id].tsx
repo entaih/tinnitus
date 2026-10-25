@@ -41,7 +41,8 @@ export default function QuestionnaireScreen() {
   // The THI-S stays unreachable until its item table is verified (sprint 3 A4, `THIS_ENABLED`).
   const q = qid === 'THIS' && !THIS_ENABLED ? undefined : QUESTIONNAIRES[qid];
 
-  const [phase, setPhase] = useState<'intro' | 'items' | 'review' | 'done'>('intro');
+  // In the guided journey the intro card is skipped (one tap less); the first item carries the scale's purpose.
+  const [phase, setPhase] = useState<'intro' | 'items' | 'review' | 'done'>(() => (inJourney ? 'items' : 'intro'));
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(() => Array(q?.items.length ?? 0).fill(null));
   const [result, setResult] = useState<ReturnType<typeof scoreQuestionnaire> | null>(null);
@@ -148,7 +149,7 @@ export default function QuestionnaireScreen() {
           index={tail != null && GATE[q.id] ? GATE[q.id]!.items + tail : step}
           total={GATE[q.id] && (tail != null || step < GATE[q.id]!.items) ? gatedCount(GATE[q.id]!) : total}
           stem={pick(q.items[step], locale)}
-          hint={GATE[q.id] && tail == null && step === GATE[q.id]!.items ? t('q.gate.expanded', { n: total - GATE[q.id]!.items }) : undefined}
+          hint={GATE[q.id] && tail == null && step === GATE[q.id]!.items ? t('q.gate.expanded', { n: total - GATE[q.id]!.items }) : inJourney && step === 0 && tail == null ? pick(q.description, locale) : undefined}
           onBack={back}
         >
           {optionsFor(q, step).map((o) => (

@@ -43,6 +43,19 @@ export const hasBackgroundSound = (tasks: ProgramTask[]) => tasks.some(isBackgro
 export const activeTasks = (tasks: ProgramTask[]) => tasks.filter((x) => !isBackground(x));
 export const backgroundTasks = (tasks: ProgramTask[]) => tasks.filter(isBackground);
 
+/**
+ * One background sound at a time on Home and in the session (two "Aç" rows confused people): at night
+ * (20:00–06:00) the sleep sound when scheduled, otherwise the daytime sound.
+ */
+export function primaryBackground(tasks: ProgramTask[], hour = new Date().getHours()): ProgramTask[] {
+  const bg = tasks.filter(isBackground);
+  if (bg.length <= 1) return bg;
+  const night = hour >= 20 || hour < 6;
+  const isSleep = (x: ProgramTask) => x.id === 'sleep.sound';
+  const pick = bg.find((x) => (night ? isSleep(x) : !isSleep(x))) ?? bg[0];
+  return [pick];
+}
+
 /** Task title without the "(deneysel)" / "(experimental)" suffix; experimental status is shown in the player instead. */
 export function taskTitle(t: TFn, task: ProgramTask): string {
   return t(task.titleKey).replace(/\s*\((deneysel|experimental)\)\s*$/i, '');

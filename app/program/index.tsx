@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, View } from 'react-native';
+import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
 import { Banner, Button, Card, Chip, Screen, Text, useCitation } from '@/components';
@@ -18,7 +18,7 @@ export default function ProgramScreen() {
   const t = useT();
   const locale = useLocale();
   const cite = useCitation();
-  const { program, assessments, completeTask, setProgram, programPrefs, enterMaintenance, ensureMaintenance, startRefresher, restartProgram } = useClinical();
+  const { program, assessments, completeTask, setProgram, programPrefs, enterMaintenance, ensureMaintenance, startRefresher } = useClinical();
   const { assessment, profile } = useProfile();
   const now = new Date();
   const pos = program ? programPosition(program, now) : null;
@@ -124,13 +124,6 @@ export default function ProgramScreen() {
 
   const goToday = () => { setWeek(pos.week); setDay(pos.day); };
 
-  /** Full regeneration (completed map cleared) after a confirmation. */
-  const confirmRestart = () => {
-    Alert.alert(t('prog.restart.confirm.title'), t('prog.restart.confirm.body'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      { text: t('prog.restart.confirm.ok'), style: 'destructive', onPress: () => { restartProgram(); setWeek(1); setDay(1); } },
-    ]);
-  };
 
   return (
     <>
@@ -250,8 +243,8 @@ export default function ProgramScreen() {
           </Card>
         ) : null}
 
-        <Button variant="ghost" title={t('prog.regenerate')} onPress={() => router.push('/program/setup')} />
-        <Button variant="ghost" title={t('prog.restart')} onPress={confirmRestart} />
+        {/* One way to change the plan here; restarting from scratch lives in Settings → Programım. */}
+        <Button variant="ghost" title={t('results.program.customize')} onPress={() => router.push('/program/setup')} />
       </Screen>
 
       <Modal visible={showWhy} transparent animationType="slide" onRequestClose={() => setShowWhy(false)}>

@@ -3,12 +3,12 @@ import { Alert, View } from 'react-native';
 import { router } from 'expo-router';
 import { Share2, TrendingUp } from 'lucide-react-native';
 import { Button, Card, Screen, Text } from '@/components';
-import { Segmented, TabHeader } from '@/components/home';
+import { Segmented, TabHeader, totalActiveDays } from '@/components/home';
 import { BarChart, ChartCard, LineChart, movingAverage, type Bar, type Band } from '@/components/progress';
 import { useTheme, type SeverityBand } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
-import { dayCompletion, programPosition } from '@/clinical/program';
+import { dayCompletion, programPosition, tasksForDay } from '@/clinical/program';
 import { THI } from '@/clinical/questionnaires';
 import type { QuestionnaireResult } from '@/clinical/types';
 import { exportCsv, hasExportableData } from '@/utils/exportCsv';
@@ -107,6 +107,20 @@ export default function ProgressScreen() {
 
   const isEmpty = diary.length === 0 && thiAll.length === 0 && !program && sessions.length === 0;
 
+  // Programme summary first (owner decision: treatment over tracking): weeks behind you, lessons finished, active days.
+  const summary = useMemo(() => {
+    if (!program) return null;
+    const pos = programPosition(program, new Date(now));
+    let lessons = 0;
+    for (let w = 1; w <= program.weeks.length; w++) for (let d = 1; d <= 7; d++) {
+      for (const task of tasksForDay(program, w, d)) {
+        if ((task.type === 'mind' || task.type === 'education' || task.type === 'sleep') && program.completed[`${w}-${d}-${task.id}`]) lessons++;
+      }
+    }
+    return { weeks: Math.max(0, pos.week - 1), week: pos.week, lessons, days: totalActiveDays(program) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [program]);
+
   const doExport = async () => {
     if (!hasExportableData({ diary, assessments })) { Alert.alert(t('progress.export.nothing')); return; }
     setExporting(true);
@@ -129,8 +143,26 @@ export default function ProgressScreen() {
         </Card>
       ) : (
         <>
+          {summary ? (
+            <Card title={t('progress.summary.title')}>
+              <View style={{ flexDirection: 'row', gap: space[2] }}>
+                {[
+                  { v: summary.week, l: t('progress.summary.week'), bg: colors.primarySoft, fg: colors.primary },
+                  { v: summary.lessons, l: t('progress.summary.lessons'), bg: colors.secondarySoft, fg: colors.secondaryText },
+                  { v: summary.days, l: t('progress.summary.days'), bg: colors.successBg, fg: colors.success },
+                ].map((x) => (
+                  <View key={x.l} accessible accessibilityLabel={`${x.l}: ${x.v}`} style={{ flex: 1, backgroundColor: x.bg, borderRadius: radius.md, padding: space[3], gap: 2 }}>
+                    <Text variant="numeric" style={{ color: x.fg, fontSize: 32, lineHeight: 38 }}>{x.v}</Text>
+                    <Text variant="caption" tone="secondary">{x.l}</Text>
+                  </View>
+                ))}
+              </View>
+            </Card>
+          ) : null}
+
           <Segmented<Range> options={[{ value: '4w', label: t('progress.range.4w') }, { value: '3m', label: t('progress.range.3m') }, { value: '1y', label: t('progress.range.1y') }]} value={range} onChange={setRange} />
 
+          {thiAll.length ? (
           <ChartCard title={t('progress.thi')} summary={thiSummary} howToRead={t('progress.howToRead.thi')} footer={<Text variant="caption" tone="muted">{t('progress.thi.mcid')}</Text>}>
             <LineChart
               series={[{ points: thi.map((q) => ({ x: new Date(q.date).getTime(), y: q.total })), color: colors.chart.thi, width: 2.5 }]}
@@ -138,7 +170,10 @@ export default function ProgressScreen() {
               yLabels={[0, 25, 50, 75, 100].map((v) => ({ value: v, label: String(v) }))} xLabels={xLabels}
             />
           </ChartCard>
+          ) : null}
 
+          {/* The daily check-in is optional now; its chart appears only when the user keeps a diary. */}
+          {entries.length ? (
           <ChartCard
             title={t('progress.daily')} summary={dailySummary} howToRead={t('progress.howToRead.daily')}
             legend={[{ color: colors.chart.loudness, label: t('progress.daily.loudness') }, { color: colors.chart.annoyance, label: t('progress.daily.annoyance') }, { color: colors.textMuted, label: t('progress.daily.avg'), dashed: true }]}
@@ -154,14 +189,17 @@ export default function ProgressScreen() {
               yLabels={[0, 5, 10].map((v) => ({ value: v, label: String(v) }))} xLabels={xLabels}
             />
           </ChartCard>
+          ) : null}
 
           <ChartCard title={t('progress.adherence')} summary={adherenceSummary} howToRead={t('progress.howToRead.adherence')}>
             <BarChart bars={adherenceBars} max={100} color={colors.primary} />
           </ChartCard>
 
-          <ChartCard title={t('progress.sleep')} summary={sleepSummary} howToRead={t('progress.howToRead.sleep')}>
-            <BarChart bars={sleepBars} max={Math.max(60, ...sleepBars.map((b) => b.value))} color={colors.chart.sleep} />
-          </ChartCard>
+          {sleepBars.length ? (
+            <ChartCard title={t('progress.sleep')} summary={sleepSummary} howToRead={t('progress.howToRead.sleep')}>
+              <BarChart bars={sleepBars} max={Math.max(60, ...sleepBars.map((b) => b.value))} color={colors.chart.sleep} />
+            </ChartCard>
+          ) : null}
 
           <Button variant="secondary" title={t('progress.export')} loading={exporting} icon={<Share2 size={18} color={colors.primaryPressed} />} onPress={() => { void doExport(); }} />
         </>

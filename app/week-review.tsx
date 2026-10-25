@@ -126,6 +126,8 @@ export default function WeekReviewScreen() {
 
         {moment ? <ShareMomentCard moment={moment} /> : null}
 
+        {/* The daily check-in is optional now: the annoyance card shows only when there are entries this week. */}
+        {compare.cur != null ? (
         <Card title={t('week.annoyance')}>
           <Text variant="h2">{avgLine}</Text>
           {compare.delta != null ? (
@@ -134,6 +136,7 @@ export default function WeekReviewScreen() {
             </Text>
           ) : <Text variant="caption" tone="muted">{t('home.checkin.firstWeek')}</Text>}
         </Card>
+        ) : null}
 
         {program ? (
           <Card title={t('week.modules')}>

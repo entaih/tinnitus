@@ -2,10 +2,9 @@ import React, { useEffect, useMemo } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2, Share2, Trophy } from 'lucide-react-native';
+import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, CheckCircle2, Share2, Trophy } from 'lucide-react-native';
 import { Banner, Button, Card, Screen, Text } from '@/components';
-import { BackgroundSoundRow, JourneyCard, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, programFinished, refresherActive, structuredWeeks, taskIcon, taskMeta, taskTitle, totalActiveDays, weekActiveDays, weeklyGoalOf } from '@/components/home';
-import { thiSeries } from '@/components/growth';
+import { BackgroundSoundRow, primaryBackground, JourneyCard, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, programFinished, refresherActive, structuredWeeks, taskIcon, taskMeta, taskTitle, totalActiveDays, weekActiveDays, weeklyGoalOf } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
@@ -32,9 +31,6 @@ export default function HomeScreen() {
   const { profile } = useProfile();
   // Separate selectors (sprint 3 E11): a diary change re-renders Home but does not recompute the programme-dependent plan.
   const program = useClinical((s) => s.program);
-  const diary = useClinical((s) => s.diary);
-  const sessions = useClinical((s) => s.sessions);
-  const assessments = useClinical((s) => s.assessments);
   const redFlagAcknowledgedAt = useClinical((s) => s.redFlagAcknowledgedAt);
   const acknowledgeRedFlag = useClinical((s) => s.acknowledgeRedFlag);
   const date = today();
@@ -62,28 +58,13 @@ export default function HomeScreen() {
   const goal = weeklyGoalOf(program);
   const shown = plan?.shown ?? [];
   const numbered = activeTasks(shown);
-  const background = backgroundTasks(shown);
+  const background = primaryBackground(backgroundTasks(shown));
   const pendingShown = plan ? numbered.filter((x) => !plan.isDone(x)) : [];
   const nextTask = pendingShown[0] ?? (plan ? plan.more.find((x) => !plan.isDone(x) && !isBackground(x)) : undefined);
   const minutesLeft = activeMinutes(pendingShown);
   const completion = plan ? { done: numbered.filter((x) => plan.isDone(x)).length, total: numbered.length } : { done: 0, total: 0 };
   const reentry = !!plan?.reentry;
   const weekDone = program && pos ? weekActiveDays(program, pos) : null;
-
-  const thiResults = useMemo(() => thiSeries(assessments), [assessments]);
-  const thiTrend = thiResults.length >= 2 ? thiResults[thiResults.length - 1].total - thiResults[thiResults.length - 2].total : null;
-  const activeDays = useMemo(() => {
-    const days = new Set<string>();
-    const cutoff = new Date(Date.now() - 6 * 86_400_000).toISOString().slice(0, 10);
-    for (const d of diary) if (d.date >= cutoff) days.add(d.date);
-    for (const s of sessions) if (s.date.slice(0, 10) >= cutoff) days.add(s.date.slice(0, 10));
-    if (program) for (const iso of Object.values(program.completed)) if (iso.slice(0, 10) >= cutoff) days.add(iso.slice(0, 10));
-    return days.size;
-  }, [diary, sessions, program]);
-
-  const TrendIcon = thiTrend == null ? Minus : thiTrend < 0 ? TrendingDown : thiTrend > 0 ? TrendingUp : Minus;
-  const trendLabel = thiTrend == null ? t('home.weekly.thi.none') : thiTrend < 0 ? t('home.weekly.thi.down') : thiTrend > 0 ? t('home.weekly.thi.up') : t('home.weekly.thi.flat');
-  const trendTone = thiTrend == null ? colors.textSecondary : thiTrend < 0 ? colors.success : thiTrend > 0 ? colors.warning : colors.textSecondary;
 
   const tile = (icon: React.ReactNode, title: string, body: string, onPress: () => void, bg: string) => (
     <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={({ pressed }) => [{ flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, padding: space[4], gap: space[2], opacity: pressed ? 0.9 : 1, borderWidth: 1, borderColor: colors.border }, shadow.e1]}>
@@ -106,7 +87,7 @@ export default function HomeScreen() {
   const heroOverline = program && pos
     ? maintenance
       ? t('home.maintenance.sub', { week: maintenanceWeek(program, pos), done: weekDone ?? 0, goal })
-      : `${t('home.today.sub', { week: pos.week, day: pos.day })} · ${t(program.weeks[pos.week - 1]?.themeKey ?? '')}`
+      : t('home.today.sub', { week: pos.week, day: pos.day })
     : '';
 
   // Programme end (sprint 3 E1): "Programı tamamladınız" with the user's own numbers, one tap into maintenance, share.
@@ -171,6 +152,8 @@ export default function HomeScreen() {
               <>
                 <Text variant="h1" style={{ color: '#FFFFFF' }}>{reentry ? t('home.reentry.title') : maintenance ? t('home.maintenance.title') : t('session.hero.title')}</Text>
                 <Text variant="body" style={{ color: 'rgba(255,255,255,0.9)' }}>{heroBody}</Text>
+                {/* The "Sıradaki" box only when it adds something: the hero line already names the core step. */}
+                {!core || coreDone || nextTask.id !== core.id ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3], backgroundColor: 'rgba(255,255,255,0.14)', borderRadius: radius.md, padding: space[3] }}>
                   <View style={{ width: 36, height: 36, borderRadius: radius.sm, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>{taskIcon(nextTask.type, '#FFFFFF')}</View>
                   <View style={{ flex: 1 }}>
@@ -179,6 +162,7 @@ export default function HomeScreen() {
                   </View>
                   <Text variant="caption" style={{ color: 'rgba(255,255,255,0.85)' }}>{taskMeta(t, nextTask)}</Text>
                 </View>
+                ) : null}
                 <Button title={t('session.start')} icon={<ArrowRight size={18} color={colors.primary} />} variant="inverse" onPress={() => router.push('/session')} />
                 {!reentry ? (
                   <Pressable accessibilityRole="button" accessibilityLabel={t('home.short')} accessibilityHint={t('session.short.hint')} onPress={() => router.push('/session?short=1')} style={({ pressed }) => ({ minHeight: 44, alignSelf: 'center', justifyContent: 'center', paddingHorizontal: space[3], opacity: pressed ? 0.7 : 1 })}>
@@ -226,17 +210,6 @@ export default function HomeScreen() {
       {program && pos && weekDone != null && !finished ? (
         <Card title={t('home.weekly')} right={<Pressable accessibilityRole="button" onPress={() => router.push('/week-review')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="caption" tone="primary">{t('week.open')}</Text></Pressable>}>
           <WeeklyGoalRing done={weekDone} goal={goal} />
-          <View style={{ gap: 2 }}>
-            <Text variant="caption" tone="secondary">{t('home.weekly.thi')}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <TrendIcon size={20} color={trendTone} />
-              <Text variant="bodyStrong" style={{ color: trendTone }}>{thiTrend == null ? trendLabel : `${trendLabel} (${thiTrend > 0 ? '+' : ''}${thiTrend})`}</Text>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], backgroundColor: colors.accentSoft, borderRadius: radius.md, padding: space[3] }}>
-            <CalendarCheck size={20} color={colors.accentText} />
-            <Text variant="bodyStrong" style={{ color: colors.accentText }}>{t('home.weekly.days', { n: activeDays })}</Text>
-          </View>
         </Card>
       ) : null}
 

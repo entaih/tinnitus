@@ -116,3 +116,13 @@ Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
 - ✅ Mağaza yapılandırması, EAS profilleri, gizlilik bildirimi, izin metinleri, bildirim ikonu, hata ekranı, gizlilik/KVKK ve kullanım koşulları ekranı, yayın kapısı betiği, lint kurulumu.
 - ✅ Bağımsız yayın denetimi: engelleyiciler ve metin sorunları giderildi; sonuç ekranı program varken de sade adımlarla açılıyor.
 - ⏭ Sahibin yapacakları: `docs/RELEASE.md` §2 (hesaplar, veri sorumlusu bilgisi, gizlilik politikası adresi, THI izni, ekran görüntüleri).
+
+## 12. UX turu (Ekim 2026, proje yöneticisi incelemesi)
+- ✅ Görseller: giriş görseli, olası nedenin kulak/baş şemasında işaretlenmesi, kulaklık (SOL/SAĞ) çizimi, ders kapak görselleri (`src/components/illustrations/`).
+- ✅ Yolculukta testlerin önündeki "Başla" kartı atlanıyor (4 dokunuş daha az); ilk soruda kısa amaç cümlesi.
+- ✅ Giriş ekranı: tek başlık, üç kısa madde, tek satır onay, köşede dil seçimi.
+- ✅ Ana sayfa: tek arka plan sesi (gece uyku sesi, gündüz rahatlatan ses), tekrar eden "Sıradaki" kutusu ve çelişen haftalık sayılar kaldırıldı, takip amaçlı THI eğilimi kaldırıldı.
+- ✅ Ad çakışması giderildi ("Ses neden rahatlatır?" dersi, "Rahatlatan arka plan sesi"); "Zihin" sekmesi "Dersler"; "Ses Laboratuvarı" → "Sesler"; sekme yazıları büyütüldü.
+- ✅ Program ekranı: görev satırının tamamı dokunulabilir, ad kesilmiyor; tek "Süreyi ve tarzı değiştir" düğmesi.
+- ✅ İlerleme: üstte "Programım" (hafta, bitirilen ders, etkin gün); boş grafikler gizleniyor. Haftalık kartta boş rahatsızlık kartı gizleniyor.
+- ✅ Sade dil: seans açıklamaları, kısaltmalar (BDT-U, SCI-8, HQ-14, Temel BDT) gündelik dile çevrildi.

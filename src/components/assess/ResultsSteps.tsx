@@ -12,6 +12,7 @@ import { diagnosisActions, type Diagnosis } from '@/clinical/diagnosis';
 import type { Assessment, Profile } from '@/clinical/types';
 import type { SeverityBand } from '@/theme/tokens';
 import type { ProgramGate } from './programGate';
+import { CauseIllustration } from '@/components/illustrations';
 
 type StepId = 'score' | 'doctor' | 'cause' | 'program';
 const WHEN_ORDER = ['now', 'h24', 'w2', 'routine'] as const;
@@ -155,7 +156,8 @@ export function ResultsSteps({ thi, dx, assessment, profile, gate, plan, onStart
 
         {step === 'cause' ? (
           <>
-            {bigIcon(<Ear size={48} color={colors.primary} />, colors.primarySoft)}
+            {/* Where in the hearing pathway (or head/neck) the likely cause sits, highlighted. */}
+            <View style={{ alignItems: 'center' }}><CauseIllustration causeId={causeId} width={330} accessibilityLabel={t(`cause.${causeId}.plain`)} /></View>
             <Text variant="overline" tone="secondary" center>{t('simple.cause.overline')}</Text>
             <Text variant="h1" center accessibilityRole="header">{t(`cause.${causeId}.plain`)}</Text>
             <Text variant="bodyStrong" center tone={certainty === 'high' ? 'success' : certainty === 'moderate' ? 'primary' : 'warning'}>{t(`simple.cause.certainty.${certainty}`)}</Text>

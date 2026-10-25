@@ -43,9 +43,9 @@ export default function MoodScreen() {
   const completeTask = useClinical((s) => s.completeTask);
   const track = useGrowth((s) => s.track);
   const { open, sheet } = useCitation();
-  const { finish, taskKey } = useJourney();
+  const { finish, taskKey, inJourney } = useJourney();
 
-  const [phase, setPhase] = useState<'intro' | 'items' | 'more' | 'done'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'items' | 'more' | 'done'>(() => (inJourney ? 'items' : 'intro'));
   const [items, setItems] = useState<MoodItem[]>(BASE_ITEMS);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});

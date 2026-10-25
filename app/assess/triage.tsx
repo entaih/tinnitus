@@ -47,12 +47,12 @@ export default function TriageScreen() {
   const saveRedFlags = useClinical((s) => s.saveRedFlags);
   const completeTask = useClinical((s) => s.completeTask);
   const { open, sheet } = useCitation();
-  const { finish: finishJourney, taskKey } = useJourney();
+  const { finish: finishJourney, taskKey, inJourney } = useJourney();
   const params = useLocalSearchParams<{ short?: string }>();
 
   const [mode, setMode] = useState<'short' | 'full'>(params.short === '1' ? 'short' : 'full');
   const [escalated, setEscalated] = useState(false);
-  const [phase, setPhase] = useState<'intro' | 'items' | 'result' | 'clear'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'items' | 'result' | 'clear'>(() => (inJourney ? 'items' : 'intro'));
   const [step, setStep] = useState(0);
   const [shortAnswers, setShortAnswers] = useState<Answers>(() => Array(SHORT).fill(null));
   const [answers, setAnswers] = useState<Answers>(() => Array(BASE + 2).fill(null));
@@ -138,7 +138,7 @@ export default function TriageScreen() {
             total={total}
             progressLabel={t('triage.progress', { n: step + 1, total })}
             stem={t(isShort ? `triage.short.q${step + 1}` : `triage.q${step + 1}`)}
-            hint={isShort ? undefined : step === 0 ? t('triage.hint.q1') : step === 9 ? t('triage.hint.q10') : undefined}
+            hint={isShort ? undefined : step === 0 ? (inJourney ? `${t('triage.intro.body')} ${t('triage.hint.q1')}` : t('triage.hint.q1')) : step === 9 ? t('triage.hint.q10') : undefined}
             onBack={back}
           >
             <OptionCard label={t('common.no')} selected={current === false} onPress={() => select(false)} />

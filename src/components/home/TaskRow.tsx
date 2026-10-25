@@ -1,10 +1,9 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { AudioWaveform, BookOpen, Brain, CalendarCheck, Check, ClipboardList, Dumbbell, MoonStar, NotebookPen } from 'lucide-react-native';
+import { AudioWaveform, BookOpen, Brain, CalendarCheck, Check, ChevronRight, ClipboardList, Dumbbell, MoonStar, NotebookPen } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { Text } from '@/components/Text';
-import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
 import { useT } from '@/i18n';
 import type { ProgramTask } from '@/clinical/types';
@@ -32,7 +31,8 @@ export function TaskRow({ task, done, onStart, onToggleDone, compact, connector 
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${title}, ${meta}${done ? `, ${t('task.done')}` : playing ? `, ${t('task.playing')}` : ''}`}
-      accessibilityHint={onToggleDone ? t('task.markDoneHint') : undefined}
+      accessibilityHint={!done && onStart ? t('task.start') : onToggleDone ? t('task.markDoneHint') : undefined}
+      onPress={!done ? onStart : undefined}
       onLongPress={toggle}
       delayLongPress={450}
       style={{ flexDirection: 'row', alignItems: 'center', gap: space[3], minHeight: 56, paddingVertical: space[2] }}
@@ -46,11 +46,12 @@ export function TaskRow({ task, done, onStart, onToggleDone, compact, connector 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], flexWrap: 'wrap' }}>
           <Text variant="caption" tone="secondary">{meta}</Text>
           {playing && !done ? <Chip small label={t('task.playing')} tone="success" /> : null}
-          {!compact && !playing ? <Chip small label={t(`task.type.${task.type}`)} tone={done ? 'neutral' : 'primary'} /> : null}
         </View>
       </View>
-      {!done && onStart ? <Button size="sm" variant="secondary" title={t('task.start')} onPress={onStart} accessibilityLabel={`${t('task.start')}: ${title}`} /> : null}
-      {onToggleDone ? (
+      {/* The whole row starts the task (a separate "Başla" button squeezed the title to "Ses zenginleşt…"). */}
+      {!done && onStart ? <ChevronRight size={22} color={colors.textMuted} /> : null}
+      {/* Tasks complete themselves when finished; the box only appears on done tasks (to undo). Long press marks done. */}
+      {onToggleDone && done ? (
         <Pressable
           accessibilityRole="checkbox"
           accessibilityState={{ checked: done }}

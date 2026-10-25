@@ -28,7 +28,7 @@ export const soundStrings = {
     'preset.note.binaural': 'Binaural vurular için kanıt çok düşüktür; bu seçenek yalnızca rahat bir fon olarak sunulur. Kulaklık gerektirir.',
 
     // --- Sound Lab (tab) ---
-    'lab.title': 'Ses Laboratuvarı',
+    'lab.title': 'Sesler',
     'lab.subtitle': 'Ses, danışmanlık ve alışmayı destekleyen bir yardımcıdır; tek başına bir tedavi değildir.',
     'lab.cat.noise': 'Gürültü', 'lab.cat.notched': 'Çentikli', 'lab.cat.nature': 'Doğa', 'lab.cat.tone': 'Ton', 'lab.cat.mix': 'Karışım',
     'lab.experimental': 'Deneysel',
@@ -53,11 +53,11 @@ export const soundStrings = {
     'lab.mix.enrichmentDesc': 'Sessiz ortamlarda pembe gürültü; karışma noktanızın hemen altında.',
     'lab.mix.sleepDesc': 'Kahverengi gürültü ve alçak okyanus; 90 dakikalık zamanlayıcı ile yavaşça söner.',
     'lab.mix.hyperacusisDesc': 'Ses hassasiyeti için düşük düzeyde pembe gürültü; her hafta küçük bir artış.',
-    'lab.mix.mixingDesc': 'Ses zenginleştirme için kişisel düzeyinizi 2 dakikada belirleyin.',
+    'lab.mix.mixingDesc': 'Size uygun ses düzeyini 2 dakikada bulun.',
 
     // --- Player ---
     'player.title': 'Oynatıcı',
-    'player.preset.enrichment': 'Ses zenginleştirme',
+    'player.preset.enrichment': 'Rahatlatan ses',
     'player.preset.sleep': 'Uyku sesi',
     'player.preset.hyperacusis': 'Ses toleransı alıştırması',
     'player.preset.notched': 'Çentikli gürültü',
@@ -318,7 +318,7 @@ export const soundStrings = {
     'preset.note.am': 'Modulated noise is experimental; there is no reliable study of its effect. If it does not feel calming, return to plain noise.',
     'preset.note.binaural': 'Evidence for binaural beats is very low; this is offered only as a comfortable background. Needs headphones.',
 
-    'lab.title': 'Sound Lab',
+    'lab.title': 'Sounds',
     'lab.subtitle': 'Sound supports counselling and habituation; it is not a treatment on its own.',
     'lab.cat.noise': 'Noise', 'lab.cat.notched': 'Notched', 'lab.cat.nature': 'Nature', 'lab.cat.tone': 'Tone', 'lab.cat.mix': 'Mixes',
     'lab.experimental': 'Experimental',
@@ -343,10 +343,10 @@ export const soundStrings = {
     'lab.mix.enrichmentDesc': 'Pink noise in quiet surroundings, just below your mixing point.',
     'lab.mix.sleepDesc': 'Brown noise with low ocean; fades out on a 90-minute timer.',
     'lab.mix.hyperacusisDesc': 'Low-level pink noise for sound sensitivity; a small increase each week.',
-    'lab.mix.mixingDesc': 'Set your personal level for sound enrichment in 2 minutes.',
+    'lab.mix.mixingDesc': 'Find your sound level in 2 minutes.',
 
     'player.title': 'Player',
-    'player.preset.enrichment': 'Sound enrichment',
+    'player.preset.enrichment': 'Soothing sound',
     'player.preset.sleep': 'Sleep sound',
     'player.preset.hyperacusis': 'Sound tolerance practice',
     'player.preset.notched': 'Notched noise',

@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 import { Stack, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowRight, Check, ChevronDown, ChevronUp, MoreHorizontal, SkipForward } from 'lucide-react-native';
 import { Banner, Button, Card, EvidenceChip, Screen, Text, useCitation } from '@/components';
-import { BackgroundSoundRow, Segmented, SessionComplete, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, returnEventsFor, taskIcon, taskMeta, taskTitle, weekActiveDays, weeklyGoalOf } from '@/components/home';
+import { BackgroundSoundRow, primaryBackground, Segmented, SessionComplete, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, returnEventsFor, taskIcon, taskMeta, taskTitle, weekActiveDays, weeklyGoalOf } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
@@ -69,7 +69,7 @@ export default function SessionScreen() {
   const plan = program && pos ? planForToday(program, pos, undefined, { short: mode === 'short' }) : null;
   const shown = plan?.shown ?? [];
   const numbered = activeTasks(shown);
-  const background = backgroundTasks(shown);
+  const background = primaryBackground(backgroundTasks(shown));
   const more = plan?.more ?? [];
   const isDone = (x: ProgramTask) => !!plan?.isDone(x);
   const allDone = numbered.length > 0 && numbered.every(isDone);
