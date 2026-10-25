@@ -195,6 +195,11 @@ export function buildProfile(a: Assessment): Profile {
   if (drivers.includes('insomnia')) add('rec.cbti', 'rct', 'marks2023', 2);
   if (drivers.includes('hyperacusis')) add('rec.hyperacusis', 'expert', 'formby2015', 2);
   if (drivers.includes('somatic')) add('rec.somatic', 'rct', 'michiels2016', 2);
+  // Sprint 2 A4 screens (physician B5–B6): OSA suspect → sleep clinic via GP, no sleep compression; misophonia clue → info article.
+  const osaSuspect = !!h?.osaSnoring && !!h?.osaSleepiness;
+  const misophonia = !!h?.misophoniaScreen;
+  if (osaSuspect) add('rec.osaReferral', 'expert', 'marks2023', 1);
+  if (misophonia) add('rec.misophoniaInfo', 'expert', 'juris2014', 3);
   if (phenotypes.includes('acute')) add('rec.acute', 'guideline', 'cima2019', 2);
   if (drivers.includes('anxiety') || drivers.includes('depression')) add('rec.mentalHealth', 'guideline', 'nice2020', (phq && phq.total >= 15) || (gad && gad.total >= 15) ? 1 : 2);
   add('rec.education', 'guideline', 'tunkel2014', 3);
@@ -214,6 +219,7 @@ export function buildProfile(a: Assessment): Profile {
     drivers,
     recommendations: recs,
     doctorSummary: [],
+    ...(osaSuspect || misophonia ? { flags: { ...(osaSuspect ? { osaSuspect: true } : {}), ...(misophonia ? { misophonia: true } : {}) } } : {}),
   };
 }
 

@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 import { Stack, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowRight, Check, ChevronDown, ChevronUp, MoreHorizontal, SkipForward } from 'lucide-react-native';
 import { Banner, Button, Card, EvidenceChip, Screen, Text, useCitation } from '@/components';
-import { BackgroundSoundRow, Segmented, SessionComplete, activeMinutes, activeTasks, backgroundTasks, isBackground, openTask, planForToday, returnEventsFor, taskIcon, taskMeta, taskTitle, weekActiveDays } from '@/components/home';
+import { BackgroundSoundRow, Segmented, SessionComplete, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, openTask, planForToday, returnEventsFor, taskIcon, taskMeta, taskTitle, weekActiveDays } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
@@ -19,7 +19,8 @@ type Mode = 'full' | 'short';
  * returns, the runner advances to the next unfinished step and shows a short "completed" banner.
  * Background sound is not a numbered step: it has its own row (Aç / Çalıyor) and can be counted as done after playing.
  * The list is capped to the active-minute budget and at most 3 numbered steps; overflow sits behind "Daha fazla".
- * "Kısa (2–3 dk)" (or ?short=1 from Home) reduces the day to the check-in plus the shortest practice.
+ * "Kısa (2–3 dk)" (or ?short=1 from Home) reduces the day to the check-in plus one short step: on a module day the
+ * core module opens as its 2-minute summary (task.params.summary = '1', carried by openTask).
  */
 export default function SessionScreen() {
   const { colors, space, radius } = useTheme();
@@ -98,6 +99,8 @@ export default function SessionScreen() {
   const keyOf = (id: string) => taskKey(pos.week, pos.day, id);
   const pending = numbered.filter((x) => !isDone(x) && !skipped.includes(x.id));
   const current = pending[0] ?? null;
+  const core = coreTask(plan.tasks);
+  const currentIsCore = !!current && !!core && current.id === core.id;
   const done = numbered.filter(isDone).length;
   const total = numbered.length;
   const doneMinutes = activeMinutes(numbered.filter(isDone));
@@ -190,7 +193,7 @@ export default function SessionScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
             <View style={{ width: 48, height: 48, borderRadius: radius.md, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center' }}>{taskIcon(current.type, colors.primary, 24)}</View>
             <View style={{ flex: 1 }}>
-              <Text variant="overline" tone="secondary">{t('session.next')}</Text>
+              <Text variant="overline" tone={currentIsCore ? 'primary' : 'secondary'}>{currentIsCore ? t('session.core.label') : t('session.next')}</Text>
               <Text variant="h2">{taskTitle(t, current)}</Text>
             </View>
           </View>

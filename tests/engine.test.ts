@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildProfile, computeTriage } from '../src/clinical/engine.ts';
 import { computeJourney } from '../src/clinical/journey.ts';
+import { generateProgram } from '../src/clinical/program.ts';
 import { QUESTIONNAIRES, SCI02, THS, scoreQuestionnaire } from '../src/clinical/questionnaires.ts';
 import type { Assessment, CaseHistory, QuestionnaireResult } from '../src/clinical/types.ts';
 
@@ -69,4 +70,26 @@ test('journey: sleep / sound-sensitivity flags open the 2-item screens; the full
   const done = computeJourney(base({ history: history({ sleepProblem: true, soundSensitivity: true }), questionnaires: [q('HQ', Array(14).fill(1)), q('SCI', Array(8).fill(3))] }), null);
   assert.ok(done.steps.find((s) => s.id === 'hq')!.done);
   assert.ok(done.steps.find((s) => s.id === 'sci')!.done);
+});
+
+test('A4 screens: snoring + daytime sleepiness → OSA suspect flag, rec.osaReferral and no sleep compression; one item alone is not enough', () => {
+  const osa = buildProfile(base({ history: history({ sleepProblem: true, osaSnoring: true, osaSleepiness: true }) }));
+  assert.equal(osa.flags?.osaSuspect, true);
+  assert.ok(osa.recommendations.some((r) => r.key === 'rec.osaReferral' && r.priority === 1));
+  assert.ok(osa.drivers.includes('insomnia'));
+  const program = generateProgram(osa, { minutesPerDay: 15, style: 'cbt' });
+  const all = program.weeks.flatMap((w) => w.days.flatMap((d) => d.tasks.map((t) => t.id)));
+  assert.ok(!all.includes('cbti.compression'));
+  assert.ok(all.includes('cbti.education'));
+  const one = buildProfile(base({ history: history({ sleepProblem: true, osaSnoring: true }) }));
+  assert.ok(!one.flags?.osaSuspect);
+  assert.ok(!one.recommendations.some((r) => r.key === 'rec.osaReferral'));
+  assert.ok(generateProgram(one, { minutesPerDay: 15, style: 'cbt' }).weeks.flatMap((w) => w.days.flatMap((d) => d.tasks.map((t) => t.id))).includes('cbti.compression'));
+});
+
+test('A4 screens: misophonia clue → flag and rec.misophoniaInfo', () => {
+  const p = buildProfile(base({ history: history({ soundSensitivity: true, misophoniaScreen: true }) }));
+  assert.equal(p.flags?.misophonia, true);
+  assert.ok(p.recommendations.some((r) => r.key === 'rec.misophoniaInfo'));
+  assert.equal(buildProfile(base()).flags, undefined);
 });

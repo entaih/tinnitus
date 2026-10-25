@@ -18,6 +18,14 @@ interface SettingsState {
   reentryNudgeId: string | null;
   /** Scheduled id of the measurement-week Sunday reminder (weeks 4/8/12), or null. */
   measurementReminderId: string | null;
+  /** Programme dose the weekday reminders were last scheduled with (their copy differs for 'light'); null = never scheduled. */
+  reminderDose: 'full' | 'light' | null;
+  /** True once the user changed the enrichment mix by hand: the pitch-matched auto-tune stops applying (C2). */
+  soundTuneOverride: boolean;
+  /** Hyperacusis "comfortable level" in dBFS (−40 … −18) found on the first graded-exposure open; null = not found yet (C3). */
+  hyperComfortDb: number | null;
+  /** Programme week in which `hyperComfortDb` was last set or the weekly "+2 dB" nudge was answered. */
+  hyperComfortWeek: number | null;
   maxVolume: number;              // 0..1 output cap
   nightStart: number; nightEnd: number;
   setLocale: (l: Locale) => void;
@@ -28,6 +36,9 @@ interface SettingsState {
   setReminderIds: (ids: string[]) => void;
   setReentryNudgeId: (id: string | null) => void;
   setMeasurementReminderId: (id: string | null) => void;
+  setReminderDose: (d: 'full' | 'light' | null) => void;
+  setSoundTuneOverride: (v: boolean) => void;
+  setHyperComfort: (db: number | null, week: number | null) => void;
   setMaxVolume: (v: number) => void;
   setDisplayName: (n: string) => void;
   resetAll: () => void;
@@ -37,6 +48,7 @@ const initial = {
   locale: 'tr' as Locale, appearance: 'system' as const, reduceMotion: false, onboarded: false, consentAt: null,
   displayName: '', reminderHour: 20, maxVolume: 0.85, nightStart: 22, nightEnd: 6,
   reminderIds: [] as string[], reentryNudgeId: null as string | null, measurementReminderId: null as string | null,
+  reminderDose: null as 'full' | 'light' | null, soundTuneOverride: false, hyperComfortDb: null as number | null, hyperComfortWeek: null as number | null,
 };
 
 export const useSettings = create<SettingsState>()(
@@ -51,6 +63,9 @@ export const useSettings = create<SettingsState>()(
       setReminderIds: (reminderIds) => set({ reminderIds }),
       setReentryNudgeId: (reentryNudgeId) => set({ reentryNudgeId }),
       setMeasurementReminderId: (measurementReminderId) => set({ measurementReminderId }),
+      setReminderDose: (reminderDose) => set({ reminderDose }),
+      setSoundTuneOverride: (soundTuneOverride) => set({ soundTuneOverride }),
+      setHyperComfort: (hyperComfortDb, hyperComfortWeek) => set({ hyperComfortDb, hyperComfortWeek }),
       setMaxVolume: (maxVolume) => set({ maxVolume }),
       setDisplayName: (displayName) => set({ displayName }),
       resetAll: () => set({ ...initial }),

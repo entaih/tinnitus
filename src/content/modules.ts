@@ -6,6 +6,8 @@
  * Tone: formal "siz", warm, no promises. Clinical content is adapted from the cited protocols; where the
  * app shortens a protocol (e.g. 15-minute body scan instead of 40) this is stated in the text.
  */
+import { SUMMARIES, type ModuleSummary } from './summaries';
+
 export type L = { tr: string; en: string };
 export type SectionKind = 'text' | 'exercise' | 'tip' | 'warning';
 export interface ModuleSection { heading: L; body: L; kind?: SectionKind }
@@ -27,14 +29,18 @@ export interface Module {
   practice?: ModulePractice;
   keyTakeaway: L;
   citations: string[];
+  /** Two-minute summary: three bullets per language (src/content/summaries.ts), shown before the full module. */
+  summary: ModuleSummary;
 }
+/** Module body as authored below; the summary is attached from src/content/summaries.ts at registry build time. */
+type ModuleContent = Omit<Module, 'summary'>;
 
 export type ModuleTrack = 'cbt' | 'act' | 'mind' | 'cbti' | 'hyper';
 
 // ---------------------------------------------------------------------------------------------
 // CORE CBT (weeks 1–8)
 // ---------------------------------------------------------------------------------------------
-const CBT: Module[] = [
+const CBT: ModuleContent[] = [
   {
     id: 'cbt.welcome',
     title: { tr: 'Hoş geldiniz: program nasıl işler', en: 'Welcome: how the programme works' },
@@ -1818,7 +1824,7 @@ The toolbox can change over time. Return to this page after three months and upd
 // ---------------------------------------------------------------------------------------------
 // ACT alternative (Hesser 2012 / Westin 2011)
 // ---------------------------------------------------------------------------------------------
-const ACT: Module[] = [
+const ACT: ModuleContent[] = [
   {
     id: 'act.acceptance',
     title: { tr: 'Kabul: mücadeleyi bırakmak', en: 'Acceptance: dropping the struggle' },
@@ -2140,7 +2146,7 @@ The sound will come along on every step; that is normal. Postponing the step "un
 // ---------------------------------------------------------------------------------------------
 // Mindfulness (MBCT-lite; McKenna/Marks 2017). App adaptation: 10–20 min/day instead of 45 — stated in text.
 // ---------------------------------------------------------------------------------------------
-const MIND: Module[] = [
+const MIND: ModuleContent[] = [
   {
     id: 'mind.bodyScan',
     title: { tr: 'Beden taraması', en: 'Body scan' },
@@ -2470,7 +2476,7 @@ These questions are not meant to refute the thought; they are reminders that it 
 // ---------------------------------------------------------------------------------------------
 // CBT-I (Marks 2023): education → stimulus control → sleep compression → cognitions → wind-down → relapse
 // ---------------------------------------------------------------------------------------------
-const CBTI: Module[] = [
+const CBTI: ModuleContent[] = [
   {
     id: 'cbti.education',
     title: { tr: 'Uyku ve tinnitus: nasıl işler', en: 'Sleep and tinnitus: how it works' },
@@ -2970,7 +2976,7 @@ The plan below is your personal maintenance plan for sleep. Write it and keep it
 // ---------------------------------------------------------------------------------------------
 // Hyperacusis (Jüris 2014 CBT; Formby 2015 graded pink noise; stop earplug use in ordinary environments)
 // ---------------------------------------------------------------------------------------------
-const HYPER: Module[] = [
+const HYPER: ModuleContent[] = [
   {
     id: 'hyper.education',
     title: { tr: 'Ses hassasiyeti: ne olur, ne yardımcı olur', en: 'Sound sensitivity: what happens and what helps' },
@@ -3228,7 +3234,9 @@ A sound meter app on your phone gives a rough idea; precise measurement needs a 
 // ---------------------------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------------------------
-export const MODULE_LIST: Module[] = [...CBT, ...ACT, ...MIND, ...CBTI, ...HYPER];
+const withSummary = (list: ModuleContent[]): Module[] => list.map((m) => ({ ...m, summary: SUMMARIES[m.id] ?? { tr: [], en: [] } }));
+const CBT_M = withSummary(CBT), ACT_M = withSummary(ACT), MIND_M = withSummary(MIND), CBTI_M = withSummary(CBTI), HYPER_M = withSummary(HYPER);
+export const MODULE_LIST: Module[] = [...CBT_M, ...ACT_M, ...MIND_M, ...CBTI_M, ...HYPER_M];
 export const MODULES: Record<string, Module> = Object.fromEntries(MODULE_LIST.map((m) => [m.id, m]));
 
 export const getModule = (id: string): Module | undefined => MODULES[id];
@@ -3240,7 +3248,7 @@ export const TRACK_ORDER: ModuleTrack[] = ['cbt', 'act', 'mind', 'cbti', 'hyper'
 
 /** Modules per track, in programme order. */
 export const MODULES_BY_TRACK: Record<ModuleTrack, Module[]> = {
-  cbt: CBT, act: ACT, mind: MIND, cbti: CBTI, hyper: HYPER,
+  cbt: CBT_M, act: ACT_M, mind: MIND_M, cbti: CBTI_M, hyper: HYPER_M,
 };
 
 /** Headline citation for each track's evidence chip. */

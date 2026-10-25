@@ -3,7 +3,7 @@ import { Share, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { Share2, FileText, Sparkles, ArrowRight, CheckCircle2, ChevronRight, Compass } from 'lucide-react-native';
+import { Share2, FileText, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react-native';
 import { Screen, Text, Card, Button, Chip, EvidenceChip, Banner, Disclaimer, useCitation } from '@/components';
 import { Gauge, useInfoSheet, ReferralList, CauseList, DiagnosisCard } from '@/components/assess';
 import { diagnose, diagnosisStatement } from '@/clinical/diagnosis';
@@ -12,7 +12,7 @@ import { CheckRow, Collapsible, GlossaryTerm, useGlossary } from '@/components/h
 import { useTheme } from '@/theme';
 import { rankCauses, confirmatoryTests } from '@/clinical/causes';
 import { computeTriage } from '@/clinical/engine';
-import { generateProgram, type ProgramPrefs } from '@/clinical/program';
+import { assessmentPrefs, generateProgram, type ProgramPrefs } from '@/clinical/program';
 import { consequenceText, profileConsequences } from '@/clinical/consequences';
 import { useLocale, useT, formatDate } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
@@ -39,6 +39,7 @@ export default function ResultsScreen() {
   const assessments = useClinical((s) => s.assessments);
   const program = useClinical((s) => s.program);
   const setProgram = useClinical((s) => s.setProgram);
+  const setProgramPrefs = useClinical((s) => s.setProgramPrefs);
   const { open, sheet } = useCitation();
   const info = useInfoSheet();
   const glossary = useGlossary();
@@ -51,16 +52,7 @@ export default function ResultsScreen() {
   const canStart = !gate.blocked && (!gate.needsAck || acked);
 
   /** Default preferences (15 min a day, CBT); setup lets the user change duration and style. */
-  const prefs = useMemo<ProgramPrefs>(() => {
-    const ps = assessment?.psycho;
-    const has = (id: string) => !!assessment?.questionnaires.some((q) => q.id === id);
-    return {
-      minutesPerDay: 15, style: 'cbt', pitchHz: ps?.pitchHz,
-      riPositive: ps ? (ps.riPositive ?? (ps.riCategory ? ps.riCategory === 'complete' : undefined)) : undefined,
-      hearingDone: !!assessment?.hearing, causesDone: !!assessment?.causeAnswers, examDone: !!assessment?.exam,
-      sciDone: has('SCI'), hqDone: has('HQ'),
-    };
-  }, [assessment]);
+  const prefs = useMemo<ProgramPrefs>(() => ({ minutesPerDay: 15, style: 'cbt', ...assessmentPrefs(assessment) }), [assessment]);
   /** Arm and length of the programme that "Programı başlat" would create (or the stored one). */
   const plan = useMemo(() => {
     if (program) return { arm: program.arm, weeks: program.weeks.length, min: 15 };
@@ -72,6 +64,7 @@ export default function ResultsScreen() {
 
   const startProgram = () => {
     if (!profile || !canStart) return;
+    setProgramPrefs(prefs);
     setProgram(generateProgram(profile, prefs));
     router.replace('/(tabs)');
   };
@@ -194,7 +187,8 @@ export default function ResultsScreen() {
         ) : null}
       </Card>
 
-      {assessment ? <DiagnosisCard d={diagnose(assessment)} /> : null}
+      {/* Layer 1 — decisive preliminary diagnosis directly under the gauge (PM sprint 2 A2) */}
+      <DiagnosisCard d={diagnose(assessment)} assessment={assessment} profile={profile} />
 
       {!selfcare ? (
         <>
@@ -232,16 +226,6 @@ export default function ResultsScreen() {
           </View>
         ))}
       </Card>
-
-      {needsMore ? (
-        <Card onPress={() => router.push(!assessment.causeAnswers ? '/assess/causes' : '/assess/exam')} accessibilityLabel={t('results.sharpen')}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
-            <Compass size={22} color={colors.primary} />
-            <Text variant="bodyStrong" style={{ flex: 1 }}>{t('results.sharpen')}</Text>
-            <ChevronRight size={20} color={colors.textMuted} />
-          </View>
-        </Card>
-      ) : null}
 
       {/* Layer 3 — collapsed accordions */}
       <Collapsible title={t('causes.result.title')} summary={topCause ? t('results.acc.causes.summary', { name: t(`cause.${topCause.id}.name`) }) : t('results.acc.causes.empty')}>
@@ -361,6 +345,8 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
   const ths = get('THS'); if (ths) lines.push(t('results.summary.ths', { total: ths.total, c1: a.questionnaires.find((x) => x.id === 'THS')?.answers[0] ?? 0 }));
   const rasst = get('RASST'); if (rasst) lines.push(t('results.summary.rasst', { total: rasst.total }));
   if (h?.sleepProblem) lines.push(t('results.summary.sleep'));
+  if (h?.osaSnoring && h?.osaSleepiness) lines.push(t('results.summary.osa'));
+  if (h?.misophoniaScreen) lines.push(t('results.summary.misophonia'));
   // Hearing screen, psychoacoustics and phone-test records with units, methods and caveats (audiology review).
   lines.push(...audioReportLines(a, t));
   if (a.redFlags) {

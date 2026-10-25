@@ -3,17 +3,20 @@ import { Share, View } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { ArrowRight, Check, Share2 } from 'lucide-react-native';
 import { Button, Card, Disclaimer, Screen, Text } from '@/components';
-import { WeeklyGoalRing, WEEKLY_GOAL_DAYS, formatAvg, isBackground, taskTitle, weekActiveDays, weekCompare } from '@/components/home';
+import { WeeklyGoalRing, WEEKLY_GOAL_DAYS, formatAvg, isBackground, programWeekWindow, taskTitle, weekActiveDays, weekCompare } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useLocale, useT } from '@/i18n';
 import { today, useClinical } from '@/store/clinical';
 import { useGrowth } from '@/store/growth';
 import { programPosition, taskKey, tasksForDay } from '@/clinical/program';
+import { getModule } from '@/content/modules';
+import { pick } from '@/i18n';
 import type { ProgramTask } from '@/clinical/types';
 
 /**
  * Sunday "1-minute weekly card" (PM §2.2 / S1-09): active days this week against the 5/7 goal, annoyance average
- * vs last week, the modules completed this week and next week's theme. Opened from the `review.weekly` task
+ * vs last week — both over the same programme week (day 1 … today; sprint 2 D12) — the modules completed this week
+ * with their first summary bullet ("Bu hafta öğrendikleriniz") and next week's theme. Opened from the `review.weekly` task
  * (?taskKey=…) it completes that task on open. Renders without a programme and without last-week data.
  * Sharing sends only the user's own numbers as plain text; the full progress card lives at /share.
  */
@@ -34,7 +37,8 @@ export default function WeekReviewScreen() {
 
   const pos = program ? programPosition(program) : null;
   const activeDays = program && pos ? weekActiveDays(program, pos) : 0;
-  const compare = useMemo(() => weekCompare(diary, date), [diary, date]);
+  const window = program && pos ? programWeekWindow(program.startDate, pos) : undefined;
+  const compare = useMemo(() => weekCompare(diary, date, 'annoyance', window), [diary, date, window?.from, window?.to]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Distinct non-check-in, non-sound tasks completed on this programme week's days up to today.
   const completed = useMemo(() => {
@@ -50,6 +54,7 @@ export default function WeekReviewScreen() {
     return out;
   }, [program, pos]);
 
+  const learned = completed.map((x) => { const first = getModule(x.id)?.summary; return first ? { id: x.id, line: pick(first, locale)[0] } : null; }).filter((x): x is { id: string; line: string } => !!x && !!x.line);
   const nextTheme = program && pos ? program.weeks[pos.week]?.themeKey ?? null : null;
   const goalMet = activeDays >= WEEKLY_GOAL_DAYS;
   const avgLine = compare.cur == null
@@ -110,6 +115,17 @@ export default function WeekReviewScreen() {
                 <Text variant="caption" tone="muted">{t('common.minutes', { n: x.minutes })}</Text>
               </View>
             )) : <Text variant="body" tone="secondary">{t('week.modules.none')}</Text>}
+          </Card>
+        ) : null}
+
+        {program ? (
+          <Card title={t('week.learned')}>
+            {learned.length ? learned.map((x) => (
+              <View key={x.id} style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
+                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.primary, marginTop: 9 }} />
+                <Text variant="body" style={{ flex: 1 }}>{x.line}</Text>
+              </View>
+            )) : <Text variant="bodySmall" tone="secondary">{t('week.learned.none')}</Text>}
           </Card>
         ) : null}
 

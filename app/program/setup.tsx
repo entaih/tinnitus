@@ -9,7 +9,7 @@ import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { useProfile } from '@/hooks/useProfile';
 import { computeTriage } from '@/clinical/engine';
-import { generateProgram, type ProgramPrefs } from '@/clinical/program';
+import { assessmentPrefs, generateProgram, type ProgramPrefs } from '@/clinical/program';
 import type { Program } from '@/clinical/types';
 import { fmtHz } from '@/utils/format';
 
@@ -18,10 +18,10 @@ export default function ProgramSetup() {
   const t = useT();
   const cite = useCitation();
   const { assessment, profile } = useProfile();
-  const { program: existing, setProgram } = useClinical();
+  const { program: existing, setProgram, setProgramPrefs, programPrefs } = useClinical();
 
-  const [minutes, setMinutes] = useState<ProgramPrefs['minutesPerDay']>(15);
-  const [style, setStyle] = useState<ProgramPrefs['style']>('cbt');
+  const [minutes, setMinutes] = useState<ProgramPrefs['minutesPerDay']>(programPrefs?.minutesPerDay ?? 15);
+  const [style, setStyle] = useState<ProgramPrefs['style']>(programPrefs?.style ?? 'cbt');
   const [acked, setAcked] = useState(false);
   const [preview, setPreview] = useState<Program | null>(null);
 
@@ -30,20 +30,11 @@ export default function ProgramSetup() {
   const canGenerate = !!profile && !gate.blocked && (!gate.needsAck || acked);
 
   const psycho = assessment?.psycho;
-  const prefs = useMemo<ProgramPrefs>(() => ({
-    minutesPerDay: minutes,
-    style,
-    pitchHz: psycho?.pitchHz,
-    riPositive: psycho ? (psycho.riPositive ?? (psycho.riCategory ? psycho.riCategory === 'complete' : undefined)) : undefined,
-    hearingDone: !!assessment?.hearing,
-    causesDone: !!assessment?.causeAnswers,
-    examDone: !!assessment?.exam,
-    sciDone: !!assessment?.questionnaires.some((q) => q.id === 'SCI'),
-    hqDone: !!assessment?.questionnaires.some((q) => q.id === 'HQ'),
-  }), [minutes, style, psycho, assessment]);
+  const prefs = useMemo<ProgramPrefs>(() => ({ minutesPerDay: minutes, style, ...assessmentPrefs(assessment) }), [minutes, style, assessment]);
 
   const generate = () => { if (profile) setPreview(generateProgram(profile, prefs)); };
-  const save = () => { if (preview) { setProgram(preview); router.replace('/program'); } };
+  // A fresh programme from setup is always the full dose; the stored prefs let the programme screen change the dose later.
+  const save = () => { if (preview) { setProgramPrefs(prefs); setProgram(preview); router.replace('/program'); } };
 
   if (!profile) {
     return (

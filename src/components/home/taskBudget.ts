@@ -10,8 +10,24 @@ export const MAX_ACTIVE_STEPS = 3;
 /** Sound tasks play in the background and do not count against the active-minute budget. */
 /** Long-running player presets (enrichment, notched, sleep, graded exposure) run in the background; short interactive sound steps (mixing point, RI) are numbered. */
 export const isBackground = (task: ProgramTask) => task.type === 'sound' && task.route.startsWith('/sound/player');
-/** Daily check-in, measurements and the 1-minute weekly card are always shown, however short the budget (but never beyond MAX_ACTIVE_STEPS). */
+/** Daily check-in, measurements and the 1-minute weekly card are always shown, whatever the budget or the step cap. */
 export const isEssential = (task: ProgramTask) => task.type === 'diary' || task.type === 'assessment' || task.type === 'review';
+/** A module read from the Mind library (CBT/ACT/mindfulness/CBT-I/hyperacusis) — the only task kind with a 2-minute summary variant. */
+export const isModuleTask = (task: ProgramTask) => (task.type === 'mind' || task.type === 'sleep') && task.route.startsWith('/mind/');
+/** Minutes shown for a module opened in its summary-only variant (PM sprint 2 §B3). */
+export const SUMMARY_MINUTES = 2;
+
+/**
+ * The one task that defines the day: the first task flagged `core: true` by the generator (sprint 2), or — for
+ * programmes generated before the flag existed — the first module/education task. Null on days without one
+ * (measurement days are "core = the scale", which is essential anyway). May be a background sound task (day 1 of
+ * the hyperacusis arm): the split shows it as background, the Home hero names it.
+ */
+export function coreTask(tasks: ProgramTask[]): ProgramTask | null {
+  const flagged = tasks.find((x) => x.core === true);
+  if (flagged) return flagged;
+  return tasks.find((x) => !isBackground(x) && !isEssential(x) && (x.type === 'mind' || x.type === 'sleep' || x.type === 'education')) ?? null;
+}
 
 /** Sum of active (non-sound) minutes. */
 export function activeMinutes(tasks: ProgramTask[]): number {
@@ -33,38 +49,60 @@ export function taskMeta(t: TFn, task: ProgramTask): string {
   return isBackground(task) ? t('task.background') : t('common.minutes', { n: task.minutes });
 }
 
+/** Query string for a task's view params (e.g. summary=1) plus the taskKey; values are URI-encoded. Pure (openTask uses it). */
+export function taskQuery(task: Pick<ProgramTask, 'params'>, key: string, extra?: Record<string, string>): string {
+  const all: Record<string, string> = { ...task.params, ...extra, taskKey: key };
+  return Object.entries(all).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+}
+
+/** The same task shown as its 2-minute summary (id unchanged, so completion keys still match; `params.summary` is view-only). */
+export const asSummary = (task: ProgramTask): ProgramTask => ({ ...task, minutes: SUMMARY_MINUTES, params: { ...task.params, summary: '1' } });
+
 /**
- * Short split (re-entry after missed days, or the user-chosen "Kısa sürüm"): the check-in plus the shortest
- * other active task. Measurement tasks are kept, and on a measurement day they take the place of the extra task.
+ * Short split (re-entry after missed days, or the user-chosen "Kısa sürüm"): the check-in plus one short step.
+ * Measurement tasks are kept, and on a measurement day they take the place of the extra step. On a module day the
+ * core module is kept as its 2-minute summary variant (PM sprint 2 §B3); otherwise the shortest other active task.
  * Background sound stays in the plan.
  */
 function shortSplit(tasks: ProgramTask[]): { shown: ProgramTask[]; more: ProgramTask[] } {
-  const keep = new Set<string>();
-  for (const x of tasks) if (isBackground(x) || isEssential(x)) keep.add(x.id);
+  const keep = new Map<string, ProgramTask>();
+  for (const x of tasks) if (isBackground(x) || isEssential(x)) keep.set(x.id, x);
   if (!tasks.some((x) => x.type === 'assessment')) {
-    const shortest = activeTasks(tasks).filter((x) => !isEssential(x)).sort((a, b) => a.minutes - b.minutes)[0];
-    if (shortest) keep.add(shortest.id);
+    const core = coreTask(tasks);
+    if (core && isModuleTask(core)) keep.set(core.id, asSummary(core));
+    else {
+      const shortest = activeTasks(tasks).filter((x) => !isEssential(x)).sort((a, b) => a.minutes - b.minutes)[0];
+      if (shortest) keep.set(shortest.id, shortest);
+    }
   }
-  return { shown: tasks.filter((x) => keep.has(x.id)), more: tasks.filter((x) => !keep.has(x.id)) };
+  return { shown: tasks.filter((x) => keep.has(x.id)).map((x) => keep.get(x.id)!), more: tasks.filter((x) => !keep.has(x.id)) };
 }
 
 /**
- * Splits a day's tasks into the ones shown as "today" and the overflow kept behind "Daha fazla".
- * Background sound is always shown (it is listed separately, not numbered). Essential tasks come first, then the
- * remaining active tasks fill the minute budget in order — but never more than MAX_ACTIVE_STEPS numbered steps.
- * In short mode (re-entry or user choice) only the check-in and the shortest other task are shown.
+ * Splits a day's tasks into the ones shown as "today" and the overflow kept behind "Daha fazla" (PM sprint 2 §B1):
+ * 1. background sound is always shown (listed separately, not numbered);
+ * 2. essentials (check-in, measurements, the 1-minute weekly card) are always shown and never blocked by the cap —
+ *    the check-in and measurements count as numbered steps, the weekly card does not;
+ * 3. the day's core task (see `coreTask`) is always shown, whatever the budget;
+ * 4. the remaining optional tasks fill the minute budget in order, but only while fewer than `maxActive` steps are
+ *    numbered — so a module day is at most check-in + core + one optional (+ the weekly card on Sundays).
+ * In short mode (re-entry or user choice) see `shortSplit`.
  */
 export function splitByBudget(tasks: ProgramTask[], budget = DEFAULT_MINUTES_PER_DAY, short = false, maxActive = MAX_ACTIVE_STEPS): { shown: ProgramTask[]; more: ProgramTask[] } {
   if (short) return shortSplit(tasks);
+  const core = coreTask(tasks);
   let used = 0;
   let steps = 0;
+  let optionalShown = false;
   const shown: ProgramTask[] = [];
   const more: ProgramTask[] = [];
   for (const x of tasks) {
     if (isBackground(x)) { shown.push(x); continue; }
-    if (steps >= maxActive) { more.push(x); continue; }
-    const fits = used + x.minutes <= budget || steps === 0;
-    if (isEssential(x) || fits) { shown.push(x); used += x.minutes; steps++; }
+    if (isEssential(x)) { shown.push(x); used += x.minutes; if (x.type !== 'review') steps++; continue; }
+    if (core && x.id === core.id) { shown.push(x); used += x.minutes; steps++; continue; }
+    // Optional: within the cap and the budget. A day without a core still shows its first optional step (never empty).
+    const fits = used + x.minutes <= budget || (!core && !optionalShown);
+    if (steps < maxActive && fits) { shown.push(x); used += x.minutes; steps++; optionalShown = true; }
     else more.push(x);
   }
   return { shown, more };

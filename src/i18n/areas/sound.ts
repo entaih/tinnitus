@@ -110,6 +110,36 @@ export const soundStrings = {
     'player.a11y.remaining': 'Kalan süre {time}',
     'player.a11y.elapsed': 'Geçen süre {time}',
 
+    // --- Pitch-matched auto-tune (Sprint 2 C2) ---
+    'sound.tuned': 'Çınlamanıza göre ayarlandı (≈{hz} Hz)',
+    'sound.tuned.hint': 'Dar bant bileşeni perde eşlemenizin merkezine yerleştirildi; pembe gürültü fonda kalır. Elle değiştirirseniz otomatik ayar durur.',
+    'sound.tuned.change': 'Değiştir',
+    'sound.tuned.manual': 'Karışımı elle ayarladınız; otomatik ayar uygulanmıyor.',
+    'sound.tuned.restore': 'Otomatik ayara dön',
+
+    // --- Hyperacusis comfortable level (Sprint 2 C3) ---
+    'sound.hyper.first.title': 'Rahat sesinizi bulun',
+    'sound.hyper.first.body': 'Ses çok kısık başlar. Rahat olduğu sürece küçük adımlarla artırın. Hafif bir rahatsızlık hissettiğiniz anda bir adım geri alın ve "Bu düzey rahat" deyin.',
+    'sound.hyper.first.level': 'Şu anki düzey: % {pct}',
+    'sound.hyper.first.up': 'Biraz daha yüksek (+2 dB)',
+    'sound.hyper.first.down': 'Biraz daha kısık (−2 dB)',
+    'sound.hyper.first.ok': 'Bu düzey rahat',
+    'sound.hyper.first.ceiling': 'Güvenli üst sınıra ulaşıldı; bu alıştırmada daha yüksek düzey önerilmez.',
+    'sound.hyper.comfort': 'Rahat düzeyiniz: % {pct}',
+    'sound.hyper.comfort.hint': 'Alıştırma bu düzeyden başlar. Ses hiçbir zaman rahatsız edici olmamalıdır; gerekirse kısın.',
+    'sound.hyper.comfort.reset': 'Rahat düzeyi yeniden bul',
+    'sound.hyper.nudge.title': 'Bu hafta 2 dB artırmayı deneyin',
+    'sound.hyper.nudge.body': 'Küçük bir artış alışmayı destekler. Zorunlu değildir; rahatsız gelirse hemen kısın.',
+    'sound.hyper.nudge.ok': 'Biraz artır',
+    'sound.hyper.nudge.later': 'Bu hafta değil',
+
+    // --- Task target and completion inside the player (Sprint 2 C3) ---
+    'sound.target.title': 'Bugünkü hedef: {n} dk',
+    'sound.target.progress': '{played} / {n} dk dinlendi',
+    'sound.target.reached': 'Hedef süreye ulaştınız.',
+    'sound.target.complete': 'Tamamlandı say',
+    'sound.target.completed': 'Bugünün adımı tamamlandı olarak kaydedildi.',
+
     // --- Mixing point ---
     'mixing.title': 'Karışma noktası',
     'mixing.intro1': 'Karışma noktası, dış sesin tinnitusunuzla birbirine karışmaya başladığı düzeydir. Ses zenginleştirme bu noktanın hemen altında yapılır: tinnitus tamamen örtülmez, yalnızca daha az belirgin olur.',
@@ -340,6 +370,33 @@ export const soundStrings = {
     'player.a11y.remove': 'Remove layer {name}',
     'player.a11y.remaining': 'Remaining {time}',
     'player.a11y.elapsed': 'Elapsed {time}',
+
+    'sound.tuned': 'Tuned to your tinnitus (≈{hz} Hz)',
+    'sound.tuned.hint': 'The narrow-band component is centred on your pitch match; pink noise stays in the background. Changing the mix by hand turns the auto-tune off.',
+    'sound.tuned.change': 'Change',
+    'sound.tuned.manual': 'You adjusted the mix by hand; the auto-tune is not applied.',
+    'sound.tuned.restore': 'Back to auto-tune',
+
+    'sound.hyper.first.title': 'Find your comfortable sound',
+    'sound.hyper.first.body': 'The sound starts very quiet. Raise it in small steps as long as it stays comfortable. At the first hint of discomfort, step back once and choose "This level is comfortable".',
+    'sound.hyper.first.level': 'Current level: {pct} %',
+    'sound.hyper.first.up': 'A little louder (+2 dB)',
+    'sound.hyper.first.down': 'A little quieter (−2 dB)',
+    'sound.hyper.first.ok': 'This level is comfortable',
+    'sound.hyper.first.ceiling': 'Safe upper limit reached; a higher level is not advised in this practice.',
+    'sound.hyper.comfort': 'Your comfortable level: {pct} %',
+    'sound.hyper.comfort.hint': 'The practice starts at this level. Sound must never be uncomfortable; turn it down if needed.',
+    'sound.hyper.comfort.reset': 'Find the comfortable level again',
+    'sound.hyper.nudge.title': 'Try 2 dB more this week',
+    'sound.hyper.nudge.body': 'A small increase supports habituation. It is optional; turn it down at once if it feels unpleasant.',
+    'sound.hyper.nudge.ok': 'Raise a little',
+    'sound.hyper.nudge.later': 'Not this week',
+
+    'sound.target.title': 'Today\'s target: {n} min',
+    'sound.target.progress': '{played} / {n} min listened',
+    'sound.target.reached': 'You reached the target time.',
+    'sound.target.complete': 'Count as done',
+    'sound.target.completed': 'Today\'s step was recorded as done.',
 
     'mixing.title': 'Mixing point',
     'mixing.intro1': 'The mixing point is the level at which an outside sound starts to blend with your tinnitus. Sound enrichment sits just below it: the tinnitus is not covered, only made less prominent.',

@@ -16,10 +16,13 @@ import { formatClinicCode, isValidClinicCode, normalizeClinicCode } from '@/comp
 export type GrowthEvent =
   | 'install' | 'assessmentStarted' | 'assessmentCompleted' | 'programStarted' | 'sessionCompleted' | 'shareOpened'
   // Sprint 1 KPI counters (docs/reviews/pm-sprint1.md §S1-12). Names only, never values.
-  | 'checkinDone' | 'questionnaireScreenedOut' | 'shortSessionUsed' | 'reentryUsed' | 'weekReviewOpened' | 'measurementCompleted' | 'day1Completed' | 'day2Returned';
+  | 'checkinDone' | 'questionnaireScreenedOut' | 'shortSessionUsed' | 'reentryUsed' | 'weekReviewOpened' | 'measurementCompleted' | 'day1Completed' | 'day2Returned'
+  // Sprint 2 (docs/reviews/pm-sprint2.md §B3): "Bugün yalnız özet yeter" chosen on a module.
+  | 'summaryOnlyUsed';
 export const GROWTH_EVENTS: GrowthEvent[] = [
   'install', 'assessmentStarted', 'assessmentCompleted', 'programStarted', 'sessionCompleted', 'shareOpened',
   'checkinDone', 'questionnaireScreenedOut', 'shortSessionUsed', 'reentryUsed', 'weekReviewOpened', 'measurementCompleted', 'day1Completed', 'day2Returned',
+  'summaryOnlyUsed',
 ];
 
 export interface SafetyPlan {

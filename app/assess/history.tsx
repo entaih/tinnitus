@@ -13,18 +13,23 @@ import type { CaseHistory, Character, Onset, Pattern, Side } from '@/clinical/ty
 
 const AUTO_ADVANCE_MS = 350;
 
-type BoolKey = 'noiseExposure' | 'hearingDifficulty' | 'soundSensitivity' | 'somaticModulation' | 'neckOrJawPain' | 'ototoxicMeds' | 'earFullness' | 'sleepProblem' | 'stressWorsens' | 'priorAudiometry';
+type BoolKey = 'noiseExposure' | 'hearingDifficulty' | 'soundSensitivity' | 'somaticModulation' | 'neckOrJawPain' | 'ototoxicMeds' | 'earFullness' | 'sleepProblem' | 'stressWorsens' | 'priorAudiometry'
+  | 'misophoniaScreen' | 'osaSnoring' | 'osaSleepiness';
 
-type Step =
+type Draft = Partial<CaseHistory>;
+
+type Step = (
   | { kind: 'choice'; key: 'side'; options: Side[] }
   | { kind: 'choice'; key: 'onset'; options: Onset[] }
   | { kind: 'choice'; key: 'pattern'; options: Pattern[] }
   | { kind: 'choice'; key: 'character'; options: Character[] }
   | { kind: 'bool'; key: BoolKey }
-  | { kind: 'age'; key: 'age' };
+  | { kind: 'age'; key: 'age' }
+) & { /** Follow-up item shown only when its parent answer makes it relevant. */ when?: (d: Draft) => boolean };
 
 /**
- * Only the questions that change triage or the programme are asked (8 items).
+ * Only the questions that change triage or the programme are asked (9 items), plus three short follow-ups
+ * (PM sprint 2 A4, physician B5–B6): a misophonia clue under sound sensitivity and a 2-item OSA screen under sleep problem.
  * Pulsatility, ototoxic drugs and Ménière-type fullness are already covered by the safety screen;
  * stress and age do not alter the plan, so they are not asked.
  */
@@ -36,11 +41,14 @@ const STEPS: Step[] = [
   { kind: 'bool', key: 'hearingDifficulty' },
   { kind: 'bool', key: 'priorAudiometry' },
   { kind: 'bool', key: 'soundSensitivity' },
+  { kind: 'bool', key: 'misophoniaScreen', when: (d) => d.soundSensitivity === true },
   { kind: 'bool', key: 'somaticModulation' },
   { kind: 'bool', key: 'sleepProblem' },
+  { kind: 'bool', key: 'osaSnoring', when: (d) => d.sleepProblem === true },
+  { kind: 'bool', key: 'osaSleepiness', when: (d) => d.sleepProblem === true },
 ];
-
-type Draft = Partial<CaseHistory>;
+const BASE_ITEMS = STEPS.filter((s) => !s.when).length;
+const visibleSteps = (d: Draft) => STEPS.filter((s) => !s.when || s.when(d));
 
 export default function HistoryScreen() {
   const t = useT();
@@ -59,16 +67,15 @@ export default function HistoryScreen() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
-  const advance = () => {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)), AUTO_ADVANCE_MS);
-  };
-
   const setField = <K extends keyof CaseHistory>(key: K, value: CaseHistory[K]) => {
     const next = { ...draft, [key]: value };
     setDraft(next);
-    if (step >= STEPS.length - 1) { if (timer.current) clearTimeout(timer.current); timer.current = setTimeout(() => complete(next), AUTO_ADVANCE_MS); }
-    else advance();
+    // The visible list may grow right after this item (follow-ups), so the next index is computed on the new draft.
+    const list = visibleSteps(next);
+    const idx = list.findIndex((s) => s.key === key);
+    if (timer.current) clearTimeout(timer.current);
+    if (idx < 0 || idx >= list.length - 1) timer.current = setTimeout(() => complete(next), AUTO_ADVANCE_MS);
+    else timer.current = setTimeout(() => setStep(idx + 1), AUTO_ADVANCE_MS);
   };
 
   const back = () => {
@@ -92,6 +99,10 @@ export default function HistoryScreen() {
       sleepProblem: !!d.sleepProblem,
       stressWorsens: !!d.stressWorsens,
       priorAudiometry: !!d.priorAudiometry,
+      // Follow-ups are only meaningful under a positive parent answer.
+      misophoniaScreen: !!d.soundSensitivity && !!d.misophoniaScreen,
+      osaSnoring: !!d.sleepProblem && !!d.osaSnoring,
+      osaSleepiness: !!d.sleepProblem && !!d.osaSleepiness,
       ...(existing?.age ? { age: existing.age } : {}),
     };
     saveHistory(id, h);
@@ -100,7 +111,8 @@ export default function HistoryScreen() {
 
   const goHub = () => finish('/(tabs)/assess');
 
-  const current = STEPS[step];
+  const steps = visibleSteps(draft);
+  const current = steps[Math.min(step, steps.length - 1)];
 
   return (
     <Screen>
@@ -114,7 +126,7 @@ export default function HistoryScreen() {
           </View>
           <Text variant="body" tone="secondary">{t('history.intro.body')}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}>
-            <Text variant="caption" tone="muted">{t('q.intro.items', { n: STEPS.length, min: 2 })}</Text>
+            <Text variant="caption" tone="muted">{t('q.intro.items', { n: BASE_ITEMS, min: 2 })}</Text>
             <EvidenceChip level="guideline" onPress={() => open('cima2019')} />
           </View>
           <Button title={t('common.start')} onPress={() => { setStep(0); setPhase('items'); }} />
@@ -123,8 +135,8 @@ export default function HistoryScreen() {
 
       {phase === 'items' ? (
         <QuestionStep
-          index={step}
-          total={STEPS.length}
+          index={Math.min(step, steps.length - 1)}
+          total={steps.length}
           stem={t(`history.q.${current.key}`)}
           onBack={back}
         >

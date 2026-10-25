@@ -17,10 +17,11 @@
  * This is an investigational diagnostic output: it is designed to be validated in a clinical investigation
  * (sham-controlled, THI primary endpoint) and used under clinician verification until certified.
  */
-import type { Assessment } from './types';
-import { CAUSES, MUST_EXCLUDE, rankCauses, confirmatoryTests, type CauseId } from './causes';
+import type { Assessment, Profile } from './types';
+import { CAUSES, MUST_EXCLUDE, rankCauses, confirmatoryTests, type CauseId, type Curability } from './causes';
 import { hearingAsymmetry, noiseNotch, pta4Hl, computeTriage } from './engine';
 import { scoreQuestionnaire, QUESTIONNAIRES } from './questionnaires';
+import { programArm } from './program';
 
 export type Certainty = 'high' | 'moderate' | 'low';
 
@@ -162,6 +163,8 @@ export function diagnose(a: Assessment): Diagnosis {
   if (gad && gad.total >= 10) comorbid.push({ key: 'dx.comorbid.anxiety', icd: 'F41.1' });
   if (phq && phq.total >= 10) comorbid.push({ key: 'dx.comorbid.depression', icd: 'F32.A' });
   if (f.somaticModulation || f.rasstPositive) comorbid.push({ key: 'dx.comorbid.somatic', icd: 'H93.1 (somatosensoriyel)' });
+  // Misophonia has no ICD-10 code of its own; it is listed so the hyperacusis/misophonia distinction reaches the clinician (physician B5).
+  if (a.history?.misophoniaScreen) comorbid.push({ key: 'dx.comorbid.misophonia', icd: '—' });
 
   const thi = a.questionnaires.find((x) => x.id === 'THI');
   const thiScored = thi ? scoreQuestionnaire(QUESTIONNAIRES.THI, thi.answers) : null;
@@ -183,4 +186,50 @@ export function diagnosisStatement(d: Diagnosis, t: (k: string, p?: Record<strin
   const sev = d.base.severityBand ? t('dx.severity', { band: t(`severity.${d.base.severityBand}`), thi: d.base.thi ?? '' }) : t('dx.severity.unknown');
   const primaryName = d.primary ? `${t(`cause.${d.primary.id}.name`)} (${d.primary.icd})` : t('cause.central.name');
   return t('dx.statement', { course: t(courseKey), type: t(typeKey), primary: primaryName, certainty: t(`dx.certainty.${d.primary?.certainty ?? 'low'}`), severity: sev });
+}
+
+/** An in-app measurement that would settle one of the primary diagnosis's missing criteria. */
+export interface DiagnosisAction { key: string; route: string; minutes: number }
+
+const PITCH_FEATURES: FeatureKey[] = ['highPitch', 'lowPitch'];
+const HEARING_FEATURES: FeatureKey[] = ['hearingLoss', 'asymmetry', 'notch', 'normalScreen'];
+const EXAM_FEATURES: FeatureKey[] = ['somaticModulation', 'somaticTestPositive', 'pressureRelief', 'neckModulates'];
+/** Features that the adaptive cause questions (src/clinical/causes.ts CAUSE_QUESTIONS) can answer. */
+const CAUSE_FEATURES: FeatureKey[] = ['older', 'autophony', 'blockedAfterCold', 'fluctuating', 'betterInNoise', 'familyEarlyHL', 'vertigoAttacks', 'soundInducedDizzy', 'clicking', 'neckModulates', 'palpitations', 'highBp', 'jawPain', 'neckPain', 'loudEventOnset', 'trauma', 'ototoxicMeds', 'imbalance'];
+
+/**
+ * "Kesinliği artırmak için": maps the primary diagnosis's missing criteria to the in-app measurements that can supply them,
+ * only when that measurement has not been done yet. At most three, shortest first (PM sprint 2 A2).
+ */
+export function diagnosisActions(d: Diagnosis, a: Assessment): DiagnosisAction[] {
+  const missing = new Set<FeatureKey>(d.primary?.missing ?? []);
+  const any = (keys: FeatureKey[]) => keys.some((k) => missing.has(k));
+  const out: DiagnosisAction[] = [];
+  // Pitch match sharpens the pitch features for every cause; a tonal user without a match always gets it.
+  if (a.psycho?.pitchHz == null && (a.history?.character === 'tonal' || any(PITCH_FEATURES))) out.push({ key: 'dx.action.pitch', route: '/assess/pitch', minutes: 6 });
+  if (!a.hearing && any(HEARING_FEATURES)) out.push({ key: 'dx.action.hearing', route: '/assess/hearing', minutes: 6 });
+  // The self-exam also supplies the somatic manoeuvre test, a required (not supporting) criterion of the somatic causes.
+  const somaticPrimary = d.primary?.id === 'somaticCervical' || d.primary?.id === 'somaticTmd';
+  if (!a.exam && (any(EXAM_FEATURES) || (somaticPrimary && !d.features.somaticTestPositive))) out.push({ key: 'dx.action.exam', route: '/assess/exam', minutes: 8 });
+  if (!a.causeAnswers && any(CAUSE_FEATURES)) out.push({ key: 'dx.action.causes', route: '/assess/causes', minutes: 2 });
+  return out.sort((x, y) => x.minutes - y.minutes).slice(0, 3);
+}
+
+export interface BestPath { curability: Curability; whoKey: string; whenKey: string; armKey: string; arm: ReturnType<typeof programArm> }
+
+/** Referral urgency line per triage tier (same keys the profile recommendations use). */
+export const REFERRAL_BY_TIER: Record<number, string> = { 0: 'rec.urgentCare', 1: 'rec.ent24h', 2: 'rec.ent2w', 3: 'rec.entRoutine', 4: 'rec.audiology', 5: 'rec.audiologyOnce' };
+
+/**
+ * "En iyi yol": curability and confirming clinician of the primary cause, the referral urgency from triage, and the
+ * programme arm. Differentials still open with a less-than-high certainty never fall below a routine ENT visit.
+ */
+export function bestPath(d: Diagnosis, profile: Profile): BestPath {
+  const cause = CAUSES[d.primary?.id ?? 'central'];
+  let whenKey = REFERRAL_BY_TIER[d.triageTier] ?? 'rec.audiologyOnce';
+  if (d.differentials.length && d.primary?.certainty !== 'high' && d.triageTier > 3) whenKey = 'rec.entRoutine';
+  // The RI result is not on the profile; the sound-first / CBT-first recommendation carries it.
+  const ri = profile.recommendations.some((r) => r.key === 'rec.cbtFirst') ? false : profile.recommendations.some((r) => r.key === 'rec.soundFirst') ? true : undefined;
+  const arm = programArm(profile, ri);
+  return { curability: cause.curability, whoKey: cause.who, whenKey, armKey: `setup.overview.arm.${arm}`, arm };
 }

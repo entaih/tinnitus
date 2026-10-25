@@ -27,9 +27,20 @@ export const notifyStrings = {
     'notif.reentry.title': '3 gündür görüşmedik',
     'notif.reentry.body': '2 dakikalık sürüm hazır. Kaldığınız yerden, kısa bir adımla devam edebilirsiniz.',
 
-    // --- Measurement week (weeks 4/8/12, Sunday morning) ---
-    'notif.measure.title': 'Bugün 3 dakikalık ölçüm',
-    'notif.measure.body': 'Puanınızın nasıl değiştiğini göreceksiniz.',
+    // --- Measurement week (weeks 4/8/12, Sunday 10:00) ---
+    'notif.measure.title': 'Ölçüm günü',
+    'notif.measure.body': 'Bu Pazar 3 dakikalık ölçüm: puanınızın nasıl değiştiğini göreceksiniz.',
+
+    // --- Light-dose programme (Sprint 2 C4): one body for weekdays 2–7 ---
+    'notif.day.light.title': 'Bugünün tek şeyi: yaklaşık 8 dk',
+    'notif.day.light.body': 'Bugün ~8 dk: tek adım',
+
+    // --- Settings: quiet hours and programme dose (Sprint 2 C4) ---
+    'settings.reminder.quiet': 'Sessiz saatlerde ({start}–{end}) hatırlatma planlanmaz; daha erken bir saat seçin.',
+    'settings.dose': 'Program dozu',
+    'settings.dose.full': 'Tam',
+    'settings.dose.light': 'Hafif',
+    'settings.dose.sub': 'Değiştirmek için program kurulumunu açın. Hafif doz: günde yaklaşık 8 dk, haftada tek modül.',
   },
   en: {
     'notif.day.1.title': 'Your 1-minute weekly card',
@@ -50,7 +61,16 @@ export const notifyStrings = {
     'notif.reentry.title': 'We haven\'t seen you in 3 days',
     'notif.reentry.body': 'The 2-minute version is ready. Pick up where you left off with one short step.',
 
-    'notif.measure.title': 'Today: a 3-minute measurement',
-    'notif.measure.body': 'You will see how your score has changed.',
+    'notif.measure.title': 'Measurement day',
+    'notif.measure.body': 'This Sunday: a 3-minute measurement. You will see how your score has changed.',
+
+    'notif.day.light.title': 'Today\'s one thing: about 8 min',
+    'notif.day.light.body': 'Today ~8 min: one step',
+
+    'settings.reminder.quiet': 'Reminders are not scheduled during quiet hours ({start}–{end}); pick an earlier hour.',
+    'settings.dose': 'Programme dose',
+    'settings.dose.full': 'Full',
+    'settings.dose.light': 'Light',
+    'settings.dose.sub': 'Open the programme setup to change it. Light dose: about 8 min a day, one module a week.',
   },
 };

@@ -5,7 +5,11 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { useSettings } from '@/store/settings';
+import { useClinical } from '@/store/clinical';
 import { translate } from '@/i18n';
+import { MEASUREMENT_HOUR, dailyReminderKeys, isQuietHour, measurementReminderHour, nextMeasurementDate } from '@/notificationRules';
+
+export { MEASUREMENT_HOUR, dailyReminderKeys, isQuietHour, measurementReminderHour, nextMeasurementDate } from '@/notificationRules';
 
 // Loaded lazily: importing expo-notifications at startup prints Expo Go warnings on every launch.
 type NotificationsModule = typeof import('expo-notifications');
@@ -99,27 +103,40 @@ export async function cancelReminders(): Promise<void> {
   setReminderIds([]);
 }
 
+/** True when a daily reminder at `hour` would fall inside the user's quiet hours (settings nightStart–nightEnd); such hours are refused (C4). */
+export function reminderHourBlocked(hour: number): boolean {
+  const { nightStart, nightEnd } = useSettings.getState();
+  return isQuietHour(hour, nightStart, nightEnd);
+}
+
+/** Programme dose the reminder copy should follow ('light' → "~8 dk: tek adım"); 'full' when there is no programme. */
+const currentDose = (): 'full' | 'light' => (useClinical.getState().program?.dose === 'light' ? 'light' : 'full');
+
 /**
  * Schedule the seven weekday reminders at `hour`:`minute` local time (WEEKLY triggers, weekday 1–7 with
- * 1 = Sunday), using the `notif.day.N.title/body` copy for the current locale. Replaces the previous set
- * (ids read from and written to `settings.reminderIds`). Returns the new ids — an empty array when
+ * 1 = Sunday), using the `notif.day.N.title/body` copy for the current locale (or the light-dose variant when
+ * the programme dose is 'light'). Replaces the previous set (ids read from and written to
+ * `settings.reminderIds`). Returns the new ids — an empty array when the hour is inside the quiet hours,
  * permission is missing or nothing could be scheduled (e.g. Expo Go on Android).
  */
 export async function scheduleWeekdayReminders(hour: number, minute = 0): Promise<string[]> {
+  if (reminderHourBlocked(hour)) return [];
   installNotificationHandler();
   const ok = await requestReminderPermission();
   if (!ok) return [];
   const locale = currentLocale();
   await ensureChannel(translate(locale, 'notif.channel'));
   await cancelReminders();
+  const dose = currentDose();
   const ids: string[] = [];
   for (const weekday of ALL_WEEKDAYS) {
     try {
+      const keys = dailyReminderKeys(weekday, dose);
       const id = await Notifications().scheduleNotificationAsync({
         content: {
-          title: translate(locale, `notif.day.${weekday}.title`),
-          body: translate(locale, `notif.day.${weekday}.body`),
-          data: { kind: DAILY_REMINDER_KIND, weekday },
+          title: translate(locale, keys.title),
+          body: translate(locale, keys.body),
+          data: { kind: DAILY_REMINDER_KIND, weekday, dose },
         },
         trigger: {
           type: Notifications().SchedulableTriggerInputTypes.WEEKLY,
@@ -135,6 +152,7 @@ export async function scheduleWeekdayReminders(hour: number, minute = 0): Promis
     }
   }
   useSettings.getState().setReminderIds(ids);
+  useSettings.getState().setReminderDose(ids.length ? dose : null);
   return ids;
 }
 
@@ -184,6 +202,9 @@ export async function bumpReentryNudge(): Promise<string | null> {
   const { reentryNudgeId, setReentryNudgeId } = useSettings.getState();
   const id = await scheduleReentryNudge(reentryNudgeId);
   setReentryNudgeId(id);
+  // Every completion also re-syncs the programme-bound reminders (measurement Sunday, dose-specific copy), so no
+  // task screen has to know about them (C1).
+  await syncProgramReminders();
   return id;
 }
 
@@ -195,31 +216,32 @@ export async function cancelReentryNudge(): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------------------------------
-// Measurement week (weeks 4/8/12): one DATE trigger on the Sunday morning of a measurement week.
+// Measurement week (weeks 4/8/12): one DATE trigger on the Sunday morning of a measurement week, 10:00 local
+// (shifted to the end of the quiet hours if 10:00 ever falls inside them). Re-synced from `bumpReentryNudge()`.
 // ---------------------------------------------------------------------------------------------------
 
 export const MEASUREMENT_KIND = 'measurement';
-export const MEASUREMENT_HOUR = 9;
 
 /**
  * Resolve the trigger date for a measurement reminder. A date-only ISO string (`YYYY-MM-DD`) means
- * 09:00 local on that day; a full timestamp is used as-is. Returns null for an invalid or past date.
+ * `hour`:00 local on that day (default 10:00); a full timestamp is used as-is. Returns null for an invalid or past date.
  */
-export function measurementReminderDate(dateISO: string, now: Date = new Date()): Date | null {
+export function measurementReminderDate(dateISO: string, now: Date = new Date(), hour = MEASUREMENT_HOUR): Date | null {
   const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(dateISO);
   const d = dateOnly ? new Date(`${dateISO}T00:00:00`) : new Date(dateISO);
   if (Number.isNaN(d.getTime())) return null;
-  if (dateOnly) d.setHours(MEASUREMENT_HOUR, 0, 0, 0);
+  if (dateOnly) d.setHours(hour, 0, 0, 0);
   return d.getTime() > now.getTime() ? d : null;
 }
 
 /**
  * Cancel `previousId` (if any) and schedule the measurement-week reminder for `dateISO`
- * (`YYYY-MM-DD` → 09:00 local). Does not prompt for permission. Returns the new id or null. Never throws.
+ * (`YYYY-MM-DD` → 10:00 local, outside the quiet hours). Does not prompt for permission. Returns the new id or null. Never throws.
  */
 export async function scheduleMeasurementReminder(dateISO: string, previousId: string | null): Promise<string | null> {
   await cancelScheduled(previousId);
-  const date = measurementReminderDate(dateISO);
+  const { nightStart, nightEnd } = useSettings.getState();
+  const date = measurementReminderDate(dateISO, new Date(), measurementReminderHour(nightStart, nightEnd));
   if (!date) return null;
   installNotificationHandler();
   if (!(await hasReminderPermission())) return null;
@@ -227,11 +249,40 @@ export async function scheduleMeasurementReminder(dateISO: string, previousId: s
   await ensureChannel(translate(locale, 'notif.channel'));
   try {
     return await Notifications().scheduleNotificationAsync({
-      content: { title: translate(locale, 'notif.measure.title'), body: translate(locale, 'notif.measure.body'), data: { kind: MEASUREMENT_KIND } },
+      content: { title: translate(locale, 'notif.measure.title'), body: translate(locale, 'notif.measure.body'), data: { kind: MEASUREMENT_KIND, date: dateISO } },
       trigger: { type: Notifications().SchedulableTriggerInputTypes.DATE, date, channelId: REMINDER_CHANNEL },
     });
   } catch {
     return null;
+  }
+}
+
+/**
+ * Bring the programme-bound reminders in line with the current programme (C1/C4). Reads
+ * `useClinical.getState().program`:
+ *  - measurement Sunday: schedules the next week-4/8/12 reminder (id in `settings.measurementReminderId`),
+ *    cancels it when the programme is gone or no measurement is left;
+ *  - weekday reminders: re-scheduled when the programme dose changed since they were last scheduled
+ *    (the light dose uses different copy); only when the user has reminders on.
+ * Never throws; silently does nothing where local notifications are unavailable (Expo Go on Android).
+ */
+export async function syncProgramReminders(): Promise<void> {
+  try {
+    const program = useClinical.getState().program;
+    const settings = useSettings.getState();
+    const next = program ? nextMeasurementDate(program) : null;
+    if (!next) {
+      if (settings.measurementReminderId) { await cancelScheduled(settings.measurementReminderId); settings.setMeasurementReminderId(null); }
+    } else {
+      const id = await scheduleMeasurementReminder(next, settings.measurementReminderId);
+      settings.setMeasurementReminderId(id);
+    }
+    const dose = currentDose();
+    if (program && settings.reminderHour != null && settings.reminderIds.length > 0 && settings.reminderDose !== null && settings.reminderDose !== dose) {
+      await scheduleWeekdayReminders(settings.reminderHour);
+    }
+  } catch {
+    // never block a task completion on notification plumbing
   }
 }
 

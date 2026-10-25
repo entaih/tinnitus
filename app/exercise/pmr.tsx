@@ -9,25 +9,29 @@ import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 
-/** Öst (1987) applied relaxation, step 1: progressive tension–release across 10 muscle groups. */
+/** Öst (1987) applied relaxation, step 1: progressive tension–release across 10 muscle groups (7 in the 6-minute `?variant=short`). */
 const GROUPS = ['hands', 'arms', 'shoulders', 'forehead', 'eyes', 'jaw', 'neck', 'chest', 'abdomen', 'legs'] as const;
 type Group = (typeof GROUPS)[number];
 type StepKind = 'intro' | 'tense' | 'release' | 'close' | 'breathIn' | 'breathOut';
 interface StepData { kind: StepKind; group?: Group; rep?: number }
 
 const TENSE_S = 5, RELEASE_S = 25, INTRO_S = 30, CLOSE_S = 90;   // 30 + 10 × 2 × 30 + 90 = 720 s ≈ 12 min
+/** Short version (`exercise.pmrShort`, PM sprint 2 §B4): 7 groups, 5 s tense / 17 s release × 2, 20 + 308 + 32 = 360 s = 6 min. */
+const SHORT_GROUPS: Group[] = ['arms', 'shoulders', 'forehead', 'jaw', 'neck', 'abdomen', 'legs'];
+const SHORT_TENSE_S = 5, SHORT_RELEASE_S = 17, SHORT_INTRO_S = 20, SHORT_CLOSE_S = 32;
 
-function fullSteps(): TimedStep<StepData>[] {
-  const out: TimedStep<StepData>[] = [{ data: { kind: 'intro' }, seconds: INTRO_S }];
-  for (const group of GROUPS) {
+function fullSteps(groups: readonly Group[] = GROUPS, tense = TENSE_S, release = RELEASE_S, intro = INTRO_S, close = CLOSE_S): TimedStep<StepData>[] {
+  const out: TimedStep<StepData>[] = [{ data: { kind: 'intro' }, seconds: intro }];
+  for (const group of groups) {
     for (let rep = 1; rep <= 2; rep++) {
-      out.push({ data: { kind: 'tense', group, rep }, seconds: TENSE_S });
-      out.push({ data: { kind: 'release', group, rep }, seconds: RELEASE_S });
+      out.push({ data: { kind: 'tense', group, rep }, seconds: tense });
+      out.push({ data: { kind: 'release', group, rep }, seconds: release });
     }
   }
-  out.push({ data: { kind: 'close' }, seconds: CLOSE_S });
+  out.push({ data: { kind: 'close' }, seconds: close });
   return out;
 }
+export const shortSteps = () => fullSteps(SHORT_GROUPS, SHORT_TENSE_S, SHORT_RELEASE_S, SHORT_INTRO_S, SHORT_CLOSE_S);
 
 /** "Hızlı gevşeme" (Öst steps 4–5 condensed): cue word on each out-breath, three breaths, ~60 s. */
 function rapidSteps(): TimedStep<StepData>[] {
@@ -46,12 +50,13 @@ export default function PmrScreen() {
   const router = useRouter();
   const { taskKey, variant } = useLocalSearchParams<{ taskKey?: string; variant?: string }>();
   const rapid = variant === 'rapid';
+  const short = variant === 'short';
   const logSession = useClinical((s) => s.logSession);
   const completeTask = useClinical((s) => s.completeTask);
   const { open, sheet } = useCitation();
   const [finished, setFinished] = useState(false);
 
-  const steps = useMemo(() => (rapid ? rapidSteps() : fullSteps()), [rapid]);
+  const steps = useMemo(() => (rapid ? rapidSteps() : short ? shortSteps() : fullSteps()), [rapid, short]);
   const timer = useStepTimer(steps, {
     onStep: (s) => {
       if (s.data.kind === 'tense') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -61,12 +66,12 @@ export default function PmrScreen() {
     onFinish: (elapsed) => {
       setFinished(true);
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      logSession({ type: 'exercise', minutes: Math.max(1, Math.round(elapsed / 60)), detail: rapid ? 'pmr:rapid' : 'pmr:full' });
+      logSession({ type: 'exercise', minutes: Math.max(1, Math.round(elapsed / 60)), detail: rapid ? 'pmr:rapid' : short ? 'pmr:short' : 'pmr:full' });
       if (taskKey) completeTask(taskKey);
     },
   });
 
-  const title = rapid ? t('exercise.pmr.rapidTitle') : t('exercise.pmr.title');
+  const title = rapid ? t('exercise.pmr.rapidTitle') : short ? t('exercise.pmrShort.title') : t('exercise.pmr.title');
   const s = timer.step?.data;
   const groupName = s?.group ? t(`exercise.pmr.group.${s.group}`) : '';
   const heading = !s ? '' : s.kind === 'intro' ? t('exercise.pmr.introTitle') : s.kind === 'close' ? t('exercise.pmr.closeTitle')
@@ -96,15 +101,15 @@ export default function PmrScreen() {
         {!finished && timer.status === 'idle' ? (
           <>
             <Text variant="h1">{title}</Text>
-            <Text variant="body">{rapid ? t('exercise.pmr.rapidIntro') : t('exercise.pmr.intro')}</Text>
+            <Text variant="body">{rapid ? t('exercise.pmr.rapidIntro') : short ? t('exercise.pmrShort.intro') : t('exercise.pmr.intro')}</Text>
             <Card variant="tinted">
-              <Text variant="bodySmall">{rapid ? t('exercise.pmr.rapidHow') : t('exercise.pmr.how', { tense: TENSE_S, release: RELEASE_S })}</Text>
+              <Text variant="bodySmall">{rapid ? t('exercise.pmr.rapidHow') : short ? t('exercise.pmrShort.how', { tense: SHORT_TENSE_S, release: SHORT_RELEASE_S }) : t('exercise.pmr.how', { tense: TENSE_S, release: RELEASE_S })}</Text>
               <Text variant="caption" tone="secondary">{t('exercise.duration', { n: totalMin })}</Text>
             </Card>
             <Text variant="bodySmall" tone="secondary">{t('exercise.pmr.safety')}</Text>
             <EvidenceChip level="rct" onPress={() => open('ost1987')} />
             <Button title={t('common.start')} onPress={timer.start} />
-            {!rapid ? <Button variant="ghost" title={t('exercise.pmr.tryRapid')} onPress={() => router.setParams({ variant: 'rapid' })} /> : null}
+            {!rapid && !short ? <Button variant="ghost" title={t('exercise.pmr.tryRapid')} onPress={() => router.setParams({ variant: 'rapid' })} /> : null}
           </>
         ) : null}
 

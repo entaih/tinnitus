@@ -2,12 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
-import { Button, Card, Screen, Text, useCitation } from '@/components';
+import { Banner, Button, Card, Chip, Screen, Text, useCitation } from '@/components';
 import { RationaleList, TaskRow, WeekTimeline, activeMinutes, hasBackgroundSound, openTask, splitByBudget, type DayState, type TimelineDay } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
-import { adaptationAdvice, adherence, dayCompletion, programPosition, taskKey, tasksForDay } from '@/clinical/program';
+import { adaptationAdvice, adherence, assessmentPrefs, dayCompletion, programPosition, regenerateProgram, taskKey, tasksForDay, type Dose, type ProgramPrefs } from '@/clinical/program';
+import { useProfile } from '@/hooks/useProfile';
 import { consequencesOf, consequenceText } from '@/clinical/consequences';
 import { QUESTIONNAIRES, scoreQuestionnaire } from '@/clinical/questionnaires';
 import { mergedLatest } from '@/store/clinical';
@@ -18,7 +19,8 @@ export default function ProgramScreen() {
   const t = useT();
   const locale = useLocale();
   const cite = useCitation();
-  const { program, assessments, completeTask, setProgram } = useClinical();
+  const { program, assessments, completeTask, setProgram, programPrefs } = useClinical();
+  const { assessment, profile } = useProfile();
   const now = new Date();
   const pos = program ? programPosition(program, now) : null;
 
@@ -27,6 +29,7 @@ export default function ProgramScreen() {
   const [showWhy, setShowWhy] = useState(false);
   const [showDone, setShowDone] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [doseNote, setDoseNote] = useState<Dose | null>(null);
 
   const thi = useMemo(() => {
     const all: QuestionnaireResult[] = [];
@@ -95,7 +98,16 @@ export default function ProgramScreen() {
     return c.total > 0 && c.done === 0;
   }) && dayCompletion(program, pos.week, pos.day).done === 0;
 
-  const advice = pos.week >= 4 ? adaptationAdvice(program, {
+  /** Dose change (PM sprint 2 A3): rebuild from this week on, keeping id, start date and everything completed. */
+  const changeDose = (dose: Dose) => {
+    if (!profile) return;
+    const prefs: ProgramPrefs = { minutesPerDay: 15, style: 'cbt', ...programPrefs, ...assessmentPrefs(assessment) };
+    setProgram(regenerateProgram(program, profile, prefs, { dose, now }));
+    setDoseNote(dose);
+  };
+
+  // Low adherence is advised from week 3 (adaptationAdvice); the THI-based lines need week 4.
+  const advice = pos.week >= 3 ? adaptationAdvice(program, {
     week: pos.week,
     thiBaseline: thi[0]?.total,
     thiNow: thi.length > 1 ? thi[thi.length - 1].total : undefined,
@@ -129,6 +141,16 @@ export default function ProgramScreen() {
             <Text variant="bodySmall" tone="primary">{t('prog.why')}</Text>
           </Pressable>
         </Card>
+
+        {program.dose === 'light' || doseNote ? (
+          <Card variant="tinted">
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], flexWrap: 'wrap' }}>
+              {program.dose === 'light' ? <Chip small tone="info" label={t('prog.dose.light')} /> : null}
+              {doseNote ? <Text variant="bodySmall" tone="success" style={{ flex: 1 }}>{t(doseNote === 'light' ? 'prog.adapt.lightened' : 'prog.adapt.restored')}</Text> : null}
+            </View>
+            {program.dose === 'light' ? <Button size="sm" variant="secondary" title={t('prog.adapt.restore')} onPress={() => changeDose('full')} /> : null}
+          </Card>
+        ) : null}
 
         {missedRecently ? (
           <Card variant="tinted" title={t('prog.missed.title')}>
@@ -177,10 +199,10 @@ export default function ProgramScreen() {
           ) : null}
         </Card>
 
-        {pos.week >= 4 ? (
+        {pos.week >= 4 || advice.length ? (
           <Card title={t('prog.adapt.title')}>
             <Text variant="bodySmall" tone="secondary">{t('prog.adapt.body')}</Text>
-            {thi.length < 2 ? <Text variant="bodySmall" tone="secondary">{t('prog.adapt.needThi')}</Text> : null}
+            {thi.length < 2 && pos.week >= 4 ? <Text variant="bodySmall" tone="secondary">{t('prog.adapt.needThi')}</Text> : null}
             {thiChange ? (
               <View style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
                 <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: thiChange.tone === 'success' ? colors.success : thiChange.tone === 'warning' ? colors.warning : colors.primary }} />
@@ -193,6 +215,7 @@ export default function ProgramScreen() {
                 <Text variant="body" style={{ flex: 1 }}>{t(k)}</Text>
               </View>
             ))}
+            {advice.includes('adapt.lowAdherence') && program.dose !== 'light' ? <Button size="sm" variant="secondary" title={t('prog.adapt.lighten')} onPress={() => changeDose('light')} /> : null}
           </Card>
         ) : null}
 

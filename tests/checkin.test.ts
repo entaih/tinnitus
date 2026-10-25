@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { averageBetween, formatAvg, last7Days, lastEntryBefore, shiftDate, weekCompare } from '../src/components/home/checkinStats.ts';
+import { averageBetween, buildCheckinEntry, formatAvg, last7Days, lastEntryBefore, needsSleepRow, programWeekWindow, shiftDate, weekCompare } from '../src/components/home/checkinStats.ts';
 import { INSIGHTS, insightForDay, insightsAreCited } from '../src/content/insights.ts';
 import { splitByBudget, planForToday, tomorrowTask, isBackground, MAX_ACTIVE_STEPS } from '../src/components/home/taskBudget.ts';
 import type { DiaryEntry, Program, ProgramTask } from '../src/clinical/types.ts';
@@ -23,6 +23,65 @@ test('last7Days: oldest first, nulls for missing days, today last', () => {
   assert.equal(days[6].date, '2026-10-24');
   assert.deepEqual(days.map((d) => d.value), [null, null, 4, null, null, null, 7]);
   assert.deepEqual(last7Days(diary, '2026-10-24', 'loudness').map((d) => d.value), [null, null, 4, null, null, null, 7]);
+  // Entries without loudness (one-tap check-in) are skipped by the loudness series, kept by the annoyance series.
+  const noLoud: DiaryEntry[] = [{ date: '2026-10-23', annoyance: 5, mood: 1 }, { date: '2026-10-24', annoyance: 6, loudness: 2, mood: 1 }];
+  assert.deepEqual(last7Days(noLoud, '2026-10-24', 'loudness').map((d) => d.value).slice(-2), [null, 2]);
+  assert.deepEqual(last7Days(noLoud, '2026-10-24').map((d) => d.value).slice(-2), [5, 6]);
+  assert.equal(averageBetween(noLoud, '2026-10-18', '2026-10-24', 'loudness'), 2);
+});
+
+// --- B2: one-tap check-in writes only the row that was used ------------------------------------------------------
+
+test('buildCheckinEntry: first tap writes annoyance only — loudness stays undefined until its row is used', () => {
+  const first = buildCheckinEntry(undefined, '2026-10-24', 'annoyance', 6);
+  assert.equal(first.annoyance, 6);
+  assert.equal(first.loudness, undefined);
+  assert.equal(first.sleepQuality, undefined);
+  assert.equal(first.mood, 1);
+  assert.ok(!('loudness' in first) || first.loudness === undefined);
+  const withLoud = buildCheckinEntry(first, '2026-10-24', 'loudness', 3);
+  assert.equal(withLoud.annoyance, 6);
+  assert.equal(withLoud.loudness, 3);
+  const withSleep = buildCheckinEntry(withLoud, '2026-10-24', 'sleep', 7);
+  assert.equal(withSleep.sleepQuality, 7);
+  assert.equal(withSleep.loudness, 3);
+  // Re-tapping annoyance keeps the other rows.
+  const again = buildCheckinEntry(withSleep, '2026-10-24', 'annoyance', 2);
+  assert.deepEqual([again.annoyance, again.loudness, again.sleepQuality], [2, 3, 7]);
+});
+
+test('needsSleepRow: sleepFirst arm, or a day with the sleep sound / legacy sleep diary', () => {
+  assert.equal(needsSleepRow('sleepFirst', []), true);
+  assert.equal(needsSleepRow('soundCbt', []), false);
+  assert.equal(needsSleepRow('soundCbt', [{ id: 'sleep.sound' }]), true);
+  assert.equal(needsSleepRow('cbtFirst', [{ id: 'sleep.diary' }]), true);
+  assert.equal(needsSleepRow(undefined, [{ id: 'diary.daily' }]), false);
+});
+
+// --- B4: programme-week window for the Sunday card ----------------------------------------------------------------
+
+test('weekCompare with a programme-week window: cur over day 1 … today, prev over the 7 days before day 1', () => {
+  const diary = [
+    e('2026-10-11', 8), e('2026-10-13', 6),                       // 7 days before the programme week
+    e('2026-10-19', 5), e('2026-10-20', 4), e('2026-10-25', 3),   // programme week 1 (starts Monday 10-19)
+    e('2026-10-18', 9),                                           // the Sunday before: inside the calendar window, outside the programme week
+  ];
+  const win = programWeekWindow('2026-10-19', { week: 1, day: 7 });
+  assert.deepEqual(win, { from: '2026-10-19', to: '2026-10-25' });
+  assert.deepEqual(programWeekWindow('2026-10-19', { week: 3, day: 2 }), { from: '2026-11-02', to: '2026-11-03' });
+  const c = weekCompare(diary, '2026-10-25', 'annoyance', win);
+  assert.equal(c.cur, 4);
+  assert.equal(c.prev, 7.5); // 10-13 (6) and 10-18 (9); 10-11 is outside the 7 days before day 1
+  assert.equal(c.daysLogged, 3);
+  assert.deepEqual(c.window, win);
+  // Calendar default is unchanged: the last 7 days ending today, "last week" the 7 before (which include 10-18).
+  const cal = weekCompare(diary, '2026-10-25');
+  assert.equal(cal.cur, 4);
+  assert.equal(cal.prev, 7.5);
+  assert.deepEqual(cal.window, { from: '2026-10-19', to: '2026-10-25' });
+  const shifted = weekCompare(diary, '2026-10-24');
+  assert.deepEqual(shifted.window, { from: '2026-10-18', to: '2026-10-24' });
+  assert.equal(shifted.cur, 6);
 });
 
 test('weekCompare: this week vs last week, one-decimal rounding, first-week case', () => {
@@ -73,19 +132,20 @@ test('insights: 24 cited notes, ≤160 chars, honest wording, no repeat on 24 co
 
 // --- budget split ---------------------------------------------------------------------------------------
 
-const task = (id: string, type: ProgramTask['type'], minutes: number): ProgramTask => ({ id, type, minutes, titleKey: `unit.${id}`, route: id === 'sound.enrichment' ? '/sound/player?preset=enrichment' : `/${id}` });
+const task = (id: string, type: ProgramTask['type'], minutes: number): ProgramTask => ({ id, type, minutes, titleKey: `unit.${id}`, route: id === 'sound.enrichment' ? '/sound/player?preset=enrichment' : type === 'mind' ? `/mind/${id}` : `/${id}` });
 const day1 = [task('diary.daily', 'diary', 1), task('sound.mixingPoint', 'sound', 5), task('cbt.welcome', 'mind', 8), task('exercise.pmr', 'exercise', 12), task('assess.causes', 'assessment', 2), task('sound.enrichment', 'sound', 120)];
 
-test('splitByBudget: never more than 3 numbered steps; essentials count toward the cap; sound is always shown', () => {
+test('splitByBudget: essentials always shown (assessment beyond the cap too), the welcome module is the core, overflow behind more', () => {
   const { shown, more } = splitByBudget(day1, 15);
   const numbered = shown.filter((x) => !isBackground(x));
-  assert.ok(numbered.length <= MAX_ACTIVE_STEPS);
-  assert.deepEqual(numbered.map((x) => x.id), ['diary.daily', 'sound.mixingPoint', 'cbt.welcome']);
+  // diary (essential) + mixing point (optional, fits) + welcome (core, first module) + causes (essential measurement); PMR overflows.
+  assert.deepEqual(numbered.map((x) => x.id), ['diary.daily', 'sound.mixingPoint', 'cbt.welcome', 'assess.causes']);
   assert.ok(shown.some((x) => x.id === 'sound.enrichment') && shown.some((x) => x.id === 'sound.mixingPoint'));
-  assert.deepEqual(more.map((x) => x.id), ['exercise.pmr', 'assess.causes']);
-  // Even a day of nothing but essentials is capped.
-  const many = [task('diary.daily', 'diary', 1), task('a', 'assessment', 3), task('b', 'assessment', 3), task('c', 'assessment', 3)];
-  assert.equal(splitByBudget(many, 15).shown.length, 3);
+  assert.deepEqual(more.map((x) => x.id), ['exercise.pmr']);
+  // A day of nothing but essentials shows them all (measurements are never hidden); optionals are then capped out.
+  const many = [task('diary.daily', 'diary', 1), task('a', 'assessment', 3), task('b', 'assessment', 3), task('c', 'assessment', 3), task('x', 'exercise', 3)];
+  assert.deepEqual(splitByBudget(many, 15).shown.map((x) => x.id), ['diary.daily', 'a', 'b', 'c']);
+  assert.ok(splitByBudget(many, 15).shown.filter((x) => !isBackground(x)).length <= MAX_ACTIVE_STEPS + 1);
   // The first non-essential step is shown even when it exceeds the budget (the day is never empty).
   assert.deepEqual(splitByBudget([task('big', 'mind', 20)], 15).shown.map((x) => x.id), ['big']);
 });
@@ -94,9 +154,14 @@ test('splitByBudget short mode: check-in + shortest practice; measurement kept i
   const s = splitByBudget(day1, 15, true);
   const numbered = s.shown.filter((x) => !isBackground(x)).map((x) => x.id);
   assert.deepEqual(numbered, ['diary.daily', 'assess.causes']);
+  // On a module day the core module is kept as its 2-minute summary instead of the shortest practice (sprint 2 §B3).
   const noAssess = splitByBudget([task('diary.daily', 'diary', 1), task('cbt.welcome', 'mind', 8), task('exercise.breathing', 'exercise', 3), task('sound.enrichment', 'sound', 120)], 15, true);
-  assert.deepEqual(noAssess.shown.map((x) => x.id), ['diary.daily', 'exercise.breathing', 'sound.enrichment']);
+  assert.deepEqual(noAssess.shown.map((x) => x.id), ['diary.daily', 'cbt.welcome', 'sound.enrichment']);
+  assert.equal(noAssess.shown[1].minutes, 2);
+  assert.equal(noAssess.shown[1].params?.summary, '1');
   assert.ok(noAssess.shown.filter((x) => !isBackground(x)).length <= 2);
+  const noModule = splitByBudget([task('diary.daily', 'diary', 1), task('exercise.pmr', 'exercise', 12), task('exercise.breathing', 'exercise', 3)], 15, true);
+  assert.deepEqual(noModule.shown.map((x) => x.id), ['diary.daily', 'exercise.breathing']);
 });
 
 const program: Program = {
@@ -110,7 +175,7 @@ const program: Program = {
 test('planForToday: short option, tomorrow task skips check-in and sound, nothing after the last day', () => {
   const full = planForToday(program, { week: 1, day: 1, dayIndex: 0 });
   assert.equal(full.short, false);
-  assert.equal(full.shown.filter((x) => !isBackground(x)).length, 3);
+  assert.equal(full.shown.filter((x) => !isBackground(x)).length, 4); // diary, mixing point, welcome (core), causes (measurement)
   const short = planForToday(program, { week: 1, day: 1, dayIndex: 0 }, undefined, { short: true });
   assert.equal(short.short, true);
   assert.ok(short.shown.filter((x) => !isBackground(x)).length <= 2);

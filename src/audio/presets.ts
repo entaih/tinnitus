@@ -83,10 +83,30 @@ export interface ResolvedPreset {
   presetId?: string;
 }
 
-export function resolveNamedPreset(name: NamedPreset, ctx: ResolveContext & { customSpec?: SoundSpec; customId?: string; mixingPoint?: number | null }): ResolvedPreset | null {
+export interface NamedPresetContext extends ResolveContext {
+  customSpec?: SoundSpec;
+  customId?: string;
+  mixingPoint?: number | null;
+  /**
+   * Enrichment auto-tune (Sprint 2 C2): when set, a narrow-band (±½ octave) layer centred on this frequency is mixed
+   * under the pink-noise bed at `TUNE_BAND_LEVEL`. Decided by `tuneFor()`; absent → plain pink noise.
+   */
+  tuneHz?: number;
+  /** Mix level of the tuned narrow-band layer (0..1); default 0.35. */
+  tuneLevel?: number;
+  /** Hyperacusis start level (linear gain) from the stored comfortable level (Sprint 2 C3); default 0.25. */
+  hyperVolume?: number;
+}
+
+export function resolveNamedPreset(name: NamedPreset, ctx: NamedPresetContext): ResolvedPreset | null {
   switch (name) {
-    case 'enrichment':
-      return { layers: [{ id: 'noise.pink', spec: { kind: 'noise', color: 'pink' }, level: 1 }], volume: ctx.mixingPoint ?? 0.5, timerMinutes: null, titleKey: 'player.preset.enrichment', presetId: 'noise.pink' };
+    case 'enrichment': {
+      const layers: PresetLayer[] = [{ id: 'noise.pink', spec: { kind: 'noise', color: 'pink' }, level: 1 }];
+      if (ctx.tuneHz && ctx.tuneHz > 0) {
+        layers.push({ id: 'narrowband.pitch', spec: { kind: 'narrowband', color: 'white', centerHz: Math.round(ctx.tuneHz), octaves: 0.5 }, level: ctx.tuneLevel ?? 0.35 });
+      }
+      return { layers, volume: ctx.mixingPoint ?? 0.5, timerMinutes: null, titleKey: 'player.preset.enrichment', presetId: 'noise.pink' };
+    }
     case 'sleep':
       return {
         layers: [
@@ -96,7 +116,7 @@ export function resolveNamedPreset(name: NamedPreset, ctx: ResolveContext & { cu
         volume: 0.4, timerMinutes: 90, titleKey: 'player.preset.sleep', presetId: 'noise.brown',
       };
     case 'hyperacusis':
-      return { layers: [{ id: 'noise.pink', spec: { kind: 'noise', color: 'pink' }, level: 1 }], volume: 0.25, timerMinutes: 30, titleKey: 'player.preset.hyperacusis', presetId: 'noise.pink' };
+      return { layers: [{ id: 'noise.pink', spec: { kind: 'noise', color: 'pink' }, level: 1 }], volume: ctx.hyperVolume ?? 0.25, timerMinutes: 30, titleKey: 'player.preset.hyperacusis', presetId: 'noise.pink' };
     case 'notched': {
       if (!ctx.pitchHz) return null;
       const spec: SoundSpec = { kind: 'notched', color: 'pink', centerHz: Math.round(ctx.pitchHz), octaves: ctx.octaves ?? 1 };

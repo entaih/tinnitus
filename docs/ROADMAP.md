@@ -68,3 +68,19 @@ Kurulum → değerlendirme tamamlama ≥ %40 · değerlendirme → program ≥ %
 | S1-12 | Büyüme sayaçları (check-in, kısa sürüm, yeniden giriş, 1→2. gün dönüşü, ölçüm tamamlama) | ✅ |
 
 Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
+
+## 7. Sprint 2 — "tanı kararlı, gün hafif" (Ekim 2026, `docs/reviews/pm-sprint2.md`)
+| # | Madde | Durum |
+|---|---|---|
+| A1 | Üretici düzeltmeleri: günde tek çekirdek, 1. hafta 4. gün ≤15 dk, akut kolda her gün uygulama, uyku günlüğü kaldırıldı, hiperakuzi kolunda 1. günden ses | ✅ |
+| A2 | Kararlı tanı kartı: tek cümle ön tanı, "En iyi yol", kesinliği artıran uygulama içi ölçümler, dışlanacaklar | ✅ |
+| A3 | Düşük uyumda "Dozu düşür" (hafif doz: günde ~8 dk, haftada 1 modül); program tercihleri kalıcı | ✅ |
+| A4 | Misofoni (1 soru) ve OSA (2 soru) taraması; OSA şüphesinde uyku sıkıştırma yok, sevk önerisi | ✅ |
+| B1 | Bütçe: çekirdek her zaman görünür, haftalık kart hiç gizlenmez; "Bugünün tek şeyi" | ✅ |
+| B2 | Check-in: gürlük uydurulmuyor; uyku kolunda "Uyku kalitesi" satırı | ✅ |
+| B3 | Modül 2 dakikalık özetleri (38 modül), "Bugün yalnız özet yeter", kaldığı yerden devam | ✅ |
+| B4 | Haftalık kart program haftasına göre; "Bu hafta öğrendikleriniz"; 6 dk kısa PMR | ✅ |
+| C1 | Ölçüm haftası Pazar hatırlatması bağlandı | ✅ |
+| C2 | Perde eşleme → ses otomatik ayarlanır ("Çınlamanıza göre ayarlandı ≈{hz} Hz") | ✅ |
+| C3 | Hiperakuzi: "Rahat sesinizi bulun" (−40 dBFS'ten başlar, tavan −18), haftalık +2 dB önerisi | ✅ |
+| C4 | Sessiz saatlerde hatırlatma reddi, hafif doz metni, Ayarlar'da program dozu | ✅ |

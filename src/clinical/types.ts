@@ -39,6 +39,11 @@ export interface CaseHistory {
   age?: number;
   priorAudiometry?: boolean;   // has had a hearing test before
   hearingAidUser?: boolean;
+  /** Misophonia clue (asked only when soundSensitivity): specific sounds (chewing, clicking) trigger anger/disgust. */
+  misophoniaScreen?: boolean;
+  /** OSA screen (asked only when sleepProblem): loud snoring / excessive daytime sleepiness. Both true = OSA suspect. */
+  osaSnoring?: boolean;
+  osaSleepiness?: boolean;
 }
 
 export interface QuestionnaireResult {
@@ -137,6 +142,8 @@ export interface Profile {
   drivers: Driver[];
   recommendations: Recommendation[];
   doctorSummary: string[];           // plain sentences (already localised)
+  /** Screen-derived flags that change the programme without being drivers (OSA suspect: no sleep compression). */
+  flags?: { osaSuspect?: boolean; misophonia?: boolean };
 }
 
 export type Phenotype =

@@ -3,14 +3,14 @@ import { Alert, Switch, TextInput, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import Constants from 'expo-constants';
 import Slider from '@react-native-community/slider';
-import { BookOpen, Share2 } from 'lucide-react-native';
+import { BookOpen, Gauge, Share2 } from 'lucide-react-native';
 import { Button, Card, Disclaimer, Row, Screen, SectionHeader, Stepper, Text } from '@/components';
 import { Segmented } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
-import { cancelReminders, scheduleWeekdayReminders } from '@/notifications';
+import { cancelReminders, reminderHourBlocked, scheduleWeekdayReminders } from '@/notifications';
 import { exportCsv, hasExportableData } from '@/utils/exportCsv';
 import { AboutGrowthRows, GrowthSettingsRows, WeeklyReviewRow } from '@/components/growth';
 
@@ -18,8 +18,10 @@ export default function SettingsScreen() {
   const { colors, space, radius } = useTheme();
   const t = useT();
   const s = useSettings();
-  const { diary, assessments, wipe } = useClinical();
+  const { diary, assessments, wipe, program } = useClinical();
   const [hour, setHour] = useState(s.reminderHour ?? 20);
+  // Quiet hours (settings nightStart–nightEnd, default 22:00–06:00): a reminder inside them is refused with an explanation (C4).
+  const quietBlocked = reminderHourBlocked(hour);
   const [name, setName] = useState(s.displayName);
   const [vol, setVol] = useState(s.maxVolume);
   const [exporting, setExporting] = useState(false);
@@ -27,6 +29,7 @@ export default function SettingsScreen() {
 
   const applyReminder = async (on: boolean, h: number) => {
     if (!on) { await cancelReminders(); s.setReminderHour(null); return; }
+    if (reminderHourBlocked(h)) { await cancelReminders(); s.setReminderHour(null); return; } // the inline warning below explains why
     // Re-schedules all 7 weekday reminders (ids kept in settings); the weekly review and re-entry nudge are untouched.
     const ids = await scheduleWeekdayReminders(h);
     if (ids.length > 0) s.setReminderHour(h);
@@ -70,7 +73,12 @@ export default function SettingsScreen() {
           </View>
           <Stepper label={t('settings.reminder.hour')} value={hour} min={0} max={23} format={fmtHour} onChange={(h) => { setHour(h); if (reminderOn) void applyReminder(true, h); }} />
           <Text variant="bodySmall" tone="secondary">{t('settings.reminder.body')}</Text>
+          {quietBlocked ? <Text variant="bodySmall" tone="warning">{t('settings.reminder.quiet', { start: fmtHour(s.nightStart), end: fmtHour(s.nightEnd) })}</Text> : null}
           <WeeklyReviewRow />
+          {program ? (
+            <Row icon={<Gauge size={20} color={colors.primary} />} title={t('settings.dose')} subtitle={t('settings.dose.sub')}
+              right={<Text variant="bodyStrong">{t(program.dose === 'light' ? 'settings.dose.light' : 'settings.dose.full')}</Text>} onPress={() => router.push('/program/setup')} />
+          ) : null}
         </Card>
 
         <SectionHeader title={t('settings.appearance')} />

@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2 } from 'lucide-react-native';
 import { Banner, Button, Card, Screen, Text } from '@/components';
-import { BackgroundSoundRow, JourneyCard, QuickCheckIn, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, isBackground, openTask, planForToday, taskIcon, taskMeta, taskTitle, weekActiveDays } from '@/components/home';
+import { BackgroundSoundRow, JourneyCard, QuickCheckIn, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, openTask, planForToday, taskIcon, taskMeta, taskTitle, weekActiveDays } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
@@ -78,9 +78,17 @@ export default function HomeScreen() {
     </Pressable>
   );
 
+  // Hero line (PM sprint 2 §B1): "Bugünün tek şeyi: {core} · {dk} dk"; once the core is done, the remaining optional count.
+  const core = plan ? coreTask(plan.tasks) : null;
+  const coreDone = !!core && !!plan?.isDone(core);
+  const optionalLeft = core ? pendingShown.filter((x) => x.id !== core.id && x.type !== 'diary').length : pendingShown.length;
   const heroBody = reentry
     ? t('home.reentry.body', { min: minutesLeft })
-    : t(plan && background.some((x) => !plan.isDone(x)) ? 'session.hero.bodySound' : 'session.hero.body', { n: pendingShown.length, min: minutesLeft });
+    : core && !coreDone
+      ? t(isBackground(core) ? 'home.today.coreBackground' : 'home.today.core', { core: taskTitle(t, core), min: core.minutes })
+      : core && coreDone
+        ? (optionalLeft > 0 ? t('home.today.coreDone', { n: optionalLeft }) : t('home.today.coreDoneNone'))
+        : t(plan && background.some((x) => !plan.isDone(x)) ? 'session.hero.bodySound' : 'session.hero.body', { n: pendingShown.length, min: minutesLeft });
 
   return (
     <Screen tab>

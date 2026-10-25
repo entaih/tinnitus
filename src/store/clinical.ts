@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Assessment, CaseHistory, DiaryEntry, ExamResult, HearingScreenResult, Program, PsychoacousticResult, QuestionnaireResult, RedFlags } from '@/clinical/types';
+import type { ProgramPrefs } from '@/clinical/program';
 
 export interface ThoughtRecord {
   id: string; date: string; situation: string; thought: string; emotion: string; intensity: number;
@@ -16,6 +17,8 @@ interface ClinicalState {
   thoughts: ThoughtRecord[];
   sessions: SessionLog[];
   program: Program | null;
+  /** Preferences the current programme was generated with (needed to regenerate it at another dose). */
+  programPrefs: ProgramPrefs | null;
   readArticles: string[];
   redFlagAcknowledgedAt: string | null;
 
@@ -31,6 +34,7 @@ interface ClinicalState {
   addThought: (t: ThoughtRecord) => void;
   logSession: (s: Omit<SessionLog, 'id' | 'date'>) => void;
   setProgram: (p: Program | null) => void;
+  setProgramPrefs: (p: ProgramPrefs | null) => void;
   completeTask: (taskKey: string) => void;
   markRead: (slug: string) => void;
   acknowledgeRedFlag: () => void;
@@ -49,7 +53,7 @@ const update = (list: Assessment[], id: string, fn: (a: Assessment) => Assessmen
 export const useClinical = create<ClinicalState>()(
   persist(
     (set, get) => ({
-      assessments: [], diary: [], thoughts: [], sessions: [], program: null, readArticles: [], redFlagAcknowledgedAt: null,
+      assessments: [], diary: [], thoughts: [], sessions: [], program: null, programPrefs: null, readArticles: [], redFlagAcknowledgedAt: null,
 
       startAssessment: () => {
         // Reuse an assessment started today so the hub accumulates results into one record.
@@ -74,10 +78,11 @@ export const useClinical = create<ClinicalState>()(
       addThought: (t) => set((s) => ({ thoughts: [t, ...s.thoughts] })),
       logSession: (x) => set((s) => ({ sessions: [...s.sessions, { ...x, id: newId(), date: new Date().toISOString() }].slice(-2000) })),
       setProgram: (program) => set({ program }),
+      setProgramPrefs: (programPrefs) => set({ programPrefs }),
       completeTask: (taskKey) => set((s) => (s.program ? { program: { ...s.program, completed: { ...s.program.completed, [taskKey]: new Date().toISOString() } } } : {})),
       markRead: (slug) => set((s) => ({ readArticles: s.readArticles.includes(slug) ? s.readArticles : [...s.readArticles, slug] })),
       acknowledgeRedFlag: () => set({ redFlagAcknowledgedAt: new Date().toISOString() }),
-      wipe: () => set({ assessments: [], diary: [], thoughts: [], sessions: [], program: null, readArticles: [], redFlagAcknowledgedAt: null }),
+      wipe: () => set({ assessments: [], diary: [], thoughts: [], sessions: [], program: null, programPrefs: null, readArticles: [], redFlagAcknowledgedAt: null }),
     }),
     { name: 'dingin.clinical', storage: createJSONStorage(() => AsyncStorage) },
   ),

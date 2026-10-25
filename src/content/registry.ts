@@ -73,6 +73,7 @@ export const UNITS: Record<string, Unit> = Object.fromEntries([
   // --- Relaxation / breathing exercise (guided, animated) ---
   u('exercise.breathing', 'exercise', 5, '/exercise/breathing', 'cbt', 'ost1987'),
   u('exercise.pmr', 'exercise', 12, '/exercise/pmr', 'cbt', 'ost1987'),
+  u('exercise.pmrShort', 'exercise', 6, '/exercise/pmr?variant=short', 'cbt', 'ost1987'),
   // --- Sound ---
   u('sound.enrichment', 'sound', 60, '/sound/player?preset=enrichment', 'sound', 'sereda2018', 'guideline'),
   u('sound.mixingPoint', 'sound', 5, '/sound/mixing-point', 'sound', 'scherer2019'),
