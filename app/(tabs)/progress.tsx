@@ -54,7 +54,8 @@ export default function ProgressScreen() {
 
   // --- Daily loudness / annoyance ---
   const entries = diary.filter((d) => d.date >= cutoffKey);
-  const loud = entries.map((d) => d.loudness);
+  const loudEntries = entries.filter((d) => d.loudness != null);
+  const loud = loudEntries.map((d) => d.loudness as number);
   const ann = entries.map((d) => d.annoyance);
   const loudAvg = movingAverage(loud, 7);
   const annAvg = movingAverage(ann, 7);
@@ -144,9 +145,9 @@ export default function ProgressScreen() {
           >
             <LineChart
               series={[
-                { points: entries.map((d, i) => ({ x: xOf(d.date), y: loud[i] })), color: colors.chart.loudness, width: 1.5, opacity: 0.6 },
+                { points: loudEntries.map((d, i) => ({ x: xOf(d.date), y: loud[i] })), color: colors.chart.loudness, width: 1.5, opacity: 0.6 },
                 { points: entries.map((d, i) => ({ x: xOf(d.date), y: ann[i] })), color: colors.chart.annoyance, width: 1.5, opacity: 0.6 },
-                { points: entries.map((d, i) => ({ x: xOf(d.date), y: loudAvg[i] })), color: colors.chart.loudness, width: 3, dots: false },
+                { points: loudEntries.map((d, i) => ({ x: xOf(d.date), y: loudAvg[i] })), color: colors.chart.loudness, width: 3, dots: false },
                 { points: entries.map((d, i) => ({ x: xOf(d.date), y: annAvg[i] })), color: colors.chart.annoyance, width: 3, dots: false },
               ]}
               xMin={cutoff} xMax={now} yMin={0} yMax={10}

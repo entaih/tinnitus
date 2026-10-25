@@ -16,7 +16,7 @@ export interface CsvInput { diary: DiaryEntry[]; assessments: Assessment[] }
 export function buildCsv({ diary, assessments }: CsvInput): string {
   const lines: string[] = ['kind,date,instrument,total,loudness,annoyance,mood,sleepQuality,note'];
   for (const d of [...diary].sort((a, b) => a.date.localeCompare(b.date))) {
-    lines.push(['diary', d.date, '', '', d.loudness, d.annoyance, d.mood, d.sleepQuality ?? '', d.note ?? ''].map(esc).join(','));
+    lines.push(['diary', d.date, '', '', d.loudness ?? '', d.annoyance, d.mood, d.sleepQuality ?? '', d.note ?? ''].map(esc).join(','));
   }
   for (const a of assessments) {
     for (const q of a.questionnaires) {

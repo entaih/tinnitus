@@ -103,7 +103,7 @@ export interface ExamResult {
 
 export interface DiaryEntry {
   date: string;            // YYYY-MM-DD
-  loudness: number;        // 0-10
+  loudness?: number;       // 0-10; absent when the one-tap check-in did not ask for it
   annoyance: number;       // 0-10
   mood: 0 | 1 | 2;         // 0 hard, 1 ok, 2 good
   sleepQuality?: number;   // 0-10
@@ -161,6 +161,8 @@ export interface ProgramTask {
   params?: Record<string, string>;
   evidence?: 'guideline' | 'rct' | 'expert';
   citation?: string;
+  /** The one thing that defines the day (module, measurement, day-1 sound step); always shown whatever the budget. */
+  core?: boolean;
 }
 
 export interface ProgramDay { day: number; tasks: ProgramTask[] }
@@ -174,4 +176,7 @@ export interface Program {
   arm: 'soundCbt' | 'cbtFirst' | 'hyperacusisFirst' | 'somaticPlus' | 'sleepFirst' | 'acute';
   notchHz?: number;
   completed: Record<string, string>;   // taskKey(week-day-taskId) -> ISO date
+  /** 'light' after a dose reduction (15 min, one module a week); undefined/'full' otherwise. */
+  dose?: 'full' | 'light';
+  doseChangedAt?: string;
 }
