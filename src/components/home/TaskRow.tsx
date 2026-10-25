@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { AudioWaveform, BookOpen, Brain, Check, ClipboardList, Dumbbell, MoonStar, NotebookPen } from 'lucide-react-native';
+import { AudioWaveform, BookOpen, Brain, CalendarCheck, Check, ClipboardList, Dumbbell, MoonStar, NotebookPen } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { Text } from '@/components/Text';
@@ -11,7 +11,7 @@ import type { ProgramTask } from '@/clinical/types';
 import { taskMeta, taskTitle } from './taskBudget';
 
 export function taskIcon(type: ProgramTask['type'], color: string, size = 20) {
-  const Icon = { sound: AudioWaveform, mind: Brain, education: BookOpen, exercise: Dumbbell, sleep: MoonStar, diary: NotebookPen, assessment: ClipboardList }[type] ?? Brain;
+  const Icon = { sound: AudioWaveform, mind: Brain, education: BookOpen, exercise: Dumbbell, sleep: MoonStar, diary: NotebookPen, assessment: ClipboardList, review: CalendarCheck }[type] ?? Brain;
   return <Icon size={size} color={color} />;
 }
 

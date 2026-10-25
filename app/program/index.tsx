@@ -8,6 +8,9 @@ import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { adaptationAdvice, adherence, dayCompletion, programPosition, taskKey, tasksForDay } from '@/clinical/program';
+import { consequencesOf, consequenceText } from '@/clinical/consequences';
+import { QUESTIONNAIRES, scoreQuestionnaire } from '@/clinical/questionnaires';
+import { mergedLatest } from '@/store/clinical';
 import type { QuestionnaireResult } from '@/clinical/types';
 
 export default function ProgramScreen() {
@@ -30,6 +33,13 @@ export default function ProgramScreen() {
     for (const a of assessments) for (const q of a.questionnaires) if (q.id === 'THI') all.push(q);
     return all.sort((a, b) => a.date.localeCompare(b.date));
   }, [assessments]);
+  /** Change line for the latest THI against the one before it ("8 puan düşüş — anlamlı iyileşme"). */
+  const thiChange = useMemo(() => {
+    if (thi.length < 2) return null;
+    const last = thi[thi.length - 1];
+    const scored = scoreQuestionnaire(QUESTIONNAIRES.THI, last.answers);
+    return consequencesOf('THI', { total: scored.total, subscales: scored.subscales, answers: last.answers }, mergedLatest(assessments), thi[thi.length - 2]).find((c) => c.key.startsWith('consequence.thi.change')) ?? null;
+  }, [thi, assessments]);
   const phq = useMemo(() => {
     let last: QuestionnaireResult | null = null;
     for (const a of assessments) for (const q of a.questionnaires) if (q.id === 'PHQ9' && (!last || q.date > last.date)) last = q;
@@ -171,6 +181,12 @@ export default function ProgramScreen() {
           <Card title={t('prog.adapt.title')}>
             <Text variant="bodySmall" tone="secondary">{t('prog.adapt.body')}</Text>
             {thi.length < 2 ? <Text variant="bodySmall" tone="secondary">{t('prog.adapt.needThi')}</Text> : null}
+            {thiChange ? (
+              <View style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
+                <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: thiChange.tone === 'success' ? colors.success : thiChange.tone === 'warning' ? colors.warning : colors.primary }} />
+                <Text variant="bodyStrong" style={{ flex: 1 }}>{consequenceText(t, thiChange)}</Text>
+              </View>
+            ) : null}
             {advice.map((k) => (
               <View key={k} style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
                 <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: k === 'adapt.safety' ? colors.danger : k === 'adapt.onTrack' || k === 'adapt.responder' || k === 'adapt.improving' ? colors.success : colors.warning }} />

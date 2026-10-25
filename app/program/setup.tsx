@@ -20,7 +20,7 @@ export default function ProgramSetup() {
   const { assessment, profile } = useProfile();
   const { program: existing, setProgram } = useClinical();
 
-  const [minutes, setMinutes] = useState<ProgramPrefs['minutesPerDay']>(30);
+  const [minutes, setMinutes] = useState<ProgramPrefs['minutesPerDay']>(15);
   const [style, setStyle] = useState<ProgramPrefs['style']>('cbt');
   const [acked, setAcked] = useState(false);
   const [preview, setPreview] = useState<Program | null>(null);
@@ -38,6 +38,8 @@ export default function ProgramSetup() {
     hearingDone: !!assessment?.hearing,
     causesDone: !!assessment?.causeAnswers,
     examDone: !!assessment?.exam,
+    sciDone: !!assessment?.questionnaires.some((q) => q.id === 'SCI'),
+    hqDone: !!assessment?.questionnaires.some((q) => q.id === 'HQ'),
   }), [minutes, style, psycho, assessment]);
 
   const generate = () => { if (profile) setPreview(generateProgram(profile, prefs)); };
@@ -93,7 +95,7 @@ export default function ProgramSetup() {
           <>
             <SectionHeader title={t('setup.minutes')} />
             {([15, 30, 45] as const).map((m) => (
-              <OptionCard key={m} label={t(`setup.minutes.${m}`)} hint={t(`setup.minutes.${m}.sub`)} selected={minutes === m} onPress={() => setMinutes(m)} />
+              <OptionCard key={m} label={t(`setup.minutes.opt.${m}`)} hint={t(`setup.minutes.${m}.sub`)} selected={minutes === m} onPress={() => setMinutes(m)} />
             ))}
             <SectionHeader title={t('setup.style')} />
             {(['cbt', 'act', 'mindfulness'] as const).map((s) => (
@@ -116,7 +118,7 @@ export default function ProgramSetup() {
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2] }}>
                 <Chip label={t(`setup.overview.arm.${preview.arm}`)} tone="primary" />
                 <Chip label={t(`setup.style.${style}`)} />
-                <Chip label={t(`setup.minutes.${minutes}`)} />
+                <Chip label={t(`setup.minutes.opt.${minutes}`)} />
                 {preview.notchHz ? <Chip label={`${t('setup.overview.notch')}: ${fmtHz(preview.notchHz)}`} tone="accent" /> : null}
               </View>
               <View style={{ gap: space[2] }}>

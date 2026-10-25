@@ -13,8 +13,14 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { formatClinicCode, isValidClinicCode, normalizeClinicCode } from '@/components/growth/clinicCode';
 
-export type GrowthEvent = 'install' | 'assessmentStarted' | 'assessmentCompleted' | 'programStarted' | 'sessionCompleted' | 'shareOpened';
-export const GROWTH_EVENTS: GrowthEvent[] = ['install', 'assessmentStarted', 'assessmentCompleted', 'programStarted', 'sessionCompleted', 'shareOpened'];
+export type GrowthEvent =
+  | 'install' | 'assessmentStarted' | 'assessmentCompleted' | 'programStarted' | 'sessionCompleted' | 'shareOpened'
+  // Sprint 1 KPI counters (docs/reviews/pm-sprint1.md §S1-12). Names only, never values.
+  | 'checkinDone' | 'questionnaireScreenedOut' | 'shortSessionUsed' | 'reentryUsed' | 'weekReviewOpened' | 'measurementCompleted' | 'day1Completed' | 'day2Returned';
+export const GROWTH_EVENTS: GrowthEvent[] = [
+  'install', 'assessmentStarted', 'assessmentCompleted', 'programStarted', 'sessionCompleted', 'shareOpened',
+  'checkinDone', 'questionnaireScreenedOut', 'shortSessionUsed', 'reentryUsed', 'weekReviewOpened', 'measurementCompleted', 'day1Completed', 'day2Returned',
+];
 
 export interface SafetyPlan {
   /** 3 people I can call. */

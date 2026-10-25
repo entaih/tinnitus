@@ -10,7 +10,7 @@ import { Segmented } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
-import { requestReminderPermission, scheduleDailyReminder } from '@/notifications';
+import { requestReminderPermission, scheduleWeekdayReminders } from '@/notifications';
 
 type Stage = 'carousel' | 'consent' | 'setup';
 
@@ -110,8 +110,8 @@ export default function Onboarding() {
     const ok = await requestReminderPermission();
     if (!ok) { setNotifState('denied'); return; }
     const hour = reminderHour ?? 20;
-    const id = await scheduleDailyReminder(hour, t('notif.title'), t('notif.body'), t('notif.channel'));
-    if (id) { setReminderHour(hour); setNotifState('granted'); } else setNotifState('denied');
+    const ids = await scheduleWeekdayReminders(hour);
+    if (ids.length > 0) { setReminderHour(hour); setNotifState('granted'); } else setNotifState('denied');
   };
 
   if (stage === 'carousel') {

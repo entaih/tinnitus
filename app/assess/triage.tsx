@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Linking, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Phone, ShieldAlert } from 'lucide-react-native';
 import { Screen, Text, Card, Button, OptionCard, Banner, EvidenceChip, useCitation, Disclaimer } from '@/components';
 import { QuestionStep, ReferralList } from '@/components/assess';
@@ -13,6 +13,8 @@ import { computeTriage, type Tier } from '@/clinical/engine';
 import type { RedFlags } from '@/clinical/types';
 
 const BASE = 12;
+/** 3-item re-screen (weeks 8/12, `?short=1`): any "Yes" escalates to the full 12 items (PM sprint 1 §1.3). */
+const SHORT = 3;
 const totalFor = (answers: Answers) => BASE + (answers[5] ? 2 : 0);
 const AUTO_ADVANCE_MS = 350;
 
@@ -44,11 +46,16 @@ export default function TriageScreen() {
   const { colors, space } = useTheme();
   const id = useAssessmentId();
   const saveRedFlags = useClinical((s) => s.saveRedFlags);
+  const completeTask = useClinical((s) => s.completeTask);
   const { open, sheet } = useCitation();
-  const { finish: finishJourney } = useJourney();
+  const { finish: finishJourney, taskKey } = useJourney();
+  const params = useLocalSearchParams<{ short?: string }>();
 
-  const [phase, setPhase] = useState<'intro' | 'items' | 'result'>('intro');
+  const [mode, setMode] = useState<'short' | 'full'>(params.short === '1' ? 'short' : 'full');
+  const [escalated, setEscalated] = useState(false);
+  const [phase, setPhase] = useState<'intro' | 'items' | 'result' | 'clear'>('intro');
   const [step, setStep] = useState(0);
+  const [shortAnswers, setShortAnswers] = useState<Answers>(() => Array(SHORT).fill(null));
   const [answers, setAnswers] = useState<Answers>(() => Array(BASE + 2).fill(null));
   const [result, setResult] = useState<{ tier: Tier; reasons: string[]; mh: boolean } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -62,14 +69,30 @@ export default function TriageScreen() {
     const tier: Tier = tri.tier;
     const reasons = tri.reasons;
     setResult({ tier, reasons, mh: final[0] });
+    if (taskKey) completeTask(taskKey);
     setPhase('result');
   };
 
   const select = (value: boolean) => {
+    if (timer.current) clearTimeout(timer.current);
+    if (mode === 'short') {
+      const next = [...shortAnswers];
+      next[step] = value;
+      setShortAnswers(next);
+      timer.current = setTimeout(() => {
+        if (next.some((v) => v === true)) {
+          // Any "Yes": the full 12-item screen runs and computeTriage re-evaluates the tier.
+          setMode('full'); setEscalated(true); setStep(0);
+        } else if (step + 1 >= SHORT) {
+          if (taskKey) completeTask(taskKey);
+          setPhase('clear');
+        } else setStep(step + 1);
+      }, AUTO_ADVANCE_MS);
+      return;
+    }
     const next = [...answers];
     next[step] = value;
     setAnswers(next);
-    if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => {
       if (step + 1 >= totalFor(next)) finish(next.map((v) => !!v));
       else setStep(step + 1);
@@ -80,6 +103,10 @@ export default function TriageScreen() {
     if (timer.current) clearTimeout(timer.current);
     if (step === 0) setPhase('intro'); else setStep(step - 1);
   };
+
+  const isShort = mode === 'short';
+  const total = isShort ? SHORT : totalFor(answers);
+  const current = isShort ? shortAnswers[step] : answers[step];
 
   const goHub = () => finishJourney('/(tabs)/assess');
 
@@ -93,11 +120,11 @@ export default function TriageScreen() {
         <Card>
           <View style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>
             <ShieldAlert size={28} color={colors.primary} />
-            <Text variant="h2" style={{ flex: 1 }}>{t('triage.intro.title')}</Text>
+            <Text variant="h2" style={{ flex: 1 }}>{t(isShort ? 'triage.short.intro.title' : 'triage.intro.title')}</Text>
           </View>
-          <Text variant="body" tone="secondary">{t('triage.intro.body')}</Text>
+          <Text variant="body" tone="secondary">{t(isShort ? 'triage.short.intro.body' : 'triage.intro.body')}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}>
-            <Text variant="caption" tone="muted">{t('q.intro.items', { n: BASE, min: 2 })}</Text>
+            <Text variant="caption" tone="muted">{t('q.intro.items', { n: isShort ? SHORT : BASE, min: isShort ? 1 : 2 })}</Text>
             <EvidenceChip level="guideline" onPress={() => open('nice2020')} />
           </View>
           <Button title={t('common.start')} onPress={() => { setStep(0); setPhase('items'); }} />
@@ -105,17 +132,28 @@ export default function TriageScreen() {
       ) : null}
 
       {phase === 'items' ? (
-        <QuestionStep
-          index={step}
-          total={totalFor(answers)}
-          progressLabel={t('triage.progress', { n: step + 1, total: totalFor(answers) })}
-          stem={t(`triage.q${step + 1}`)}
-          hint={step === 0 ? t('triage.hint.q1') : step === 9 ? t('triage.hint.q10') : undefined}
-          onBack={back}
-        >
-          <OptionCard label={t('common.no')} selected={answers[step] === false} onPress={() => select(false)} />
-          <OptionCard label={t('common.yes')} selected={answers[step] === true} onPress={() => select(true)} />
-        </QuestionStep>
+        <View style={{ gap: space[3] }}>
+          {escalated ? <Banner tone="warning" title={t('triage.short.escalate')} /> : null}
+          <QuestionStep
+            index={step}
+            total={total}
+            progressLabel={t('triage.progress', { n: step + 1, total })}
+            stem={t(isShort ? `triage.short.q${step + 1}` : `triage.q${step + 1}`)}
+            hint={isShort ? undefined : step === 0 ? t('triage.hint.q1') : step === 9 ? t('triage.hint.q10') : undefined}
+            onBack={back}
+          >
+            <OptionCard label={t('common.no')} selected={current === false} onPress={() => select(false)} />
+            <OptionCard label={t('common.yes')} selected={current === true} onPress={() => select(true)} />
+          </QuestionStep>
+        </View>
+      ) : null}
+
+      {phase === 'clear' ? (
+        <View style={{ gap: space[4] }}>
+          <Banner tone="success" title={t('triage.short.clear.title')} body={t('triage.short.clear.body')} />
+          <Button title={t('common.continue')} onPress={() => finishJourney('/(tabs)')} />
+          <Disclaimer textKey="disclaimer.short" />
+        </View>
       ) : null}
 
       {phase === 'result' && result ? (

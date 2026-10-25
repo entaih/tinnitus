@@ -16,6 +16,10 @@ export interface ProgramPrefs {
   hearingDone?: boolean;
   causesDone?: boolean;
   examDone?: boolean;
+  /** full SCI-8 already taken (otherwise scheduled in week 2 when the SCI-02 screen was positive) */
+  sciDone?: boolean;
+  /** full HQ-14 already taken (otherwise scheduled in week 2 when the THS-C screen was positive) */
+  hqDone?: boolean;
 }
 
 const task = (id: string, overrides: Partial<ProgramTask> = {}): ProgramTask => {
@@ -57,7 +61,65 @@ const MIND_WEEKS: string[][] = [
 const CBTI_WEEKS: Record<number, string[]> = { 2: ['cbti.education'], 3: ['cbti.stimulusControl'], 4: ['cbti.compression'], 5: ['cbti.cognitions'], 6: ['cbti.windDown'], 7: ['cbti.relapse'] };
 const HYPER_WEEKS: Record<number, string[]> = { 2: ['hyper.education'], 3: ['hyper.hierarchy'], 5: ['hyper.earplugs'] };
 
-const DAILY_PRACTICE: Record<number, string> = { 1: 'exercise.pmr', 2: 'exercise.pmr', 3: 'exercise.breathing', 4: 'exercise.breathing', 5: 'exercise.breathing', 6: 'exercise.breathing', 7: 'exercise.breathing', 8: 'exercise.breathing' };
+/**
+ * Daily short practice, rotated from a pool so no two consecutive days repeat (PM sprint 1 §2.3).
+ * The pools follow Öst's applied-relaxation steps: PMR/breathing → release-only → cue-controlled → rapid + attention.
+ * Selection is `pool[(day - 1) % pool.length]`.
+ */
+export const DAILY_PRACTICE_POOL: Record<number, string[]> = {
+  1: ['exercise.pmr', 'exercise.breathing'],
+  2: ['exercise.pmr', 'exercise.breathing'],
+  3: ['exercise.breathing', 'mind.breathingSpace', 'cbt.relax3'],
+  4: ['exercise.breathing', 'mind.breathingSpace', 'cbt.relax3'],
+  5: ['cbt.relax5', 'exercise.breathing', 'mind.breathingSpace'],
+  6: ['cbt.relax5', 'exercise.breathing', 'mind.breathingSpace'],
+  7: ['cbt.relax6', 'mind.breathingSpace', 'exercise.breathing', 'cbt.concentration'],
+};
+/** Mindfulness style: body scan on days 1 and 4, otherwise breathing space / breathing alternate. */
+export const MIND_PRACTICE_POOL = ['mind.breathingSpace', 'exercise.breathing'];
+
+export function dailyPracticeFor(week: number, day: number, style: ProgramPrefs['style']): string {
+  if (style === 'mindfulness') return day === 1 || day === 4 ? 'mind.bodyScan' : MIND_PRACTICE_POOL[(day - 1) % MIND_PRACTICE_POOL.length];
+  const pool = DAILY_PRACTICE_POOL[Math.min(week, 7)] ?? DAILY_PRACTICE_POOL[7];
+  // Week 1 has no practice on day 1 (sound + welcome), so the rotation starts on day 2 with PMR (§2.4 "Yarın: ilk gevşeme becerisi").
+  const offset = week === 1 ? 1 : 0;
+  return pool[(day - 1 - offset + pool.length) % pool.length];
+}
+
+/** Weeks 9–12 (12-week programmes): consolidation with units the 8-week core does not use. */
+const LATE_WEEKS: Record<number, string[]> = {
+  9: ['cbt.concentration', 'cbt.toolbox'],
+  10: ['act.values'],
+  11: ['cbt.restructuring'],
+  12: ['cbt.exposure', 'cbt.relapse'],
+};
+
+/**
+ * Measurement schedule spread across the days of weeks 4, 8 and 12 (one scale a day; mood + anxiety share day 5
+ * because PHQ-2+item 9 and GAD-2 are five items together). Week 4 keeps PHQ item 9 as the only safety re-check;
+ * weeks 8/12 add the 3-item red-flag re-screen. The acute arm measures once, at week 4.
+ */
+export function measurementTasksFor(week: number, day: number, opts: { acute: boolean; insomnia: boolean; totalWeeks: number }): string[] {
+  const { acute, insomnia, totalWeeks } = opts;
+  if (acute) {
+    if (week !== 4) return [];
+    if (day === 5) return ['assess.mood'];
+    if (day === 7) return ['assess.thi', 'assess.redflagsShort'];
+    return [];
+  }
+  if (week === 4) {
+    if (day === 5) return ['assess.mood'];
+    if (day === 7) return ['assess.thi'];
+    return [];
+  }
+  if (week === 8 || (week === 12 && totalWeeks >= 12)) {
+    if (day === 4) return ['assess.redflagsShort'];
+    if (day === 5) return ['assess.mood', 'assess.anxiety'];
+    if (day === 6) return insomnia ? ['assess.sleep'] : [];
+    if (day === 7) return ['assess.thi'];
+  }
+  return [];
+}
 
 export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate = new Date()): Program {
   const d = profile.drivers;
@@ -82,13 +144,16 @@ export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate
   const totalWeeks = acute ? 4 : mild ? 6 : 12;
 
   // Add-on priority when capacity is limited: mood (handled via referral) > insomnia > hyperacusis > somatic > hearing > experimental.
-  const addOnBudget = prefs.minutesPerDay === 15 ? 0 : prefs.minutesPerDay === 30 ? 1 : 2;
+  // Add-on modules are weekly (one short module on one day) and the daily 3-step cap handles overflow,
+  // so even the 15-minute default carries the single most important add-on (PM sprint 1: the consequence lines promise it).
+  const addOnBudget = prefs.minutesPerDay === 15 ? 1 : prefs.minutesPerDay === 30 ? 2 : 3;
   const addOns: string[] = [];
   if (insomnia) addOns.push('cbti');
   if (hyper) addOns.push('hyper');
   if (somatic) addOns.push('somatic');
   const activeAddOns = addOns.slice(0, addOnBudget);
   const notchedExperimental = tonal && activeAddOns.length < 2 && !hyper;
+  const soundEnrichmentOn = !(hyper && activeAddOns.includes('hyper')) && (!severe || prefs.riPositive !== false);
 
   const weeks: ProgramWeek[] = [];
   for (let w = 1; w <= totalWeeks; w++) {
@@ -98,11 +163,11 @@ export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate
     if (w > 8) themeKey = w <= 10 ? 'program.theme.consolidation' : 'program.theme.booster';
     if (acute) themeKey = 'program.theme.acute';
 
-    // Modules for the week (spread across days 1,3,5)
+    // Modules for the week (spread across days 1,3,5). Week 4 of the acute arm measures THI via the measurement schedule.
     let modules = acute
-      ? [['edu.acute', 'edu.hearingProtection', 'cbt.relax1'], ['cbt.psychoeducation', 'cbt.soundEnrichment'], ['cbt.relax3', 'cbt.sleepGuidelines'], ['cbt.negativeThoughts', 'assess.thi']][w - 1] ?? []
+      ? [['edu.acute', 'edu.hearingProtection', 'cbt.relax1'], ['cbt.psychoeducation', 'cbt.soundEnrichment'], ['cbt.relax3', 'cbt.sleepGuidelines'], ['cbt.negativeThoughts']][w - 1] ?? []
       : mild && w === 6 ? ['cbt.relapse', 'cbt.toolbox']
-      : w <= 8 ? [...core[w - 1]] : w <= 10 ? ['cbt.toolbox'] : ['cbt.restructuring', 'cbt.exposure'];
+      : w <= 8 ? [...core[w - 1]] : [...(LATE_WEEKS[w] ?? ['cbt.toolbox'])];
     const moduleDays = [1, 3, 5, 2, 4, 6, 7];
     if (hyper && activeAddOns.includes('hyper')) for (let i = 0; i < modules.length; i++) if (modules[i] === 'cbt.exposure') modules[i] = 'hyper.hierarchy';
 
@@ -111,63 +176,65 @@ export function generateProgram(profile: Profile, prefs: ProgramPrefs, startDate
 
     for (let day = 1; day <= 7; day++) {
       const tasks: ProgramTask[] = [];
-      // 1. Daily check-in (10 s)
+      const background: ProgramTask[] = [];
+      const firstDay = w === 1 && day === 1;
+      // 1. Daily check-in (one tap)
       tasks.push(task('diary.daily'));
-      // 2. Module(s) of the day
+      // 2. Day 1 "find your sound": mixing point right after the check-in so sound starts playing before the welcome module.
+      if (firstDay && soundEnrichmentOn) tasks.push(task('sound.mixingPoint'));
+      // 3. Module(s) of the day
       modules.forEach((m, i) => { if (moduleDays[i] === day) tasks.push(task(m)); });
-      // 3. Daily practice (relaxation) — twice daily in the iCBT protocol; we schedule once with a hint.
-      if (!acute || w >= 2) {
-        const practice = DAILY_PRACTICE[Math.min(w, 8)] ?? 'exercise.breathing';
-        if (prefs.minutesPerDay > 15 || day % 2 === 1) tasks.push(task(prefs.style === 'mindfulness' ? 'mind.breathingSpace' : practice));
+      // 4. Measurements that re-check the plan (weeks 4/8/12, one scale a day) and the gated full scales in week 2.
+      const measurements = measurementTasksFor(w, day, { acute, insomnia, totalWeeks });
+      if (!acute && w === 2 && day === 2 && insomnia && !prefs.sciDone) measurements.push('assess.sleepFull');
+      if (!acute && w === 2 && day === 4 && hyper && !prefs.hqDone) measurements.push('assess.hyperFull');
+      measurements.forEach((id) => tasks.push(task(id)));
+      const measurementDay = measurements.length > 0;
+      // 4b. Add-on modules of the day come before the daily practice so the 3-step cap never hides them.
+      if (activeAddOns.includes('cbti')) { const m = CBTI_WEEKS[w]; if (m && day === 2) m.forEach((id) => tasks.push(task(id))); }
+      if (activeAddOns.includes('hyper')) { const m = HYPER_WEEKS[w]; if (m && day === 4) m.forEach((id) => tasks.push(task(id))); }
+      // 5. Daily practice (rotated pool). Not on day 1 (sound + welcome only) and not on measurement days (the scale is the core).
+      if (!firstDay && !measurementDay && (!acute || w >= 2)) {
+        const practice = dailyPracticeFor(w, day, prefs.style);
+        if (!tasks.some((x) => x.id === practice)) tasks.push(task(practice));
       }
-      // 4. Sound enrichment — default on; replaced by graded pink-noise exposure for hyperacusis.
+      // 6. Sound: enrichment (background, listed last) or graded pink-noise exposure for hyperacusis.
       if (hyper && activeAddOns.includes('hyper')) {
-        if (w >= 2) tasks.push(task('hyper.exposure', { minutes: Math.min(60, 20 + (w - 2) * 5) }));
-      } else if (!severe || prefs.riPositive !== false) {
-        if (w === 1 && day === 1) tasks.push(task('sound.mixingPoint'));
+        if (w >= 2) background.push(task('hyper.exposure', { minutes: Math.min(60, 20 + (w - 2) * 5) }));
+      } else if (soundEnrichmentOn) {
         const target = prefs.riPositive ? 120 : 60;
-        if (w <= 8 || day % 2 === 0) tasks.push(task(notchedExperimental && w >= 3 ? 'sound.notched' : 'sound.enrichment', { minutes: w > 8 ? 30 : target }));
+        if (w <= 8 || day % 2 === 0) background.push(task(notchedExperimental && w >= 3 ? 'sound.notched' : 'sound.enrichment', { minutes: w > 8 ? 30 : target }));
       }
-      // 5. Add-ons
+      // 7. Add-ons
       if (activeAddOns.includes('cbti')) {
-        const m = CBTI_WEEKS[w];
-        if (m && day === 2) m.forEach((id) => tasks.push(task(id)));
         if (w >= 2 && w <= 8) tasks.push(task('sleep.diary'));
-        if (w >= 2) tasks.push(task('sleep.sound'));
-      }
-      if (activeAddOns.includes('hyper')) {
-        const m = HYPER_WEEKS[w];
-        if (m && day === 4) m.forEach((id) => tasks.push(task(id)));
+        if (w >= 2) background.unshift(task('sleep.sound'));
       }
       if (activeAddOns.includes('somatic') && w <= 9) {
         tasks.push(task(ph.includes('somatosensory') && profile.subtypes.includes('phenotype.somatosensory') && day % 2 === 0 ? 'somatic.orofacial' : 'somatic.cervical'));
         if (day === 1) tasks.push(task('somatic.posture'));
       }
-      // 5b. Measurements that change the plan, scheduled once in week 1 only when missing:
-      //     pitch match (tonal tinnitus → notched / narrow-band sound), residual inhibition (sound-first vs CBT-first),
-      //     hearing screen (referral decision) when hearing difficulty or noise exposure is reported.
+      // 7b. Week-1 measurements that change the plan, only when missing: pitch (day 2), cause questions + residual
+      //     inhibition (day 3), self-exam + hearing screen (day 4). Day 1 stays sound + welcome; day 2 is PMR (+ pitch).
       if (!acute && w === 1) {
-        if (day === 1 && !prefs.causesDone) tasks.push(task('assess.causes'));
-        if (day === 2 && !prefs.examDone) tasks.push(task('assess.exam'));
         if (day === 2 && ph.includes('tonal') && !prefs.pitchHz) tasks.push(task('assess.pitch'));
+        if (day === 3 && !prefs.causesDone) tasks.push(task('assess.causes'));
         if (day === 3 && prefs.riPositive === undefined) tasks.push(task('sound.ri'));
+        if (day === 4 && !prefs.examDone) tasks.push(task('assess.exam'));
         if (day === 4 && !prefs.hearingDone && (hearing || ph.includes('noiseInduced'))) tasks.push(task('assess.hearing'));
       }
-      // 6. Hearing pathway: referral task in week 1, hearing tactics in week 5.
+      // 8. Hearing pathway: referral task in week 1, hearing tactics in week 5.
       if (hearing && w === 1 && day === 2) tasks.push(task('hearing.referral'));
       if (hearing && w === 5 && day === 6) tasks.push(task('cbt.hearingTactics'));
-      // 7. Education drip
+      // 9. Education drip (Saturday reading day)
       const edu = ['edu.whatIsTinnitus', 'edu.habituation', 'edu.sleep', 'edu.supplements', 'edu.whenToSeeDoctor', 'edu.hearingAids', 'edu.neuromodulation', 'edu.hearingProtection'];
       if (day === 6 && w <= edu.length) tasks.push(task(edu[w - 1]));
       if (somatic && w === 2 && day === 7) tasks.push(task('edu.somatic'));
       if (hyper && w === 2 && day === 7) tasks.push(task('edu.hyperacusis'));
-      // 8. Measurement schedule: THI at weeks 4, 8, 12 (+ mood/anxiety/sleep at 8); red flags re-screened at 4 and 12.
-      if (day === 7 && (w === 4 || w === 8 || w === 12 || (acute && w === 4))) {
-        tasks.push(task('assess.thi'));
-        tasks.push(task('assess.redflags'));
-        tasks.push(task('assess.mood'));
-        if (w === 8 || w === 12) { tasks.push(task('assess.anxiety')); if (insomnia) tasks.push(task('assess.sleep')); }
-      }
+      // 10. Sunday: one-minute weekly card (after the THI on measurement weeks).
+      if (day === 7) tasks.push(task('review.weekly'));
+      // Background sound is always the last row.
+      tasks.push(...background);
       days.push({ day, tasks });
     }
     if (activeAddOns.includes('cbti')) rationale.push('program.rationale.cbti');

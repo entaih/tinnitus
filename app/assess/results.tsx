@@ -12,7 +12,8 @@ import { CheckRow, Collapsible, GlossaryTerm, useGlossary } from '@/components/h
 import { useTheme } from '@/theme';
 import { rankCauses, confirmatoryTests } from '@/clinical/causes';
 import { computeTriage } from '@/clinical/engine';
-import { generateProgram } from '@/clinical/program';
+import { generateProgram, type ProgramPrefs } from '@/clinical/program';
+import { consequenceText, profileConsequences } from '@/clinical/consequences';
 import { useLocale, useT, formatDate } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
 import { useClinical } from '@/store/clinical';
@@ -49,10 +50,29 @@ export default function ResultsScreen() {
   const gate = programGate(profile, tier);
   const canStart = !gate.blocked && (!gate.needsAck || acked);
 
+  /** Default preferences (15 min a day, CBT); setup lets the user change duration and style. */
+  const prefs = useMemo<ProgramPrefs>(() => {
+    const ps = assessment?.psycho;
+    const has = (id: string) => !!assessment?.questionnaires.some((q) => q.id === id);
+    return {
+      minutesPerDay: 15, style: 'cbt', pitchHz: ps?.pitchHz,
+      riPositive: ps ? (ps.riPositive ?? (ps.riCategory ? ps.riCategory === 'complete' : undefined)) : undefined,
+      hearingDone: !!assessment?.hearing, causesDone: !!assessment?.causeAnswers, examDone: !!assessment?.exam,
+      sciDone: has('SCI'), hqDone: has('HQ'),
+    };
+  }, [assessment]);
+  /** Arm and length of the programme that "Programı başlat" would create (or the stored one). */
+  const plan = useMemo(() => {
+    if (program) return { arm: program.arm, weeks: program.weeks.length, min: 15 };
+    if (!profile) return null;
+    const p = generateProgram(profile, prefs);
+    return { arm: p.arm, weeks: p.weeks.length, min: prefs.minutesPerDay };
+  }, [program, profile, prefs]);
+  const determinants = useMemo(() => profileConsequences(assessment ?? null, 5), [assessment]);
+
   const startProgram = () => {
     if (!profile || !canStart) return;
-    const ps = assessment?.psycho;
-    setProgram(generateProgram(profile, { minutesPerDay: 30, style: 'cbt', pitchHz: ps?.pitchHz, riPositive: ps ? (ps.riPositive ?? (ps.riCategory ? ps.riCategory === 'complete' : undefined)) : undefined, hearingDone: !!assessment?.hearing, causesDone: !!assessment?.causeAnswers, examDone: !!assessment?.exam }));
+    setProgram(generateProgram(profile, prefs));
     router.replace('/(tabs)');
   };
 
@@ -186,14 +206,18 @@ export default function ResultsScreen() {
         </>
       ) : null}
 
-      {/* Layer 2 — programme */}
-      {!program ? (
-        <Card variant="tinted" title={t('results.program.autoTitle')}>
-          <Text variant="body" tone="secondary">{t('results.program.autoBody')}</Text>
-          {gate.reasonKey ? <Text variant="bodySmall" tone={gate.blocked ? 'danger' : 'warning'}>{t(gate.reasonKey)}</Text> : null}
-          <Button variant="ghost" size="sm" title={t('results.program.customize')} onPress={() => router.push('/program/setup')} />
-        </Card>
-      ) : null}
+      {/* Layer 2 — programme: arm + length + daily minutes, then what each score changed (consequences.ts) */}
+      <Card variant="tinted" title={t('results.program.determinants')}>
+        {plan ? <Text variant="bodyStrong">{t('results.program.plan', { arm: t(`setup.overview.arm.${plan.arm}`), n: plan.weeks, min: plan.min })}</Text> : null}
+        {determinants.map((c) => (
+          <View key={c.key} style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
+            <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: c.tone === 'danger' ? colors.danger : c.tone === 'warning' ? colors.warning : c.tone === 'success' ? colors.success : colors.primary }} />
+            <Text variant="body" style={{ flex: 1 }}>{consequenceText(t, c)}</Text>
+          </View>
+        ))}
+        {gate.reasonKey && !program ? <Text variant="bodySmall" tone={gate.blocked ? 'danger' : 'warning'}>{t(gate.reasonKey)}</Text> : null}
+        <Button variant="ghost" size="sm" title={t('results.program.customize')} onPress={() => router.push('/program/setup')} />
+      </Card>
 
       <Card title={t('results.path.title')} right={<Sparkles size={20} color={colors.primary} />}>
         {profile.recommendations.map((r, i) => (
@@ -332,6 +356,9 @@ function buildSummary(a: Assessment, t: (k: string, p?: Record<string, string | 
   const phq = get('PHQ9'); if (phq) lines.push(t('results.summary.phq', { total: phq.total, item9: phqRaw?.answers[8] ?? 0 }));
   const gad = get('GAD7'); if (gad) lines.push(t('results.summary.gad', { total: gad.total }));
   const sci = get('SCI'); if (sci) lines.push(t('results.summary.sci', { total: sci.total }));
+  // Short baseline screens are reported as screens, never as the full scales.
+  const sci02 = get('SCI02'); if (sci02) lines.push(t('results.summary.sci02', { total: sci02.total }));
+  const ths = get('THS'); if (ths) lines.push(t('results.summary.ths', { total: ths.total, c1: a.questionnaires.find((x) => x.id === 'THS')?.answers[0] ?? 0 }));
   const rasst = get('RASST'); if (rasst) lines.push(t('results.summary.rasst', { total: rasst.total }));
   if (h?.sleepProblem) lines.push(t('results.summary.sleep'));
   // Hearing screen, psychoacoustics and phone-test records with units, methods and caveats (audiology review).

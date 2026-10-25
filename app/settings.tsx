@@ -10,7 +10,7 @@ import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
-import { cancelReminders, scheduleDailyReminder } from '@/notifications';
+import { cancelReminders, scheduleWeekdayReminders } from '@/notifications';
 import { exportCsv, hasExportableData } from '@/utils/exportCsv';
 import { AboutGrowthRows, GrowthSettingsRows, WeeklyReviewRow } from '@/components/growth';
 
@@ -27,8 +27,9 @@ export default function SettingsScreen() {
 
   const applyReminder = async (on: boolean, h: number) => {
     if (!on) { await cancelReminders(); s.setReminderHour(null); return; }
-    const id = await scheduleDailyReminder(h, t('notif.title'), t('notif.body'), t('notif.channel'));
-    if (id) s.setReminderHour(h);
+    // Re-schedules all 7 weekday reminders (ids kept in settings); the weekly review and re-entry nudge are untouched.
+    const ids = await scheduleWeekdayReminders(h);
+    if (ids.length > 0) s.setReminderHour(h);
     else { s.setReminderHour(null); Alert.alert(t('settings.reminder'), t('settings.reminder.denied')); }
   };
 

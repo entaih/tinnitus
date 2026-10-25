@@ -10,11 +10,20 @@ import { useClinical } from '@/store/clinical';
 import { useAssessmentId } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
 import { QUESTIONNAIRES, scoreQuestionnaire, type QuestionnaireId } from '@/clinical/questionnaires';
+import { consequencesOf, consequenceText, type Consequence } from '@/clinical/consequences';
+import { latestQuestionnaire, mergedLatest } from '@/store/clinical';
+import { useGrowth } from '@/store/growth';
 import type { QuestionnaireResult } from '@/clinical/types';
 
 const AUTO_ADVANCE_MS = 350;
-/** Two-item screeners (PHQ-2 / GAD-2): the full scale opens only when the first two items sum to >= 3. */
-const GATE: Partial<Record<QuestionnaireId, { items: number; cutoff: number }>> = { PHQ9: { items: 2, cutoff: 3 }, GAD7: { items: 2, cutoff: 3 } };
+/**
+ * Gated scales: the full scale opens only when the first `items` answers sum to >= cutoff. `alwaysAsk` lists item
+ * indices asked even when the gate stays closed (PHQ item 9: self-harm is screened on every mood check).
+ * THS-C asks item C2 only when C1 >= 1.
+ */
+type Gate = { items: number; cutoff: number; alwaysAsk?: number[] };
+const GATE: Partial<Record<QuestionnaireId, Gate>> = { PHQ9: { items: 2, cutoff: 3, alwaysAsk: [8] }, GAD7: { items: 2, cutoff: 3 }, THS: { items: 1, cutoff: 1 } };
+const gatedCount = (g: Gate) => g.items + (g.alwaysAsk?.length ?? 0);
 
 export default function QuestionnaireScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -25,6 +34,7 @@ export default function QuestionnaireScreen() {
   const assessmentId = useAssessmentId();
   const saveQuestionnaire = useClinical((s) => s.saveQuestionnaire);
   const completeTask = useClinical((s) => s.completeTask);
+  const track = useGrowth((s) => s.track);
   const { open, sheet } = useCitation();
   const { finish, inJourney, taskKey } = useJourney();
 
@@ -35,6 +45,9 @@ export default function QuestionnaireScreen() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(() => Array(q?.items.length ?? 0).fill(null));
   const [result, setResult] = useState<ReturnType<typeof scoreQuestionnaire> | null>(null);
+  const [consequences, setConsequences] = useState<Consequence[]>([]);
+  /** Index into gate.alwaysAsk while the screen is closed but mandatory items are still asked; null otherwise. */
+  const [tail, setTail] = useState<number | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
@@ -58,9 +71,19 @@ export default function QuestionnaireScreen() {
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => {
       const gate = GATE[q.id];
+      if (gate && tail != null) {
+        const nextTail = tail + 1;
+        if (gate.alwaysAsk && nextTail < gate.alwaysAsk.length) { setTail(nextTail); setStep(gate.alwaysAsk[nextTail]); }
+        else { setTail(null); submit(next.map((a) => a ?? 0), true); }
+        return;
+      }
       if (gate && step + 1 === gate.items) {
         const screen = next.slice(0, gate.items).reduce<number>((acc, b) => acc + (b ?? 0), 0);
-        if (screen < gate.cutoff) { submit(next.map((a) => a ?? 0), true); return; }
+        if (screen < gate.cutoff) {
+          if (gate.alwaysAsk?.length) { setTail(0); setStep(gate.alwaysAsk[0]); }
+          else submit(next.map((a) => a ?? 0), true);
+          return;
+        }
       }
       if (step + 1 >= total) setPhase('review'); else setStep(step + 1);
     }, AUTO_ADVANCE_MS);
@@ -68,6 +91,12 @@ export default function QuestionnaireScreen() {
 
   const back = () => {
     if (timer.current) clearTimeout(timer.current);
+    const gate = GATE[q.id];
+    if (gate && tail != null) {
+      if (tail > 0 && gate.alwaysAsk) { setTail(tail - 1); setStep(gate.alwaysAsk[tail - 1]); }
+      else { setTail(null); setStep(gate.items - 1); }
+      return;
+    }
     if (step === 0) setPhase('intro'); else setStep(step - 1);
   };
 
@@ -82,8 +111,13 @@ export default function QuestionnaireScreen() {
       total: scored.total,
       subscales: Object.keys(scored.subscales).length ? scored.subscales : screenedOut ? { screen: 2 } : undefined,
     };
+    // Previous result of the same scale (week 4/8/12 change line) and the merged assessment, read before saving.
+    const before = useClinical.getState().assessments;
+    const prev = latestQuestionnaire(before, rec.id);
+    setConsequences(consequencesOf(q.id, { total: scored.total, subscales: rec.subscales, answers: filled }, mergedLatest(before), prev));
     saveQuestionnaire(assessmentId, rec);
-    if (taskKey) completeTask(taskKey);
+    if (taskKey) { completeTask(taskKey); track('measurementCompleted'); }
+    if (screenedOut) track('questionnaireScreenedOut');
     setResult(scored);
     setPhase('done');
   };
@@ -101,7 +135,7 @@ export default function QuestionnaireScreen() {
           <Text variant="h2">{name}</Text>
           <Text variant="body" tone="secondary">{pick(q.description, locale)}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], flexWrap: 'wrap' }}>
-            <Text variant="caption" tone="muted">{GATE[q.id] ? t('q.intro.gated', { n: GATE[q.id]!.items, total }) : t('q.intro.items', { n: total, min: q.minutes })}</Text>
+            <Text variant="caption" tone="muted">{GATE[q.id] ? t('q.intro.gated', { n: gatedCount(GATE[q.id]!), total }) : t('q.intro.items', { n: total, min: q.minutes })}</Text>
             <EvidenceChip level={q.evidence} onPress={() => open(q.citation)} />
           </View>
           <Text variant="bodySmall" tone="secondary">{t('q.intro.hint')}</Text>
@@ -110,7 +144,12 @@ export default function QuestionnaireScreen() {
       ) : null}
 
       {phase === 'items' ? (
-        <QuestionStep index={step} total={GATE[q.id] && step < GATE[q.id]!.items ? GATE[q.id]!.items : total} stem={pick(q.items[step], locale)} onBack={back}>
+        <QuestionStep
+          index={tail != null && GATE[q.id] ? GATE[q.id]!.items + tail : step}
+          total={GATE[q.id] && (tail != null || step < GATE[q.id]!.items) ? gatedCount(GATE[q.id]!) : total}
+          stem={pick(q.items[step], locale)}
+          onBack={back}
+        >
           {q.options.map((o) => (
             <OptionCard
               key={o.value}
@@ -184,6 +223,16 @@ export default function QuestionnaireScreen() {
               <EvidenceChip level={q.evidence} onPress={() => open(q.citation)} />
             </View>
           </Card>
+          {consequences.length ? (
+            <Card variant="tinted" title={t('q.done.consequences.title')}>
+              {consequences.slice(0, 3).map((c) => (
+                <View key={c.key} style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
+                  <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: c.tone === 'danger' ? colors.danger : c.tone === 'warning' ? colors.warning : c.tone === 'success' ? colors.success : colors.primary }} />
+                  <Text variant="body" style={{ flex: 1 }}>{consequenceText(t, c)}</Text>
+                </View>
+              ))}
+            </Card>
+          ) : null}
           {crisis ? (
             <Button variant="secondary" title={t('triage.call183')} icon={<Phone size={18} color={colors.primaryPressed} />} onPress={() => call('183')} />
           ) : null}

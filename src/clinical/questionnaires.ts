@@ -9,7 +9,7 @@
  */
 import type { SeverityBand } from '@/theme/tokens';
 
-export type QuestionnaireId = 'THI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST';
+export type QuestionnaireId = 'THI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'SCI02' | 'THS';
 
 export interface Option { value: number; tr: string; en: string }
 export interface Item { tr: string; en: string; subscale?: string; reverse?: boolean }
@@ -23,8 +23,8 @@ export interface Questionnaire {
   evidence: 'guideline' | 'rct' | 'expert';
   options: Option[];
   items: Item[];
-  /** Score → band + interpretation key */
-  interpret: (total: number) => { band: SeverityBand; key: string };
+  /** Score → band + interpretation key. `answers` is passed for scales whose screen rests on one item (THS C1). */
+  interpret: (total: number, answers?: number[]) => { band: SeverityBand; key: string };
   max: number;
   mcid?: number;
 }
@@ -184,6 +184,35 @@ export const HQ: Questionnaire = {
   },
 };
 
+const THS_OPTIONS: Option[] = [
+  { value: 0, tr: 'Hayır, sorun değil', en: 'No, not a problem' },
+  { value: 1, tr: 'Evet, küçük bir sorun', en: 'Yes, a small problem' },
+  { value: 2, tr: 'Evet, orta düzeyde bir sorun', en: 'Yes, a moderate problem' },
+  { value: 3, tr: 'Evet, büyük bir sorun', en: 'Yes, a big problem' },
+  { value: 4, tr: 'Evet, çok büyük bir sorun', en: 'Yes, a very big problem' },
+];
+
+/**
+ * Tinnitus and Hearing Survey, section C "Sound tolerance" (Henry et al. 2015; public domain, VA). Two items, 0–4 each.
+ * Screen: C1 ≥ 2 → positive (full HQ-14 opens in week 2). C2 is asked only when C1 ≥ 1 (gate in the questionnaire screen).
+ * Turkish wording is a screen translation ("ekran tahmini"), not a validated adaptation.
+ */
+export const THS: Questionnaire = {
+  id: 'THS',
+  name: { tr: 'Ses toleransı taraması (THS-C)', en: 'Sound tolerance screen (THS-C)' },
+  description: { tr: 'Geçen haftayı düşünerek yanıtlayın. İki kısa soru; Türkçe metin ekran çevirisidir.', en: 'Think about the past week. Two short questions.' },
+  minutes: 1,
+  citation: 'henry2015',
+  evidence: 'expert',
+  options: THS_OPTIONS,
+  max: 8,
+  items: [
+    { tr: 'Geçen hafta, çevremdekiler için normal olan sesler bana fazla yüksek ya da rahatsız edici geldi.', en: 'Over the last week, sounds that are normal for people around me seemed too loud or uncomfortable to me.' },
+    { tr: 'Geçen hafta bu ses hassasiyeti günlük yaşamımda ne kadar sorun oldu?', en: 'Over the last week, how much of a problem was this sound sensitivity in my daily life?' },
+  ],
+  interpret: (t, answers) => ((answers?.[0] ?? t) >= 2 ? { band: 'moderate', key: 'ths.positive' } : { band: 'none', key: 'ths.none' }),
+};
+
 const SCI_OPTIONS: Option[] = [
   { value: 0, tr: '0', en: '0' }, { value: 1, tr: '1', en: '1' }, { value: 2, tr: '2', en: '2' }, { value: 3, tr: '3', en: '3' }, { value: 4, tr: '4', en: '4' },
 ];
@@ -215,6 +244,23 @@ export const SCI: Questionnaire = {
   },
 };
 
+/**
+ * SCI-02 (Espie et al. 2014, BMJ Open): the two-item short form of the SCI (items 3 and 7), 0–8;
+ * ≤2 suggests probable insomnia disorder. Used at baseline; the full SCI-8 opens in week 2 only when positive.
+ */
+export const SCI02: Questionnaire = {
+  id: 'SCI02',
+  name: { tr: 'Uyku taraması (SCI-02)', en: 'Sleep screen (SCI-02)' },
+  description: { tr: 'Son bir ay içindeki uykunuzu düşünerek yanıtlayın. İki soru; yüksek puan daha iyi uykuyu gösterir.', en: 'Think about your sleep over the past month. Two questions; higher scores mean better sleep.' },
+  minutes: 1,
+  citation: 'espie2014',
+  evidence: 'rct',
+  options: SCI_OPTIONS,
+  max: 8,
+  items: [SCI.items[2], SCI.items[6]],
+  interpret: (t) => (t <= 2 ? { band: 'severe', key: 'sci02.probable' } : { band: 'none', key: 'sci02.ok' }),
+};
+
 const YESNO: Option[] = [
   { value: 0, tr: 'Hayır', en: 'No' },
   { value: 1, tr: 'Evet', en: 'Yes' },
@@ -239,13 +285,13 @@ export const RASST: Questionnaire = {
   interpret: (t) => (t >= 2 ? { band: 'moderate', key: 'rasst.positive' } : { band: 'none', key: 'rasst.negative' }),
 };
 
-export const QUESTIONNAIRES: Record<QuestionnaireId, Questionnaire> = { THI, HQ, PHQ9, GAD7, SCI, RASST };
+export const QUESTIONNAIRES: Record<QuestionnaireId, Questionnaire> = { THI, HQ, PHQ9, GAD7, SCI, RASST, SCI02, THS };
 
 export function scoreQuestionnaire(q: Questionnaire, answers: number[]) {
   const total = answers.reduce((a, b) => a + b, 0);
   const subscales: Record<string, number> = {};
   q.items.forEach((it, i) => { if (it.subscale) subscales[it.subscale] = (subscales[it.subscale] ?? 0) + (answers[i] ?? 0); });
-  return { total, subscales, ...q.interpret(total) };
+  return { total, subscales, ...q.interpret(total, answers) };
 }
 
 /** TFI bands (Meikle 2012 / Henry 2016) — used when a user enters a clinic-measured TFI. */

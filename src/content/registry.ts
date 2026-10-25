@@ -4,7 +4,7 @@
  * src/content/exercises.ts (somatosensory + breathing) and src/content/articles.ts (education).
  * Keep ids stable: they are persisted inside users' programmes.
  */
-export type UnitType = 'mind' | 'exercise' | 'sound' | 'education' | 'sleep' | 'diary' | 'assessment';
+export type UnitType = 'mind' | 'exercise' | 'sound' | 'education' | 'sleep' | 'diary' | 'assessment' | 'review';
 
 export interface Unit {
   id: string;
@@ -101,6 +101,10 @@ export const UNITS: Record<string, Unit> = Object.fromEntries([
   u('assess.causes', 'assessment', 2, '/assess/causes', 'core', 'adams2026', 'expert'),
   u('assess.exam', 'assessment', 8, '/assess/exam', 'core', 'chen2021', 'expert'),
   u('assess.redflags', 'assessment', 2, '/assess/triage', 'core', 'nice2020', 'guideline'),
+  u('assess.redflagsShort', 'assessment', 1, '/assess/triage?short=1', 'core', 'nice2020', 'guideline'),
+  u('assess.sleepFull', 'assessment', 2, '/assess/questionnaire/SCI', 'core', 'espie2014'),
+  u('assess.hyperFull', 'assessment', 3, '/assess/questionnaire/HQ', 'core', 'khalfa2002', 'expert'),
+  u('review.weekly', 'review', 1, '/week-review', 'core', 'beukes2018', 'expert'),
   u('hearing.referral', 'education', 3, '/education/hearing-aids', 'hearing', 'tunkel2014', 'guideline'),
 ].map((x) => [x.id, x]));
 

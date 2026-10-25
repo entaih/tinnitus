@@ -42,7 +42,7 @@ export interface CaseHistory {
 }
 
 export interface QuestionnaireResult {
-  id: 'THI' | 'TFI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'ISI' | 'TCQ';
+  id: 'THI' | 'TFI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'ISI' | 'TCQ' | 'SCI02' | 'THS';
   date: string;
   answers: number[];
   total: number;
@@ -154,7 +154,7 @@ export interface Recommendation {
 
 export interface ProgramTask {
   id: string;
-  type: 'sound' | 'mind' | 'education' | 'exercise' | 'sleep' | 'diary' | 'assessment';
+  type: 'sound' | 'mind' | 'education' | 'exercise' | 'sleep' | 'diary' | 'assessment' | 'review';
   titleKey: string;
   minutes: number;
   route: string;             // expo-router href

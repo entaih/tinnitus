@@ -50,3 +50,21 @@ Kaynak: `docs/reviews/physician.md`, `audiologist.md`, `ux.md`, `marketing.md` (
 
 ## 5. Başarı ölçütleri (pazarlama ile uyumlu)
 Kurulum → değerlendirme tamamlama ≥ %40 · değerlendirme → program ≥ %60 · D7/D30 ≥ %25/%12 · 4. haftada THI ≥ 7 puan düşüş gösteren kullanıcı ≥ %40 · klinik kodlu kurulum payı izlenir.
+
+## 6. Sprint 1 — "sıkılmadan tedavi" (Ekim 2026, `docs/reviews/pm-sprint1.md`)
+| # | Madde | Durum |
+|---|---|---|
+| S1-01 | Kısa kapılı ölçekler: SCI-02, THS-C (2 madde), PHQ-2 + madde 9; tam SCI-8/HQ-14 2. haftada yalnız pozitiflere | ✅ |
+| S1-02 | "Bu puan şunu değiştirdi" satırları (`consequences.ts`): ölçek sonu, sonuç ekranı, program uyarlaması | ✅ |
+| S1-03 | 1. gün = check-in → Sesinizi bulun → Hoş geldiniz (14 dk); varsayılan 15 dk; en fazla 3 numaralı adım; "Yarın: …" | ✅ |
+| S1-04 | Ana ekranda tek dokunuş check-in (0–10) + 7 günlük mini grafik + haftalık karşılaştırma | ✅ |
+| S1-05 | Ölçüm haftası günlere yayıldı; 3 maddelik kırmızı bayrak yeniden taraması (kapılı) | ✅ |
+| S1-06 | Günlük uygulama rotasyonu (Öst basamakları), 9–12. hafta içeriği, arka plan sesi ayrı satır | ✅ |
+| S1-07 | Seans sonu "Günün notu" (24 kaynaklı içgörü) | ✅ |
+| S1-08 | "Kısa sürüm" (2–3 dk) kullanıcı seçimli | ✅ |
+| S1-09 | Haftalık hedef 5/7 halkası + Pazar haftalık kartı (`/week-review`) | ✅ |
+| S1-10 | Güne özel hatırlatma metinleri, 3 gün yeniden giriş bildirimi, ölçüm haftası hatırlatması | ✅ (ölçüm hatırlatması bağlanmadı) |
+| S1-11 | Sonuç ekranı "Programınızı belirleyen şeyler" | ✅ |
+| S1-12 | Büyüme sayaçları (check-in, kısa sürüm, yeniden giriş, 1→2. gün dönüşü, ölçüm tamamlama) | ✅ |
+
+Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.

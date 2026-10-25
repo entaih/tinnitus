@@ -4,13 +4,13 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2 } from 'lucide-react-native';
 import { Banner, Button, Card, Screen, Text } from '@/components';
-import { JourneyCard, TabHeader, activeDaysOf, activeMinutes, hasBackgroundSound, planForToday, taskIcon, taskMeta, taskTitle } from '@/components/home';
+import { BackgroundSoundRow, JourneyCard, QuickCheckIn, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, isBackground, openTask, planForToday, taskIcon, taskMeta, taskTitle, weekActiveDays } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
 import { useProfile } from '@/hooks/useProfile';
-import { programPosition } from '@/clinical/program';
+import { programPosition, taskKey } from '@/clinical/program';
 import type { QuestionnaireResult } from '@/clinical/types';
 
 function greetingKey(h: number) {
@@ -36,16 +36,19 @@ export default function HomeScreen() {
   const showUrgent = !!profile && profile.triage === 'urgent' && !redFlagAcknowledgedAt;
   const selfHarm = !!profile?.triageReasons.includes('triage.selfHarm');
 
-  // Today's plan: budgeted (or reduced to the two shortest steps after missed days); sound tasks do not count as active minutes.
+  // Today's plan: budgeted, at most 3 numbered steps (or the short split after missed days). Background sound is a
+  // separate row, never the "next" step, and does not count as active minutes.
   const pos = program ? programPosition(program, now) : null;
   const plan = program && pos ? planForToday(program, pos) : null;
   const shown = plan?.shown ?? [];
-  const pendingShown = plan ? shown.filter((x) => !plan.isDone(x)) : [];
-  const nextTask = pendingShown[0] ?? (plan ? plan.more.find((x) => !plan.isDone(x)) : undefined);
+  const numbered = activeTasks(shown);
+  const background = backgroundTasks(shown);
+  const pendingShown = plan ? numbered.filter((x) => !plan.isDone(x)) : [];
+  const nextTask = pendingShown[0] ?? (plan ? plan.more.find((x) => !plan.isDone(x) && !isBackground(x)) : undefined);
   const minutesLeft = activeMinutes(pendingShown);
-  const completion = plan ? { done: shown.filter((x) => plan.isDone(x)).length, total: shown.length } : { done: 0, total: 0 };
+  const completion = plan ? { done: numbered.filter((x) => plan.isDone(x)).length, total: numbered.length } : { done: 0, total: 0 };
   const reentry = !!plan?.reentry;
-  const weekDays = program && pos ? activeDaysOf(program, pos.dayIndex, 7) : null;
+  const weekDone = program && pos ? weekActiveDays(program, pos) : null;
 
   const thiResults = useMemo(() => {
     const all: QuestionnaireResult[] = [];
@@ -77,7 +80,7 @@ export default function HomeScreen() {
 
   const heroBody = reentry
     ? t('home.reentry.body', { min: minutesLeft })
-    : t(hasBackgroundSound(pendingShown) ? 'session.hero.bodySound' : 'session.hero.body', { n: pendingShown.length, min: minutesLeft });
+    : t(plan && background.some((x) => !plan.isDone(x)) ? 'session.hero.bodySound' : 'session.hero.body', { n: pendingShown.length, min: minutesLeft });
 
   return (
     <Screen tab>
@@ -124,6 +127,11 @@ export default function HomeScreen() {
                   <Text variant="caption" style={{ color: 'rgba(255,255,255,0.85)' }}>{taskMeta(t, nextTask)}</Text>
                 </View>
                 <Button title={t('session.start')} icon={<ArrowRight size={18} color={colors.primary} />} variant="inverse" onPress={() => router.push('/session')} />
+                {!reentry ? (
+                  <Pressable accessibilityRole="button" accessibilityLabel={t('home.short')} accessibilityHint={t('session.short.hint')} onPress={() => router.push('/session?short=1')} style={({ pressed }) => ({ minHeight: 44, alignSelf: 'center', justifyContent: 'center', paddingHorizontal: space[3], opacity: pressed ? 0.7 : 1 })}>
+                    <Text variant="bodySmall" style={{ color: '#FFFFFF', textDecorationLine: 'underline' }}>{t('home.short')}</Text>
+                  </Pressable>
+                ) : null}
               </>
             ) : (
               <>
@@ -136,33 +144,35 @@ export default function HomeScreen() {
               </>
             )}
           </LinearGradient>
-          <View style={{ backgroundColor: colors.card, paddingHorizontal: space[4], paddingVertical: space[3], flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text variant="caption" tone="secondary">{t('home.today.tasks', { done: completion.done, total: completion.total })}</Text>
-            <Pressable accessibilityRole="button" onPress={() => router.push('/program')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="caption" tone="primary">{t('home.today.viewProgram')}</Text></Pressable>
+          <View style={{ backgroundColor: colors.card, paddingHorizontal: space[4], paddingVertical: space[2] }}>
+            {background.map((task) => (
+              <BackgroundSoundRow key={task.id} task={task} state={plan?.isDone(task) ? 'done' : 'idle'} onOpen={() => openTask(task, taskKey(pos.week, pos.day, task.id))} />
+            ))}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text variant="caption" tone="secondary">{t('home.today.tasks', { done: completion.done, total: completion.total })}</Text>
+              <Pressable accessibilityRole="button" onPress={() => router.push('/program')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="caption" tone="primary">{t('home.today.viewProgram')}</Text></Pressable>
+            </View>
           </View>
         </View>
       ) : (
         <JourneyCard />
       )}
 
+      <QuickCheckIn />
+
       <View style={{ flexDirection: 'row', gap: space[3] }}>
         {tile(<AudioWaveform size={22} color={colors.primary} />, t('home.quickSound'), t('home.quickSound.short'), () => router.push('/sound/player?preset=enrichment'), colors.primarySoft)}
         {tile(<MoonStar size={22} color={colors.secondaryText} />, t('home.sleep'), t('home.sleep.short'), () => router.push('/sleep'), colors.secondarySoft)}
       </View>
 
-      {program && weekDays ? (
-        <Card title={t('home.weekly')}>
-          <View style={{ flexDirection: 'row', gap: space[3] }}>
-            <View style={{ flex: 1, gap: 2 }}>
-              <Text variant="caption" tone="secondary">{t('home.weekly.adherence')}</Text>
-              <Text variant="h2">{t('home.weekly.daysOf', { done: weekDays.done, total: weekDays.total })}</Text>
-            </View>
-            <View style={{ flex: 1, gap: 2 }}>
-              <Text variant="caption" tone="secondary">{t('home.weekly.thi')}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <TrendIcon size={20} color={trendTone} />
-                <Text variant="bodyStrong" style={{ color: trendTone }}>{thiTrend == null ? trendLabel : `${trendLabel} (${thiTrend > 0 ? '+' : ''}${thiTrend})`}</Text>
-              </View>
+      {program && pos && weekDone != null ? (
+        <Card title={t('home.weekly')} right={<Pressable accessibilityRole="button" onPress={() => router.push('/week-review')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="caption" tone="primary">{t('week.open')}</Text></Pressable>}>
+          <WeeklyGoalRing done={weekDone} />
+          <View style={{ gap: 2 }}>
+            <Text variant="caption" tone="secondary">{t('home.weekly.thi')}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <TrendIcon size={20} color={trendTone} />
+              <Text variant="bodyStrong" style={{ color: trendTone }}>{thiTrend == null ? trendLabel : `${trendLabel} (${thiTrend > 0 ? '+' : ''}${thiTrend})`}</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2], backgroundColor: colors.accentSoft, borderRadius: radius.md, padding: space[3] }}>

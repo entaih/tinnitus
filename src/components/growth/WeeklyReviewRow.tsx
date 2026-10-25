@@ -12,7 +12,7 @@ const WEEKDAYS = [2, 3, 4, 5, 6, 7, 1]; // Monday-first display; values follow e
 
 /**
  * Settings toggle for the weekly review notification. Lives inside the reminder card.
- * The daily reminder cancels every scheduled notification when it changes, so this row re-schedules the
+ * The weekday reminders no longer cancel other notifications; this row still re-syncs the
  * weekly review whenever `reminderHour` changes and re-checks on mount that the notification still exists.
  */
 export function WeeklyReviewRow() {
@@ -32,7 +32,7 @@ export function WeeklyReviewRow() {
     else { setWeeklyReview(null); Alert.alert(t('growth.weekly.toggle'), t('settings.reminder.denied')); }
   };
 
-  // Resync: after the daily reminder was (re)scheduled (which cancels everything) or when the id is gone.
+  // Resync: when the reminder hour changes or the scheduled id is gone.
   useEffect(() => {
     if (!weekly) return;
     let active = true;

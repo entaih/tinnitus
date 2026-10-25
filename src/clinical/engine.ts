@@ -131,9 +131,14 @@ export function buildProfile(a: Assessment): Profile {
   const phq = q(a, 'PHQ9');
   const gad = q(a, 'GAD7');
   const sci = q(a, 'SCI');
+  const sci02 = q(a, 'SCI02');
+  const ths = q(a, 'THS');
   const rasst = q(a, 'RASST');
   const h = a.history;
   const ps = a.psycho;
+  // Short screens (SCI-02 ≤ 2, THS-C item C1 ≥ 2) stand in for the full scales until those are taken in week 2.
+  const sci02Pos = !!sci02 && sci02.total <= 2;
+  const thsPos = !!ths && (ths.answers[0] ?? 0) >= 2;
 
   let severityBand: SeverityBand = 'none';
   let severityScore: number | undefined;
@@ -154,20 +159,20 @@ export function buildProfile(a: Assessment): Profile {
   const p = pta4Hl(a);
   if ((p != null && p > 25) || h?.hearingDifficulty) phenotypes.push('hearingLossAssociated');
   if ((rasst && rasst.total >= 2) || h?.somaticModulation || a.exam?.somaticPositive) phenotypes.push('somatosensory');
-  if ((hq && hq.total >= 16) || (!hq && h?.soundSensitivity)) phenotypes.push('hyperacusis');
+  if ((hq && hq.total >= 16) || thsPos || (!hq && !ths && h?.soundSensitivity)) phenotypes.push('hyperacusis');
 
   const drivers: Driver[] = [];
   if (thi && thi.total >= 38) drivers.push('distress');
   if (gad && gad.total >= 10) drivers.push('anxiety');
   if (phq && phq.total >= 10) drivers.push('depression');
-  if ((sci && sci.total <= 16) || (!sci && h?.sleepProblem)) drivers.push('insomnia');
+  if ((sci && sci.total <= 16) || sci02Pos || (!sci && !sci02 && h?.sleepProblem)) drivers.push('insomnia');
   if (phenotypes.includes('hyperacusis')) drivers.push('hyperacusis');
   if (phenotypes.includes('somatosensory')) drivers.push('somatic');
   if (phenotypes.includes('hearingLossAssociated')) drivers.push('hearingLoss');
   if (thi && (thi.subscales.C ?? 0) >= 8) drivers.push('catastrophizing'); // 5 catastrophic items (Newman 1996), ≥8/20
   if (thi && (thi.answers[0] ?? 0) + (thi.answers[17] ?? 0) >= 4) drivers.push('attention');
 
-  const highDistress = [gad && gad.total >= 10, sci && sci.total <= 16, phq && phq.total >= 10, hq && hq.total >= 16].filter(Boolean).length >= 2;
+  const highDistress = [gad && gad.total >= 10, (sci && sci.total <= 16) || sci02Pos, phq && phq.total >= 10, hq && hq.total >= 16].filter(Boolean).length >= 2;
 
   const recs: Recommendation[] = [];
   const add = (key: string, evidence: Recommendation['evidence'], citation: string, priority: Recommendation['priority']) => recs.push({ key, evidence, citation, priority });

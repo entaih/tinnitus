@@ -34,9 +34,10 @@ export function computeJourney(a: Assessment | null, program: Program | null): J
     { id: 'history', route: '/assess/history', minutes: 2, done: !!h, whyKey: 'journey.why.history' },
     { id: 'thi', route: '/assess/questionnaire/THI', minutes: 4, done: has(a, 'THI'), whyKey: 'journey.why.thi' },
   ];
-  if (h?.soundSensitivity) steps.push({ id: 'hq', route: '/assess/questionnaire/HQ', minutes: 2, done: has(a, 'HQ'), whyKey: 'journey.why.hq' });
+  // Short screens at baseline (PM sprint 1 §1.2): THS-C (2 items) and SCI-02 (2 items); the full HQ-14 / SCI-8 open as week-2 programme tasks when positive.
+  if (h?.soundSensitivity) steps.push({ id: 'hq', route: '/assess/questionnaire/THS', minutes: 1, done: has(a, 'THS') || has(a, 'HQ'), whyKey: 'journey.why.hqShort' });
   if (h?.somaticModulation || h?.neckOrJawPain) steps.push({ id: 'rasst', route: '/assess/questionnaire/RASST', minutes: 1, done: has(a, 'RASST'), whyKey: 'journey.why.rasst' });
-  if (h?.sleepProblem) steps.push({ id: 'sci', route: '/assess/questionnaire/SCI', minutes: 2, done: has(a, 'SCI'), whyKey: 'journey.why.sci' });
+  if (h?.sleepProblem) steps.push({ id: 'sci', route: '/assess/questionnaire/SCI02', minutes: 1, done: has(a, 'SCI02') || has(a, 'SCI'), whyKey: 'journey.why.sciShort' });
   steps.push({ id: 'phq', route: '/assess/questionnaire/PHQ9', minutes: 1, done: has(a, 'PHQ9'), whyKey: 'journey.why.phq' });
   steps.push({ id: 'gad', route: '/assess/questionnaire/GAD7', minutes: 1, done: has(a, 'GAD7'), whyKey: 'journey.why.gad' });
   steps.push({ id: 'results', route: '/assess/results', minutes: 1, done: false, whyKey: 'journey.why.results' });
