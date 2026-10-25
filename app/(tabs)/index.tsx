@@ -1,17 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2 } from 'lucide-react-native';
+import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2, Share2, Trophy } from 'lucide-react-native';
 import { Banner, Button, Card, Screen, Text } from '@/components';
-import { BackgroundSoundRow, JourneyCard, QuickCheckIn, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, openTask, planForToday, taskIcon, taskMeta, taskTitle, weekActiveDays } from '@/components/home';
+import { BackgroundSoundRow, JourneyCard, QuickCheckIn, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, programFinished, refresherActive, structuredWeeks, taskIcon, taskMeta, taskTitle, totalActiveDays, weekActiveDays, weeklyGoalOf } from '@/components/home';
+import { ClinicCodeLine, thiSeries } from '@/components/growth';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
-import { useClinical } from '@/store/clinical';
+import { today, useClinical } from '@/store/clinical';
 import { useProfile } from '@/hooks/useProfile';
 import { programPosition, taskKey } from '@/clinical/program';
-import type { QuestionnaireResult } from '@/clinical/types';
 
 function greetingKey(h: number) {
   if (h < 6) return 'home.greeting.night';
@@ -27,8 +27,20 @@ export default function HomeScreen() {
   const locale = useLocale();
   const displayName = useSettings((s) => s.displayName);
   const { profile } = useProfile();
-  const { program, diary, sessions, assessments, redFlagAcknowledgedAt, acknowledgeRedFlag } = useClinical();
+  // Separate selectors (sprint 3 E11): a diary change re-renders Home but does not recompute the programme-dependent plan.
+  const program = useClinical((s) => s.program);
+  const diary = useClinical((s) => s.diary);
+  const sessions = useClinical((s) => s.sessions);
+  const assessments = useClinical((s) => s.assessments);
+  const redFlagAcknowledgedAt = useClinical((s) => s.redFlagAcknowledgedAt);
+  const acknowledgeRedFlag = useClinical((s) => s.acknowledgeRedFlag);
+  const date = today();
   const now = new Date();
+
+  const ensureMaintenance = useClinical((s) => s.ensureMaintenance);
+  const enterMaintenance = useClinical((s) => s.enterMaintenance);
+  // Programme end → maintenance block bookkeeping (A1): extends the block when its last week is reached.
+  useEffect(() => { ensureMaintenance(); }, [ensureMaintenance, program?.id, program?.phase, date]);
 
   const greeting = `${t(greetingKey(now.getHours()))}${displayName ? `, ${displayName}` : ''}`;
   const dateLabel = formatDate(now.toISOString(), locale, { weekday: 'long', day: 'numeric', month: 'long' });
@@ -37,9 +49,14 @@ export default function HomeScreen() {
   const selfHarm = !!profile?.triageReasons.includes('triage.selfHarm');
 
   // Today's plan: budgeted, at most 3 numbered steps (or the short split after missed days). Background sound is a
-  // separate row, never the "next" step, and does not count as active minutes.
-  const pos = program ? programPosition(program, now) : null;
-  const plan = program && pos ? planForToday(program, pos) : null;
+  // separate row, never the "next" step, and does not count as active minutes. Memoised on the programme and the day.
+  const pos = useMemo(() => (program ? programPosition(program, new Date()) : null), [program, date]); // eslint-disable-line react-hooks/exhaustive-deps
+  const plan = useMemo(() => (program && pos ? planForToday(program, pos) : null), [program, pos]);
+  const core = useMemo(() => (plan ? coreTask(plan.tasks) : null), [plan]);
+  const finished = useMemo(() => (program ? programFinished(program, new Date()) : false), [program, date]); // eslint-disable-line react-hooks/exhaustive-deps
+  const maintenance = isMaintenance(program);
+  const refresher = !!program && refresherActive(program);
+  const goal = weeklyGoalOf(program);
   const shown = plan?.shown ?? [];
   const numbered = activeTasks(shown);
   const background = backgroundTasks(shown);
@@ -50,20 +67,15 @@ export default function HomeScreen() {
   const reentry = !!plan?.reentry;
   const weekDone = program && pos ? weekActiveDays(program, pos) : null;
 
-  const thiResults = useMemo(() => {
-    const all: QuestionnaireResult[] = [];
-    for (const a of assessments) for (const q of a.questionnaires) if (q.id === 'THI') all.push(q);
-    return all.sort((a, b) => a.date.localeCompare(b.date));
-  }, [assessments]);
+  const thiResults = useMemo(() => thiSeries(assessments), [assessments]);
   const thiTrend = thiResults.length >= 2 ? thiResults[thiResults.length - 1].total - thiResults[thiResults.length - 2].total : null;
   const activeDays = useMemo(() => {
     const days = new Set<string>();
-    const cutoff = new Date(now.getTime() - 6 * 86_400_000).toISOString().slice(0, 10);
+    const cutoff = new Date(Date.now() - 6 * 86_400_000).toISOString().slice(0, 10);
     for (const d of diary) if (d.date >= cutoff) days.add(d.date);
     for (const s of sessions) if (s.date.slice(0, 10) >= cutoff) days.add(s.date.slice(0, 10));
     if (program) for (const iso of Object.values(program.completed)) if (iso.slice(0, 10) >= cutoff) days.add(iso.slice(0, 10));
     return days.size;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [diary, sessions, program]);
 
   const TrendIcon = thiTrend == null ? Minus : thiTrend < 0 ? TrendingDown : thiTrend > 0 ? TrendingUp : Minus;
@@ -79,7 +91,6 @@ export default function HomeScreen() {
   );
 
   // Hero line (PM sprint 2 §B1): "Bugünün tek şeyi: {core} · {dk} dk"; once the core is done, the remaining optional count.
-  const core = plan ? coreTask(plan.tasks) : null;
   const coreDone = !!core && !!plan?.isDone(core);
   const optionalLeft = core ? pendingShown.filter((x) => x.id !== core.id && x.type !== 'diary').length : pendingShown.length;
   const heroBody = reentry
@@ -89,6 +100,16 @@ export default function HomeScreen() {
       : core && coreDone
         ? (optionalLeft > 0 ? t('home.today.coreDone', { n: optionalLeft }) : t('home.today.coreDoneNone'))
         : t(plan && background.some((x) => !plan.isDone(x)) ? 'session.hero.bodySound' : 'session.hero.body', { n: pendingShown.length, min: minutesLeft });
+  const heroOverline = program && pos
+    ? maintenance
+      ? t('home.maintenance.sub', { week: maintenanceWeek(program, pos), done: weekDone ?? 0, goal })
+      : `${t('home.today.sub', { week: pos.week, day: pos.day })} · ${t(program.weeks[pos.week - 1]?.themeKey ?? '')}`
+    : '';
+
+  // Programme end (sprint 3 E1): "Programı tamamladınız" with the user's own numbers, one tap into maintenance, share.
+  const finishedWeeks = program ? structuredWeeks(program) : 0;
+  const finishedDays = program ? totalActiveDays(program) : 0;
+  const finishedHeadline = t('growth.moment.programDone.card', { weeks: finishedWeeks, days: finishedDays });
 
   return (
     <Screen tab>
@@ -118,13 +139,34 @@ export default function HomeScreen() {
         />
       ) : null}
 
-      {program && pos ? (
+      {program && finished ? (
         <View style={[{ borderRadius: radius.xl, overflow: 'hidden' }, shadow.e2]}>
           <LinearGradient colors={colors.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: space[5], gap: space[3] }}>
-            <Text variant="overline" style={{ color: 'rgba(255,255,255,0.85)' }}>{t('home.today.sub', { week: pos.week, day: pos.day })} · {t(program.weeks[pos.week - 1]?.themeKey ?? '')}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}>
+              <Trophy size={24} color="#FFFFFF" />
+              <Text variant="h1" style={{ color: '#FFFFFF', flex: 1 }} accessibilityRole="header">{t('home.finished.title')}</Text>
+            </View>
+            <Text variant="body" style={{ color: 'rgba(255,255,255,0.9)' }}>{t('home.finished.body', { n: finishedWeeks, k: finishedDays })}</Text>
+            <Text variant="bodySmall" style={{ color: 'rgba(255,255,255,0.85)' }}>{t('home.finished.maintenanceHint')}</Text>
+            <Button variant="inverse" title={t('home.finished.maintenance')} icon={<ArrowRight size={18} color={colors.primary} />} onPress={enterMaintenance} />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('home.finished.share')}
+              onPress={() => router.push({ pathname: '/share', params: { moment: 'programDone', headline: finishedHeadline } })}
+              style={({ pressed }) => ({ minHeight: 44, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[3], opacity: pressed ? 0.7 : 1 })}
+            >
+              <Share2 size={16} color="#FFFFFF" />
+              <Text variant="bodySmall" style={{ color: '#FFFFFF', textDecorationLine: 'underline' }}>{t('home.finished.share')}</Text>
+            </Pressable>
+          </LinearGradient>
+        </View>
+      ) : program && pos ? (
+        <View style={[{ borderRadius: radius.xl, overflow: 'hidden' }, shadow.e2]}>
+          <LinearGradient colors={colors.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: space[5], gap: space[3] }}>
+            <Text variant="overline" style={{ color: 'rgba(255,255,255,0.85)' }}>{heroOverline}</Text>
             {nextTask ? (
               <>
-                <Text variant="h1" style={{ color: '#FFFFFF' }}>{reentry ? t('home.reentry.title') : t('session.hero.title')}</Text>
+                <Text variant="h1" style={{ color: '#FFFFFF' }}>{reentry ? t('home.reentry.title') : maintenance ? t('home.maintenance.title') : t('session.hero.title')}</Text>
                 <Text variant="body" style={{ color: 'rgba(255,255,255,0.9)' }}>{heroBody}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3], backgroundColor: 'rgba(255,255,255,0.14)', borderRadius: radius.md, padding: space[3] }}>
                   <View style={{ width: 36, height: 36, borderRadius: radius.sm, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>{taskIcon(nextTask.type, '#FFFFFF')}</View>
@@ -147,7 +189,7 @@ export default function HomeScreen() {
                   <CheckCircle2 size={24} color="#FFFFFF" />
                   <Text variant="h2" style={{ color: '#FFFFFF' }}>{t('session.allDone.title')}</Text>
                 </View>
-                <Text variant="body" style={{ color: 'rgba(255,255,255,0.9)' }}>{t('home.today.allDone')}</Text>
+                <Text variant="body" style={{ color: 'rgba(255,255,255,0.9)' }}>{t(maintenance ? 'home.maintenance.allDone' : 'home.today.allDone')}</Text>
                 <Button variant="inverse" title={t('home.sleep')} icon={<MoonStar size={18} color={colors.primary} />} onPress={() => router.push('/sleep')} />
               </>
             )}
@@ -163,8 +205,15 @@ export default function HomeScreen() {
           </View>
         </View>
       ) : (
-        <JourneyCard />
+        <>
+          <JourneyCard />
+          <ClinicCodeLine />
+        </>
       )}
+
+      {refresher && program?.refresherUntil ? (
+        <Banner tone="info" title={t('home.refresher.title')} body={t('home.refresher.body', { date: formatDate(`${program.refresherUntil}T12:00:00`, locale) })} />
+      ) : null}
 
       <QuickCheckIn />
 
@@ -173,9 +222,9 @@ export default function HomeScreen() {
         {tile(<MoonStar size={22} color={colors.secondaryText} />, t('home.sleep'), t('home.sleep.short'), () => router.push('/sleep'), colors.secondarySoft)}
       </View>
 
-      {program && pos && weekDone != null ? (
+      {program && pos && weekDone != null && !finished ? (
         <Card title={t('home.weekly')} right={<Pressable accessibilityRole="button" onPress={() => router.push('/week-review')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="caption" tone="primary">{t('week.open')}</Text></Pressable>}>
-          <WeeklyGoalRing done={weekDone} />
+          <WeeklyGoalRing done={weekDone} goal={goal} />
           <View style={{ gap: 2 }}>
             <Text variant="caption" tone="secondary">{t('home.weekly.thi')}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>

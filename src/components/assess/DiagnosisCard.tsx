@@ -9,7 +9,7 @@ import { Button } from '@/components/Button';
 import { Banner } from '@/components/Banner';
 import { useT } from '@/i18n';
 import type { Diagnosis, DxEntry } from '@/clinical/diagnosis';
-import { bestPath, diagnosisActions } from '@/clinical/diagnosis';
+import { bestPath, certaintyProgress, diagnosisActions } from '@/clinical/diagnosis';
 import type { Assessment, Profile } from '@/clinical/types';
 
 function CriteriaList({ e }: { e: DxEntry }) {
@@ -89,6 +89,8 @@ export function DiagnosisCard({ d, assessment, profile }: { d: Diagnosis; assess
   const misophonia = d.comorbid.some((c) => c.key === 'dx.comorbid.misophonia');
   const metCount = primary?.met.length ?? 0;
   const missingCount = primary?.missing.length ?? 0;
+  const progress = certaintyProgress(d);
+  const barColor = certainty === 'high' ? colors.success : certainty === 'moderate' ? colors.primary : colors.warning;
 
   return (
     <View style={[{ backgroundColor: colors.card, borderRadius: radius.lg, padding: space[4], gap: space[3], borderWidth: isDark ? 1 : 0, borderColor: colors.border }, !isDark ? shadow.e1 : {}]}>
@@ -110,6 +112,14 @@ export function DiagnosisCard({ d, assessment, profile }: { d: Diagnosis; assess
         {d.base.severityBand ? <Chip small tone="neutral" label={t('dx.severity', { band: t(`severity.${d.base.severityBand}`), thi: d.base.thi ?? '' })} /> : null}
       </View>
 
+      {/* Certainty bar: criteria met out of all criteria of the primary diagnosis (sprint 3 A2) */}
+      <View style={{ gap: space[1] }} accessible accessibilityRole="progressbar" accessibilityLabel={t('dx.certaintyBar', { met: progress.met, total: progress.total })} accessibilityValue={{ min: 0, max: progress.total, now: progress.met }}>
+        <Text variant="caption" tone="secondary">{t('dx.certaintyBar', { met: progress.met, total: progress.total })}</Text>
+        <View style={{ height: 6, borderRadius: 3, backgroundColor: colors.skeleton, overflow: 'hidden' }}>
+          <View style={{ width: `${Math.round(progress.fraction * 100)}%`, height: 6, backgroundColor: barColor }} />
+        </View>
+      </View>
+
       {/* 2. Best path: curability + who first + urgency line */}
       <View style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start', borderTopWidth: 1, borderTopColor: colors.border, paddingTop: space[3] }}>
         <Compass size={18} color={colors.primary} style={{ marginTop: 2 }} />
@@ -127,7 +137,7 @@ export function DiagnosisCard({ d, assessment, profile }: { d: Diagnosis; assess
           <Text variant="caption" tone="secondary">{t('dx.sharpen')}</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2] }}>
             {actions.map((a) => (
-              <Button key={a.route} size="sm" variant="secondary" title={`${t(a.key)} · ${t('common.minutes', { n: a.minutes })}`} onPress={() => router.push(a.route as never)} />
+              <Button key={a.route} size="sm" variant="secondary" title={`${t(a.key)} · ${t('common.minutes', { n: a.minutes })}`} onPress={() => router.push(`${a.route}?from=dx` as never)} />
             ))}
           </View>
         </View>

@@ -18,11 +18,14 @@ export type GrowthEvent =
   // Sprint 1 KPI counters (docs/reviews/pm-sprint1.md §S1-12). Names only, never values.
   | 'checkinDone' | 'questionnaireScreenedOut' | 'shortSessionUsed' | 'reentryUsed' | 'weekReviewOpened' | 'measurementCompleted' | 'day1Completed' | 'day2Returned'
   // Sprint 2 (docs/reviews/pm-sprint2.md §B3): "Bugün yalnız özet yeter" chosen on a module.
-  | 'summaryOnlyUsed';
+  | 'summaryOnlyUsed'
+  // Sprint 3 (docs/reviews/pm-sprint3.md §B1/§B3): share moments shown/used, the post-value reminder card shown/accepted.
+  | 'shareMomentShown' | 'shareMomentUsed' | 'reminderPromptShown' | 'reminderPromptAccepted';
 export const GROWTH_EVENTS: GrowthEvent[] = [
   'install', 'assessmentStarted', 'assessmentCompleted', 'programStarted', 'sessionCompleted', 'shareOpened',
   'checkinDone', 'questionnaireScreenedOut', 'shortSessionUsed', 'reentryUsed', 'weekReviewOpened', 'measurementCompleted', 'day1Completed', 'day2Returned',
   'summaryOnlyUsed',
+  'shareMomentShown', 'shareMomentUsed', 'reminderPromptShown', 'reminderPromptAccepted',
 ];
 
 export interface SafetyPlan {
@@ -61,8 +64,13 @@ interface GrowthState {
   weeklyReview: WeeklyReviewSetting | null;
   /** Random, non-identifying code embedded in the invite deep link (dingin://invite?from=…). */
   inviteCode: string;
+  /** When the last share-moment card was shown and which one (at most one distinct moment per week; sprint 3 §B3). */
+  lastShareMomentAt: string | null;
+  lastShareMomentId: string | null;
 
   track: (event: GrowthEvent) => void;
+  /** Records that a share-moment card was shown now (the weekly rate limit reads it). */
+  markShareMoment: (id: string) => void;
   setSafetyPlanItem: (group: 'people' | 'places' | 'activities', index: 0 | 1 | 2, value: string) => void;
   clearSafetyPlan: () => void;
   /** Validates the checksum; returns false (and stores nothing) for an invalid code. */
@@ -83,6 +91,8 @@ const initial = {
   safetyPlan: emptyPlan(),
   clinic: null as ClinicAttribution | null,
   weeklyReview: null as WeeklyReviewSetting | null,
+  lastShareMomentAt: null as string | null,
+  lastShareMomentId: null as string | null,
 };
 
 export const clinicLabel = (code: string) => `Klinik ${formatClinicCode(code)}`;
@@ -97,6 +107,7 @@ export const useGrowth = create<GrowthState>()(
         const now = new Date().toISOString();
         return { counters: { ...s.counters, [event]: (s.counters[event] ?? 0) + 1 }, firstEventAt: s.firstEventAt ?? now, lastEventAt: now };
       }),
+      markShareMoment: (id) => set({ lastShareMomentAt: new Date().toISOString(), lastShareMomentId: id }),
       setSafetyPlanItem: (group, index, value) => set((s) => {
         const list = [...s.safetyPlan[group]] as [string, string, string];
         list[index] = value.slice(0, 80);

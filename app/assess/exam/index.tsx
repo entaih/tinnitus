@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { Stack, router } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { ChevronRight, CircleCheck, Circle, Stethoscope } from 'lucide-react-native';
 import { Banner, Button, Card, Disclaimer, Screen, Text } from '@/components';
 import { useTheme } from '@/theme';
@@ -38,7 +38,9 @@ export default function ExamHubScreen() {
     }
   };
 
-  const firstRoute = steps.length ? `${steps[0].route}?seq=1` : null;
+  const { from } = useLocalSearchParams<{ from?: string }>();
+  // Opened from the diagnosis card: the sequence returns to the results with the certainty comparison.
+  const firstRoute = steps.length ? `${steps[0].route}?seq=1${from === 'dx' ? '&from=dx' : ''}` : null;
 
   return (
     <Screen>

@@ -18,8 +18,15 @@ export interface ScoredAnswers { total: number; subscales?: Record<string, numbe
 export const THI_MCID = 7;
 /** THI increase treated as worsening (adaptationAdvice uses the same threshold). */
 export const THI_WORSE = 11;
+/** THI increase in maintenance that adds a two-week refresher block (PM sprint 3 A1; `program.ts` THI_REFRESHER_RISE). */
+export const THI_REFRESHER = 13;
 
 const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : '0');
+
+export interface ConsequenceOpts {
+  /** The programme is in maintenance: the THI change line speaks of the refresher block / the running block. */
+  maintenance?: boolean;
+}
 
 /**
  * Two-item screeners (PHQ-2 / GAD-2) store zeros for the unasked items and `{ screen: 2 }` as a marker.
@@ -35,7 +42,7 @@ const screenedOut = (s: ScoredAnswers, gateItems = 2, cutoff = 3) => {
  * Lines for one scale. `prev` is the previous result of the same scale (THI only is interpreted as change).
  * `a` supplies context (acute onset shortens the programme).
  */
-export function consequencesOf(id: QuestionnaireId, scored: ScoredAnswers, a: Assessment | null, prev?: QuestionnaireResult | null): Consequence[] {
+export function consequencesOf(id: QuestionnaireId, scored: ScoredAnswers, a: Assessment | null, prev?: QuestionnaireResult | null, opts: ConsequenceOpts = {}): Consequence[] {
   const out: Consequence[] = [];
   const t = scored.total;
   const push = (key: string, tone: ConsequenceTone, params?: Record<string, string | number>) => out.push({ key, tone, params });
@@ -43,7 +50,13 @@ export function consequencesOf(id: QuestionnaireId, scored: ScoredAnswers, a: As
   switch (id) {
     case 'THI': {
       const band = QUESTIONNAIRES.THI.interpret(t).band;
-      if (prev && prev.id === 'THI') {
+      if (prev && prev.id === 'THI' && opts.maintenance) {
+        // Maintenance (A1): +13 → refresher block; a meaningful drop stays "good"; anything else → the block carries on.
+        const drop = prev.total - t;
+        if (-drop >= THI_REFRESHER) push('consequence.thi.maint.refresher', 'warning', { d: -drop });
+        else if (drop >= THI_MCID) push('consequence.thi.change.good', 'success', { d: drop });
+        else push('consequence.thi.maint.steady', 'info', { d: signed(-drop) });
+      } else if (prev && prev.id === 'THI') {
         const drop = prev.total - t;
         if (drop >= THI_MCID) push('consequence.thi.change.good', 'success', { d: drop });
         else if (drop <= -THI_WORSE) push('consequence.thi.change.worse', 'warning', { d: -drop });
@@ -85,6 +98,12 @@ export function consequencesOf(id: QuestionnaireId, scored: ScoredAnswers, a: As
       else if (t >= 15) push('consequence.gad.pos', 'warning');
       else if (t >= 10) push('consequence.gad.moderate', 'info');
       else push('consequence.gad.low', 'success');
+      break;
+    }
+    case 'THIS': {
+      // Interim trend only (A4): a difference against the previous THI-S, never a band or a decision.
+      if (prev && prev.id === 'THIS') push('consequence.this.trend', 'info', { prev: prev.total, now: t, d: signed(t - prev.total) });
+      else push('consequence.this.first', 'info', { t });
       break;
     }
     default:

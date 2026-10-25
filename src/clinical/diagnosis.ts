@@ -215,6 +215,61 @@ export function diagnosisActions(d: Diagnosis, a: Assessment): DiagnosisAction[]
   return out.sort((x, y) => x.minutes - y.minutes).slice(0, 3);
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+// "Kesinlik arttı" loop (PM sprint 3 A2 / E5): the results screen snapshots the primary diagnosis every time it opens
+// and compares the fresh diagnosis against the previous snapshot.
+// ---------------------------------------------------------------------------------------------------------------------
+
+export type DxSnapshot = NonNullable<Assessment['dxSnapshot']>;
+/** In-app measurement families the diagnosis can gain (keys of `dx.action.*`). */
+export type MeasurementKey = 'pitch' | 'hearing' | 'exam' | 'causes';
+
+export interface DxDelta {
+  /** `raised`: certainty went up or more criteria are met; `changed`: another primary cause; `unchanged`: nothing moved. */
+  kind: 'raised' | 'changed' | 'unchanged';
+  before: Certainty; after: Certainty;
+  metBefore: number; metAfter: number;
+  prevPrimaryId: CauseId | null; primaryId: CauseId | null;
+  /** Measurements present now that were not in the previous snapshot (what "raised" the certainty). */
+  measurements: MeasurementKey[];
+  /** Supporting criteria still missing on the current primary diagnosis. */
+  missing: FeatureKey[];
+}
+
+/** Which in-app measurements the assessment already holds. */
+export function measurementsDone(a: Assessment): MeasurementKey[] {
+  const out: MeasurementKey[] = [];
+  if (a.psycho?.pitchHz != null) out.push('pitch');
+  if (a.hearing) out.push('hearing');
+  if (a.exam) out.push('exam');
+  if (a.causeAnswers) out.push('causes');
+  return out;
+}
+
+/** Snapshot of the primary diagnosis for `Assessment.dxSnapshot`. */
+export function snapshotOf(d: Diagnosis, a: Assessment, now = new Date()): DxSnapshot {
+  return { date: now.toISOString(), primaryId: d.primary?.id ?? null, certainty: d.primary?.certainty ?? 'low', met: d.primary?.met.length ?? 0, missing: d.primary?.missing.length ?? 0, measurements: measurementsDone(a) };
+}
+
+/** Compares the fresh diagnosis with the stored snapshot; null when there is nothing to compare against. */
+export function compareDxSnapshot(prev: DxSnapshot | null | undefined, d: Diagnosis, a: Assessment): DxDelta | null {
+  if (!prev) return null;
+  const after = snapshotOf(d, a);
+  const before: Certainty = prev.certainty ?? 'low';
+  const measurements = measurementsDone(a).filter((m) => !(prev.measurements ?? []).includes(m));
+  const base = { before, after: after.certainty ?? 'low', metBefore: prev.met, metAfter: after.met, prevPrimaryId: (prev.primaryId as CauseId | null) ?? null, primaryId: d.primary?.id ?? null, measurements, missing: d.primary?.missing ?? [] };
+  if (prev.primaryId != null && after.primaryId != null && prev.primaryId !== after.primaryId) return { kind: 'changed', ...base };
+  if (RANK[base.after] > RANK[before] || after.met > prev.met) return { kind: 'raised', ...base };
+  return { kind: 'unchanged', ...base };
+}
+
+/** Certainty as a fraction of the primary diagnosis's criteria: met / (met + missing); 0 when nothing is evaluated. */
+export function certaintyProgress(d: Diagnosis): { met: number; total: number; fraction: number } {
+  const met = d.primary?.met.length ?? 0;
+  const total = met + (d.primary?.missing.length ?? 0);
+  return { met, total, fraction: total ? met / total : 0 };
+}
+
 export interface BestPath { curability: Curability; whoKey: string; whenKey: string; armKey: string; arm: ReturnType<typeof programArm> }
 
 /** Referral urgency line per triage tier (same keys the profile recommendations use). */

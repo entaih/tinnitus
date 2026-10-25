@@ -1,34 +1,35 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Share, View } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
-import { captureRef } from 'react-native-view-shot';
 import { FileText, Gift, Image as ImageIcon, MessageSquareText } from 'lucide-react-native';
 import { Button, Card, Disclaimer, Screen, SectionHeader, Text } from '@/components';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { useGrowth } from '@/store/growth';
-import { ProgressCardView, buildCardHtml, buildShareText, computeProgressStats, thiBandKey } from '@/components/growth';
-
-/** Store links are placeholders until the listings exist (docs/store-listing.md). */
-const STORE_IOS = 'https://apps.apple.com/app/dingin/id0000000000';
-const STORE_ANDROID = 'https://play.google.com/store/apps/details?id=com.aiheartech.tinnova';
+import { ProgressCardView, STORE_ANDROID, STORE_IOS, buildCardHtml, buildShareText, computeProgressStats, inviteLink, shareCardImage, thiBandKey } from '@/components/growth';
 
 /**
  * Shareable progress card + "invite a friend". The card is captured from the on-screen View with
- * react-native-view-shot (bundled in Expo Go SDK 57) and handed to expo-sharing; if capture fails the same
+ * react-native-view-shot (bundled in Expo Go) and handed to expo-sharing; if capture fails the same
  * content goes out as an HTML→PDF card (expo-print) or as plain text (Share.share).
+ * Opened from a share moment (`?moment=…&headline=…`, sprint 3 B3) the headline is rendered inside the card.
  */
 export default function ShareScreen() {
   const { colors, space } = useTheme();
   const t = useT();
-  const { assessments, program, diary, sessions } = useClinical();
+  const { moment, headline: headlineParam } = useLocalSearchParams<{ moment?: string; headline?: string }>();
+  const assessments = useClinical((s) => s.assessments);
+  const program = useClinical((s) => s.program);
+  const diary = useClinical((s) => s.diary);
+  const sessions = useClinical((s) => s.sessions);
   const track = useGrowth((s) => s.track);
   const inviteCode = useGrowth((s) => s.inviteCode);
   const cardRef = useRef<React.ComponentRef<typeof View>>(null);
   const [busy, setBusy] = useState<'image' | 'pdf' | 'text' | null>(null);
+  const headline = typeof headlineParam === 'string' && headlineParam.trim() ? headlineParam : undefined;
 
   useEffect(() => { track('shareOpened'); }, [track]);
 
@@ -44,7 +45,8 @@ export default function ShareScreen() {
     bandOf: (total: number) => t(`severity.${thiBandKey(total)}`),
     noThi: t('growth.share.card.noThi'),
   };
-  const text = buildShareText(stats, labels);
+  const baseText = buildShareText(stats, labels);
+  const text = headline ? baseText.replace(/\n/, `\n${headline}\n`) : baseText;
 
   const shareFile = async (uri: string, mimeType: string, UTI: string) => {
     if (await Sharing.isAvailableAsync()) await Sharing.shareAsync(uri, { mimeType, UTI, dialogTitle: t('growth.share.shareTitle') });
@@ -52,7 +54,7 @@ export default function ShareScreen() {
   };
 
   const sharePdf = async () => {
-    const html = buildCardHtml({ title: t('growth.share.card.title'), lines: text.split('\n').slice(1).filter(Boolean).slice(0, -1), footer: t('growth.share.card.footer'), accent: colors.primary, mark: t('app.name') });
+    const html = buildCardHtml({ title: headline ?? t('growth.share.card.title'), lines: text.split('\n').slice(1).filter(Boolean).slice(0, -1), footer: t('growth.share.card.footer'), accent: colors.primary, mark: t('app.name') });
     const { uri } = await Print.printToFileAsync({ html });
     await shareFile(uri, 'application/pdf', 'com.adobe.pdf');
   };
@@ -60,18 +62,9 @@ export default function ShareScreen() {
   const run = async (kind: 'image' | 'pdf' | 'text') => {
     setBusy(kind);
     try {
-      if (kind === 'text') {
-        await Share.share({ message: text, title: t('growth.share.shareTitle') });
-      } else if (kind === 'pdf') {
-        await sharePdf();
-      } else {
-        try {
-          const uri = await captureRef(cardRef, { format: 'png', quality: 1, result: 'tmpfile', fileName: 'dingin-progress' });
-          await shareFile(uri, 'image/png', 'public.png');
-        } catch {
-          await sharePdf(); // view-shot unavailable (e.g. web) → same card as PDF
-        }
-      }
+      if (kind === 'text') await Share.share({ message: text, title: t('growth.share.shareTitle') });
+      else if (kind === 'pdf') await sharePdf();
+      else await shareCardImage(cardRef, { fileName: moment ? `dingin-${moment}` : 'dingin-progress', dialogTitle: t('growth.share.shareTitle'), fallbackText: text });
     } catch {
       Alert.alert(t('growth.share.title'), t('growth.share.fail'));
     } finally {
@@ -80,8 +73,7 @@ export default function ShareScreen() {
   };
 
   const invite = async () => {
-    const link = `dingin://invite?from=${encodeURIComponent(inviteCode)}`;
-    const message = t('growth.invite.message', { link, ios: STORE_IOS, android: STORE_ANDROID });
+    const message = t('growth.invite.message', { link: inviteLink(inviteCode), ios: STORE_IOS, android: STORE_ANDROID });
     try { await Share.share({ message, title: t('growth.invite.title') }); } catch { /* user dismissed */ }
   };
 
@@ -89,9 +81,9 @@ export default function ShareScreen() {
     <>
       <Stack.Screen options={{ title: t('growth.share.title') }} />
       <Screen>
-        <SectionHeader title={t('growth.share.card.title')} />
+        <SectionHeader title={headline ?? t('growth.share.card.title')} />
         <Text variant="bodySmall" tone="secondary">{t('growth.share.card.intro')}</Text>
-        {hasData ? <ProgressCardView ref={cardRef} stats={stats} /> : <Card><Text variant="body" tone="secondary">{t('growth.share.empty')}</Text></Card>}
+        {hasData ? <ProgressCardView ref={cardRef} stats={stats} headline={headline} /> : <Card><Text variant="body" tone="secondary">{t('growth.share.empty')}</Text></Card>}
         {hasData ? (
           <View style={{ gap: space[2] }}>
             <Button title={t('growth.share.image')} icon={<ImageIcon size={18} color={colors.onPrimary} />} loading={busy === 'image'} disabled={busy != null} onPress={() => { void run('image'); }} />

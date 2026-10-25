@@ -7,9 +7,12 @@ import Constants from 'expo-constants';
 import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
 import { translate } from '@/i18n';
-import { MEASUREMENT_HOUR, dailyReminderKeys, isQuietHour, measurementReminderHour, nextMeasurementDate } from '@/notificationRules';
+import { MEASUREMENT_HOUR, dailyReminderKeys, isQuietHour, measurementReminderHour, nextMeasurementDate, programDoneDate, programDoneHour, reminderWeekdays, type ProgramPhase } from '@/notificationRules';
 
-export { MEASUREMENT_HOUR, dailyReminderKeys, isQuietHour, measurementReminderHour, nextMeasurementDate } from '@/notificationRules';
+export {
+  DEFAULT_MAINTENANCE_REMINDER_DAYS, MEASUREMENT_HOUR, PROGRAM_DONE_HOUR, dailyReminderKeys, isQuietHour, measurementReminderHour,
+  nextMeasurementDate, normalizeReminderDays, programDoneDate, programEndDate, reminderWeekdays,
+} from '@/notificationRules';
 
 // Loaded lazily: importing expo-notifications at startup prints Expo Go warnings on every launch.
 type NotificationsModule = typeof import('expo-notifications');
@@ -90,11 +93,8 @@ const currentLocale = () => useSettings.getState().locale;
 
 export const DAILY_REMINDER_KIND = 'dailyReminder';
 
-/** Weekdays in expo-notifications numbering: 1 = Sunday … 7 = Saturday. */
-const ALL_WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
-
 /**
- * Cancel only the seven weekday reminders stored in `settings.reminderIds` and clear the list.
+ * Cancel only the weekday reminders stored in `settings.reminderIds` and clear the list.
  * Leaves the weekly review and the re-entry nudge alone. Never throws.
  */
 export async function cancelReminders(): Promise<void> {
@@ -111,13 +111,24 @@ export function reminderHourBlocked(hour: number): boolean {
 
 /** Programme dose the reminder copy should follow ('light' → "~8 dk: tek adım"); 'full' when there is no programme. */
 const currentDose = (): 'full' | 'light' => (useClinical.getState().program?.dose === 'light' ? 'light' : 'full');
+/** Programme phase the reminders should follow: 'maintenance' only when the programme says so (Sprint 3 C2). */
+const currentPhase = (): ProgramPhase => (useClinical.getState().program?.phase === 'maintenance' ? 'maintenance' : 'active');
 
 /**
- * Schedule the seven weekday reminders at `hour`:`minute` local time (WEEKLY triggers, weekday 1–7 with
- * 1 = Sunday), using the `notif.day.N.title/body` copy for the current locale (or the light-dose variant when
- * the programme dose is 'light'). Replaces the previous set (ids read from and written to
- * `settings.reminderIds`). Returns the new ids — an empty array when the hour is inside the quiet hours,
- * permission is missing or nothing could be scheduled (e.g. Expo Go on Android).
+ * Weekdays the daily reminder is scheduled on right now: all seven in the active programme, the user's
+ * `settings.reminderDays` (default Mon/Wed/Sun) in maintenance.
+ */
+export function currentReminderWeekdays(): number[] {
+  return reminderWeekdays(currentPhase(), useSettings.getState().reminderDays);
+}
+
+/**
+ * Schedule the weekday reminders at `hour`:`minute` local time (WEEKLY triggers, weekday 1–7 with 1 = Sunday):
+ * all seven days in the active programme, only `settings.reminderDays` in maintenance (Sprint 3 C2). Uses the
+ * `notif.day.N.title/body` copy for the current locale (the light-dose or maintenance variant when applicable).
+ * Replaces the previous set (ids read from and written to `settings.reminderIds`). Returns the new ids — an empty
+ * array when the hour is inside the quiet hours, permission is missing or nothing could be scheduled (e.g. Expo Go
+ * on Android).
  */
 export async function scheduleWeekdayReminders(hour: number, minute = 0): Promise<string[]> {
   if (reminderHourBlocked(hour)) return [];
@@ -128,15 +139,16 @@ export async function scheduleWeekdayReminders(hour: number, minute = 0): Promis
   await ensureChannel(translate(locale, 'notif.channel'));
   await cancelReminders();
   const dose = currentDose();
+  const phase = currentPhase();
   const ids: string[] = [];
-  for (const weekday of ALL_WEEKDAYS) {
+  for (const weekday of currentReminderWeekdays()) {
     try {
-      const keys = dailyReminderKeys(weekday, dose);
+      const keys = dailyReminderKeys(weekday, dose, phase);
       const id = await Notifications().scheduleNotificationAsync({
         content: {
           title: translate(locale, keys.title),
           body: translate(locale, keys.body),
-          data: { kind: DAILY_REMINDER_KIND, weekday, dose },
+          data: { kind: DAILY_REMINDER_KIND, weekday, dose, phase },
         },
         trigger: {
           type: Notifications().SchedulableTriggerInputTypes.WEEKLY,
@@ -153,6 +165,7 @@ export async function scheduleWeekdayReminders(hour: number, minute = 0): Promis
   }
   useSettings.getState().setReminderIds(ids);
   useSettings.getState().setReminderDose(ids.length ? dose : null);
+  useSettings.getState().setReminderPhase(ids.length ? phase : null);
   return ids;
 }
 
@@ -257,13 +270,46 @@ export async function scheduleMeasurementReminder(dateISO: string, previousId: s
   }
 }
 
+// ---------------------------------------------------------------------------------------------------
+// Programme completed (Sprint 3 C2): one DATE trigger on the programme's last day, 18:00 local (outside the quiet
+// hours), "Programı tamamladınız — bakım modunu açın". Re-synced from `syncProgramReminders()`; gone in maintenance.
+// ---------------------------------------------------------------------------------------------------
+
+export const PROGRAM_DONE_KIND = 'programDone';
+
 /**
- * Bring the programme-bound reminders in line with the current programme (C1/C4). Reads
+ * Cancel `previousId` (if any) and schedule the one-shot "programme completed" notification for `dateISO`
+ * (`YYYY-MM-DD` → 18:00 local, outside the quiet hours). Does not prompt for permission. Returns the new id or null. Never throws.
+ */
+export async function scheduleProgramDoneReminder(dateISO: string, previousId: string | null): Promise<string | null> {
+  await cancelScheduled(previousId);
+  const { nightStart, nightEnd } = useSettings.getState();
+  const date = measurementReminderDate(dateISO, new Date(), programDoneHour(nightStart, nightEnd));
+  if (!date) return null;
+  installNotificationHandler();
+  if (!(await hasReminderPermission())) return null;
+  const locale = currentLocale();
+  await ensureChannel(translate(locale, 'notif.channel'));
+  try {
+    return await Notifications().scheduleNotificationAsync({
+      content: { title: translate(locale, 'notif.programDone.title'), body: translate(locale, 'notif.programDone.body'), data: { kind: PROGRAM_DONE_KIND, date: dateISO } },
+      trigger: { type: Notifications().SchedulableTriggerInputTypes.DATE, date, channelId: REMINDER_CHANNEL },
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Bring the programme-bound reminders in line with the current programme (C1/C4, Sprint 3 C2). Reads
  * `useClinical.getState().program`:
- *  - measurement Sunday: schedules the next week-4/8/12 reminder (id in `settings.measurementReminderId`),
- *    cancels it when the programme is gone or no measurement is left;
- *  - weekday reminders: re-scheduled when the programme dose changed since they were last scheduled
- *    (the light dose uses different copy); only when the user has reminders on.
+ *  - measurement Sunday: schedules the next week-4/8/12 reminder, or in maintenance the next 4-weekly Sunday
+ *    (id in `settings.measurementReminderId`); cancels it when the programme is gone or no measurement is left;
+ *  - programme completed: the one-shot `programDone` notification on the programme's last day
+ *    (id in `settings.programDoneReminderId`); cancelled once the programme is in maintenance or gone;
+ *  - weekday reminders: re-scheduled when the programme dose or phase changed since they were last scheduled
+ *    (the light dose and maintenance use other copy; maintenance only `settings.reminderDays`); only when the user
+ *    has reminders on.
  * Never throws; silently does nothing where local notifications are unavailable (Expo Go on Android).
  */
 export async function syncProgramReminders(): Promise<void> {
@@ -277,9 +323,19 @@ export async function syncProgramReminders(): Promise<void> {
       const id = await scheduleMeasurementReminder(next, settings.measurementReminderId);
       settings.setMeasurementReminderId(id);
     }
+    const doneDate = program ? programDoneDate(program) : null;
+    if (!doneDate) {
+      if (settings.programDoneReminderId) { await cancelScheduled(settings.programDoneReminderId); settings.setProgramDoneReminderId(null); }
+    } else {
+      const id = await scheduleProgramDoneReminder(doneDate, settings.programDoneReminderId);
+      settings.setProgramDoneReminderId(id);
+    }
     const dose = currentDose();
-    if (program && settings.reminderHour != null && settings.reminderIds.length > 0 && settings.reminderDose !== null && settings.reminderDose !== dose) {
-      await scheduleWeekdayReminders(settings.reminderHour);
+    const phase = currentPhase();
+    const scheduled = settings.reminderHour != null && settings.reminderIds.length > 0 && settings.reminderDose !== null;
+    const stale = settings.reminderDose !== dose || (settings.reminderPhase ?? 'active') !== phase;
+    if (program && scheduled && stale) {
+      await scheduleWeekdayReminders(settings.reminderHour!);
     }
   } catch {
     // never block a task completion on notification plumbing

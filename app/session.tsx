@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 import { Stack, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowRight, Check, ChevronDown, ChevronUp, MoreHorizontal, SkipForward } from 'lucide-react-native';
 import { Banner, Button, Card, EvidenceChip, Screen, Text, useCitation } from '@/components';
-import { BackgroundSoundRow, Segmented, SessionComplete, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, openTask, planForToday, returnEventsFor, taskIcon, taskMeta, taskTitle, weekActiveDays } from '@/components/home';
+import { BackgroundSoundRow, Segmented, SessionComplete, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, returnEventsFor, taskIcon, taskMeta, taskTitle, weekActiveDays, weeklyGoalOf } from '@/components/home';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
@@ -166,7 +166,7 @@ export default function SessionScreen() {
     <Screen footer={footer}>
       <Stack.Screen options={{ title: t('session.title') }} />
       <View style={{ gap: space[1] }}>
-        <Text variant="overline" tone="secondary">{t('home.today.sub', { week: pos.week, day: pos.day })}</Text>
+        <Text variant="overline" tone="secondary">{isMaintenance(program) ? t('home.maintenance.sub', { week: maintenanceWeek(program, pos), done: weekDays, goal: weeklyGoalOf(program) }) : t('home.today.sub', { week: pos.week, day: pos.day })}</Text>
         <Text variant="h1">{allDone ? t('session.allDone.title') : t('session.progress', { done, total })}</Text>
         <View style={{ height: 6, backgroundColor: colors.primaryTrack, borderRadius: 3, overflow: 'hidden', marginTop: space[2] }}>
           <View style={{ width: `${total ? Math.round((done / total) * 100) : 0}%`, height: 6, backgroundColor: colors.primary }} />

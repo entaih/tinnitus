@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { bestPath, diagnose, diagnosisActions, extractFeatures } from '../src/clinical/diagnosis.ts';
+import { bestPath, certaintyProgress, compareDxSnapshot, diagnose, diagnosisActions, extractFeatures, snapshotOf } from '../src/clinical/diagnosis.ts';
 import { buildProfile, computeTriage } from '../src/clinical/engine.ts';
 import { programGate } from '../src/components/assess/programGate.ts';
 import type { Assessment } from '../src/clinical/types.ts';
@@ -133,4 +133,36 @@ test('A2-6 best path carries the programme arm and escalates a self-care user wi
   assert.equal(d.triageTier, 5);
   assert.ok(d.differentials.some((x) => x.id === 'meniere'));
   assert.equal(bestPath(d, buildProfile(men)).whenKey, 'rec.entRoutine');
+});
+
+// --- Sprint 3 A2: "kesinlik arttı" loop (snapshot + comparison) ---
+
+test('A2-7 snapshot/compare: a tonal noise user goes moderate → high after the pitch match; the same snapshot compares as unchanged; a new primary is "changed"', () => {
+  const a = base({ history: { ...hist, side: 'left', character: 'multiple', noiseExposure: true }, hearing: screen(true), exam: { date: '' }, causeAnswers: { highBp: false } });
+  const before = diagnose(a);
+  const snap = snapshotOf(before, a, new Date('2026-10-25T10:00:00Z'));
+  assert.deepEqual(snap, { date: '2026-10-25T10:00:00.000Z', primaryId: 'noiseCochlear', certainty: 'moderate', met: before.primary!.met.length, missing: before.primary!.missing.length, measurements: ['hearing', 'exam', 'causes'] });
+  assert.equal(compareDxSnapshot(undefined, before, a), null, 'nothing to compare on the first open');
+  assert.equal(compareDxSnapshot(snap, before, a)!.kind, 'unchanged');
+  const after = { ...a, psycho: { date: '', pitchHz: 5000 } };
+  const delta = compareDxSnapshot(snap, diagnose(after), after)!;
+  assert.equal(delta.kind, 'raised');
+  assert.equal(delta.before, 'moderate'); assert.equal(delta.after, 'high');
+  assert.deepEqual(delta.measurements, ['pitch']);
+  assert.ok(delta.metAfter > delta.metBefore);
+  assert.equal(delta.primaryId, 'noiseCochlear');
+  // Second open with the refreshed snapshot: no banner.
+  assert.equal(compareDxSnapshot(snapshotOf(diagnose(after), after), diagnose(after), after)!.kind, 'unchanged');
+  // A new primary cause (sudden hearing loss reported later) is reported as "changed", not "raised".
+  const changed = { ...a, redFlags: { ...rf, suddenHearingLoss: true, unilateralSymptoms: true }, history: { ...a.history!, onset: 'lt3m' as const, earFullness: true } };
+  const c = compareDxSnapshot(snap, diagnose(changed), changed)!;
+  assert.equal(c.kind, 'changed'); assert.equal(c.prevPrimaryId, 'noiseCochlear'); assert.equal(c.primaryId, 'ssnhl');
+  // Certainty bar: met / (met + missing).
+  const prog = certaintyProgress(diagnose(after));
+  assert.equal(prog.met, diagnose(after).primary!.met.length);
+  assert.equal(prog.total, prog.met + diagnose(after).primary!.missing.length);
+  assert.ok(prog.fraction > 0.5 && prog.fraction <= 1);
+  // More criteria met at the same certainty still counts as raised.
+  const sameLevel = { ...snap, met: snap.met - 1 };
+  assert.equal(compareDxSnapshot(sameLevel, before, a)!.kind, 'raised');
 });

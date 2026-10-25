@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Alert, Modal, Pressable, ScrollView, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
 import { Banner, Button, Card, Chip, Screen, Text, useCitation } from '@/components';
@@ -7,7 +7,7 @@ import { RationaleList, TaskRow, WeekTimeline, activeMinutes, hasBackgroundSound
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useClinical } from '@/store/clinical';
-import { adaptationAdvice, adherence, assessmentPrefs, dayCompletion, programPosition, regenerateProgram, taskKey, tasksForDay, type Dose, type ProgramPrefs } from '@/clinical/program';
+import { adaptationAdvice, adherence, assessmentPrefs, dayCompletion, isProgramFinished, maintenanceWeekOf, programPosition, refresherActive, regenerateProgram, taskKey, tasksForDay, type Dose, type ProgramPrefs } from '@/clinical/program';
 import { useProfile } from '@/hooks/useProfile';
 import { consequencesOf, consequenceText } from '@/clinical/consequences';
 import { QUESTIONNAIRES, scoreQuestionnaire } from '@/clinical/questionnaires';
@@ -19,10 +19,12 @@ export default function ProgramScreen() {
   const t = useT();
   const locale = useLocale();
   const cite = useCitation();
-  const { program, assessments, completeTask, setProgram, programPrefs } = useClinical();
+  const { program, assessments, completeTask, setProgram, programPrefs, enterMaintenance, ensureMaintenance, startRefresher, restartProgram } = useClinical();
   const { assessment, profile } = useProfile();
   const now = new Date();
   const pos = program ? programPosition(program, now) : null;
+  // Maintenance blocks are appended as the user reaches the last generated week (A1).
+  useEffect(() => { ensureMaintenance(); }, [ensureMaintenance]);
 
   const [week, setWeek] = useState(pos?.week ?? 1);
   const [day, setDay] = useState(pos?.day ?? 1);
@@ -106,17 +108,30 @@ export default function ProgramScreen() {
     setDoseNote(dose);
   };
 
-  // Low adherence is advised from week 3 (adaptationAdvice); the THI-based lines need week 4.
-  const advice = pos.week >= 3 ? adaptationAdvice(program, {
+  const maintenance = program.phase === 'maintenance';
+  const finished = isProgramFinished(program, now);
+  const refresher = refresherActive(program, now);
+  // Low adherence is advised from week 3 (adaptationAdvice); the THI-based lines need week 4. In maintenance the latest
+  // two THI totals decide (a rise of ≥ 13 opens the refresher block).
+  const advice = pos.week >= 3 || maintenance ? adaptationAdvice(program, {
     week: pos.week,
-    thiBaseline: thi[0]?.total,
+    thiBaseline: maintenance && thi.length > 1 ? thi[thi.length - 2].total : thi[0]?.total,
     thiNow: thi.length > 1 ? thi[thi.length - 1].total : undefined,
     adherence14: adherence(program, now, 14),
     phq9: phq?.total,
     phqItem9: phq?.answers[8],
+    phase: program.phase,
   }) : [];
 
   const goToday = () => { setWeek(pos.week); setDay(pos.day); };
+
+  /** Full regeneration (completed map cleared) after a confirmation. */
+  const confirmRestart = () => {
+    Alert.alert(t('prog.restart.confirm.title'), t('prog.restart.confirm.body'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('prog.restart.confirm.ok'), style: 'destructive', onPress: () => { restartProgram(); setWeek(1); setDay(1); } },
+    ]);
+  };
 
   return (
     <>
@@ -131,9 +146,25 @@ export default function ProgramScreen() {
           ))}
         </ScrollView>
 
+        {finished ? (
+          <Card variant="tinted" title={t('prog.finished.title')}>
+            <Text variant="body" tone="secondary">{t('prog.finished.body', { n: program.weeks.length })}</Text>
+            <Button title={t('prog.finished.enter')} onPress={enterMaintenance} />
+          </Card>
+        ) : null}
+        {maintenance ? (
+          <Card variant="tinted">
+            <Text variant="h3">{t('prog.maintenance.title', { n: maintenanceWeekOf(program, pos.week) })}</Text>
+            <Text variant="bodySmall" tone="secondary">{t('prog.maintenance.body')}</Text>
+          </Card>
+        ) : null}
+        {refresher && program.refresherUntil ? (
+          <Banner tone="info" title={t('prog.refresher.title')} body={t('prog.refresher.body', { until: formatDate(program.refresherUntil, locale) })} />
+        ) : null}
+
         <Card>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[2] }}>
-            <Text variant="h3" style={{ flex: 1 }}>{t(w.themeKey)}</Text>
+            <Text variant="h3" style={{ flex: 1 }}>{maintenance && maintenanceWeekOf(program, week) > 0 ? `${t(w.themeKey)} · ${t('prog.maintenance.week', { n: maintenanceWeekOf(program, week) })}` : t(w.themeKey)}</Text>
             {week !== pos.week || day !== pos.day ? <Button size="sm" variant="ghost" title={t('prog.today')} onPress={goToday} /> : null}
           </View>
           <WeekTimeline days={days} selected={day} onSelect={setDay} />
@@ -211,15 +242,17 @@ export default function ProgramScreen() {
             ) : null}
             {advice.map((k) => (
               <View key={k} style={{ flexDirection: 'row', gap: space[2], alignItems: 'flex-start' }}>
-                <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: k === 'adapt.safety' ? colors.danger : k === 'adapt.onTrack' || k === 'adapt.responder' || k === 'adapt.improving' ? colors.success : colors.warning }} />
+                <View style={{ width: 10, height: 10, borderRadius: 5, marginTop: 8, backgroundColor: k === 'adapt.safety' ? colors.danger : k === 'adapt.onTrack' || k === 'adapt.responder' || k === 'adapt.improving' || k === 'adapt.maintenanceImproving' || k === 'adapt.maintenanceSteady' ? colors.success : colors.warning }} />
                 <Text variant="body" style={{ flex: 1 }}>{t(k)}</Text>
               </View>
             ))}
             {advice.includes('adapt.lowAdherence') && program.dose !== 'light' ? <Button size="sm" variant="secondary" title={t('prog.adapt.lighten')} onPress={() => changeDose('light')} /> : null}
+            {advice.includes('adapt.refresher') && !refresher ? <Button size="sm" variant="secondary" title={t('prog.adapt.startRefresher')} onPress={startRefresher} /> : null}
           </Card>
         ) : null}
 
         <Button variant="ghost" title={t('prog.regenerate')} onPress={() => router.push('/program/setup')} />
+        <Button variant="ghost" title={t('prog.restart')} onPress={confirmRestart} />
       </Screen>
 
       <Modal visible={showWhy} transparent animationType="slide" onRequestClose={() => setShowWhy(false)}>

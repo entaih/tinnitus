@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MAX_ACTIVE_STEPS, SUMMARY_MINUTES, asSummary, coreTask, isBackground, isEssential, isModuleTask, splitByBudget, taskQuery } from '../src/components/home/taskBudget.ts';
+import { MAINTENANCE_GOAL_DAYS, MAX_ACTIVE_STEPS, SUMMARY_MINUTES, WEEKLY_GOAL_DAYS, asSummary, coreTask, isBackground, isEssential, isModuleTask, isSummaryTask, maintenanceWeek, programFinished, refresherActive, splitByBudget, structuredWeeks, taskQuery, totalActiveDays, weeklyGoalOf } from '../src/components/home/taskBudget.ts';
 import { generateProgram, tasksForDay, type ProgramPrefs } from '../src/clinical/program.ts';
-import type { Profile, ProgramTask } from '../src/clinical/types.ts';
+import type { Profile, Program, ProgramTask } from '../src/clinical/types.ts';
 
 // PM sprint 2 §B1 (defects D1, D2): the weekly card and the week's module are never pushed behind "Daha fazla".
 
@@ -112,4 +112,50 @@ test('simulation: no Sunday hides review.weekly; the core is always shown; at mo
       assert.ok(numbered(shown).length <= MAX_ACTIVE_STEPS + 2, `${label}: ${numbered(shown).length} numbered steps (${ids(numbered(shown)).join(',')})`);
     }
   }
+});
+
+// --- Sprint 3 (PM §B2): numbered sound steps, summary label, programme end and maintenance helpers ----------------
+
+test('B2: a player task flagged numbered is a numbered step, not a background row (hyperacusis day 1)', () => {
+  const bg = task('hyper.exposure', 'sound', 10, { route: '/sound/player?preset=hyper' });
+  const numberedStep = task('hyper.exposure', 'sound', 10, { route: '/sound/player?preset=hyper', numbered: true, core: true });
+  assert.ok(isBackground(bg));
+  assert.ok(!isBackground(numberedStep));
+  const day = [task('diary.daily', 'diary', 1), task('cbt.welcome', 'mind', 5), numberedStep];
+  const { shown } = splitByBudget(day, 15);
+  assert.deepEqual(ids(numbered(shown)), ['diary.daily', 'cbt.welcome', 'hyper.exposure']);
+  assert.equal(coreTask(day)?.id, 'hyper.exposure');
+  // Mixing point / RI stay numbered as before (not on the player route).
+  assert.ok(!isBackground(task('sound.ri', 'sound', 3, { route: '/assess/ri' })));
+});
+
+test('B2: light-dose summary tasks are recognised by params.summary', () => {
+  assert.ok(isSummaryTask({ params: { summary: '1' } }));
+  assert.ok(!isSummaryTask({ params: {} }));
+  assert.ok(!isSummaryTask({}));
+  assert.ok(isSummaryTask(asSummary(task('cbt.restructuring', 'mind', 16))));
+});
+
+const weeks = (n: number) => Array.from({ length: n }, (_, i) => ({ week: i + 1, themeKey: 'w', rationaleKeys: [], days: Array.from({ length: 7 }, (_, d) => ({ day: d + 1, tasks: [] as ProgramTask[] })) }));
+const prog = (over: Partial<Program> = {}): Program => ({ id: 'p', createdAt: '2026-09-01T00:00:00.000Z', startDate: '2026-09-01', arm: 'soundCbt', completed: {}, weeks: weeks(6), ...over });
+
+test('B2: a 6-week programme is finished on day 43, not on day 42, and never once in maintenance', () => {
+  assert.ok(!programFinished(prog(), new Date('2026-10-12T12:00:00')), 'day 42 = w6d7');
+  assert.ok(programFinished(prog(), new Date('2026-10-13T12:00:00')), 'day 43');
+  assert.ok(!programFinished(prog({ phase: 'maintenance', maintenanceStartDate: '2026-10-13', weeks: weeks(10) }), new Date('2026-10-13T12:00:00')));
+});
+
+test('B2: weekly goal, maintenance week and refresher helpers', () => {
+  assert.equal(weeklyGoalOf(null), WEEKLY_GOAL_DAYS);
+  assert.equal(weeklyGoalOf(prog()), WEEKLY_GOAL_DAYS);
+  assert.equal(weeklyGoalOf(prog({ phase: 'maintenance' })), MAINTENANCE_GOAL_DAYS);
+  assert.equal(weeklyGoalOf(prog({ weeklyGoal: 4 })), 4);
+  const m = prog({ phase: 'maintenance', maintenanceStartDate: '2026-10-13', weeks: weeks(10) });
+  assert.equal(structuredWeeks(m), 6);
+  assert.equal(maintenanceWeek(m, { week: 7 }), 1);
+  assert.equal(maintenanceWeek(prog(), { week: 3 }), 0);
+  assert.equal(totalActiveDays(prog({ completed: { '1-1-a': '2026-09-01T10:00:00.000Z', '1-1-b': '2026-09-01T12:00:00.000Z', '1-3-a': '2026-09-03T10:00:00.000Z' } })), 2);
+  assert.ok(refresherActive({ refresherUntil: '2026-10-20' }, new Date('2026-10-20T08:00:00')));
+  assert.ok(!refresherActive({ refresherUntil: '2026-10-20' }, new Date('2026-10-21T08:00:00')));
+  assert.ok(!refresherActive(prog()));
 });

@@ -1,5 +1,5 @@
 import type { Program, ProgramTask } from '@/clinical/types';
-import { dayCompletion, taskKey, tasksForDay } from '@/clinical/program';
+import { dayCompletion, isProgramFinished, maintenanceWeekOf, structuredWeeksOf, taskKey, tasksForDay } from '@/clinical/program';
 import type { TFn } from '@/i18n';
 
 /** Default active-minute budget when the programme preferences are not stored (Sprint 1: 30 → 15). */
@@ -8,8 +8,12 @@ export const DEFAULT_MINUTES_PER_DAY = 15;
 export const MAX_ACTIVE_STEPS = 3;
 
 /** Sound tasks play in the background and do not count against the active-minute budget. */
-/** Long-running player presets (enrichment, notched, sleep, graded exposure) run in the background; short interactive sound steps (mixing point, RI) are numbered. */
-export const isBackground = (task: ProgramTask) => task.type === 'sound' && task.route.startsWith('/sound/player');
+/**
+ * Long-running player presets (enrichment, notched, sleep, graded exposure) run in the background; short interactive
+ * sound steps (mixing point, RI) are numbered, as is any player task the generator flags `numbered` (sprint 3 E2: the
+ * hyperacusis day-1 "find your comfortable sound").
+ */
+export const isBackground = (task: ProgramTask) => task.type === 'sound' && task.route.startsWith('/sound/player') && !task.numbered;
 /** Daily check-in, measurements and the 1-minute weekly card are always shown, whatever the budget or the step cap. */
 export const isEssential = (task: ProgramTask) => task.type === 'diary' || task.type === 'assessment' || task.type === 'review';
 /** A module read from the Mind library (CBT/ACT/mindfulness/CBT-I/hyperacusis) — the only task kind with a 2-minute summary variant. */
@@ -44,9 +48,14 @@ export function taskTitle(t: TFn, task: ProgramTask): string {
   return t(task.titleKey).replace(/\s*\((deneysel|experimental)\)\s*$/i, '');
 }
 
-/** "{n} dk" for active tasks, "Arka planda, gün içinde" for sound tasks (no minute target). */
+/** True for a module task generated (light dose) or converted (short split) as its 2-minute summary. */
+export const isSummaryTask = (task: Pick<ProgramTask, 'params'>) => task.params?.summary === '1';
+
+/** "{n} dk" for active tasks, "2 dk özet" for summary modules, "Arka planda, gün içinde" for sound tasks (no minute target). */
 export function taskMeta(t: TFn, task: ProgramTask): string {
-  return isBackground(task) ? t('task.background') : t('common.minutes', { n: task.minutes });
+  if (isBackground(task)) return t('task.background');
+  if (isSummaryTask(task)) return t('task.summaryMeta', { n: task.minutes });
+  return t('common.minutes', { n: task.minutes });
 }
 
 /** Query string for a task's view params (e.g. summary=1) plus the taskKey; values are URI-encoded. Pure (openTask uses it). */
@@ -133,6 +142,41 @@ export function activeDaysOf(program: Program, dayIndex: number, n = 7): { done:
 
 /** Weekly goal: 5 active days out of 7 (no daily streak — a missed day costs the week nothing). */
 export const WEEKLY_GOAL_DAYS = 5;
+/** Weekly goal in maintenance (PM sprint 3 §2): 3 active days out of 7. */
+export const MAINTENANCE_GOAL_DAYS = 3;
+
+/** True once the programme has been switched to maintenance (weeks appended by `enterMaintenance`). */
+export const isMaintenance = (p: Pick<Program, 'phase'> | null | undefined) => p?.phase === 'maintenance';
+
+/** The goal the ring targets: `program.weeklyGoal` when the generator wrote it, else 3 in maintenance and 5 otherwise. */
+export function weeklyGoalOf(p: Pick<Program, 'phase' | 'weeklyGoal'> | null | undefined): number {
+  if (p?.weeklyGoal != null && p.weeklyGoal > 0) return p.weeklyGoal;
+  return isMaintenance(p) ? MAINTENANCE_GOAL_DAYS : WEEKLY_GOAL_DAYS;
+}
+
+/** True while a refresher block (THI +13 in maintenance) is running: `refresherUntil` is today or later. */
+export function refresherActive(p: Pick<Program, 'refresherUntil'> | null | undefined, now = new Date()): boolean {
+  if (!p?.refresherUntil) return false;
+  return p.refresherUntil >= now.toISOString().slice(0, 10);
+}
+
+/** True once the structured weeks are behind the user and maintenance has not started (sprint 3 E1): `isProgramFinished` (Team A, A1). */
+export const programFinished = (p: Program, now = new Date()): boolean => isProgramFinished(p, now);
+
+/** Distinct calendar days with at least one completed task over the whole programme (the "{k} etkin gün" of the finished card). */
+export function totalActiveDays(p: Pick<Program, 'completed'>): number {
+  const days = new Set<string>();
+  for (const iso of Object.values(p.completed)) days.add(iso.slice(0, 10));
+  return days.size;
+}
+
+/** Number of structured (non-maintenance) weeks (the "{n} hafta" of the finished card): all weeks while active, else the weeks before `maintenanceStartDate`. */
+export const structuredWeeks = (p: Pick<Program, 'weeks' | 'startDate' | 'maintenanceStartDate' | 'phase'>): number => structuredWeeksOf(p);
+
+/** 1-based maintenance week ("Bakım · 3. hafta"); 0 while the programme is active. */
+export function maintenanceWeek(p: Pick<Program, 'weeks' | 'startDate' | 'maintenanceStartDate' | 'phase'>, pos: { week: number }): number {
+  return isMaintenance(p) ? Math.max(1, maintenanceWeekOf(p, pos.week)) : 0;
+}
 
 /** Active days in the current programme week (day 1 … today). */
 export function weekActiveDays(program: Program, pos: { week: number; day: number; dayIndex: number }): number {

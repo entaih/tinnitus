@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, View, useWindowDimensions } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { DX_RETURN_ROUTE } from '@/hooks/useJourney';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import { Ear, Headphones } from 'lucide-react-native';
@@ -41,7 +42,9 @@ export default function HearingScreen() {
   const t = useT();
   const { colors, space, radius } = useTheme();
   const { width } = useWindowDimensions();
-  const params = useLocalSearchParams<{ ok?: string; hp?: string }>();
+  const params = useLocalSearchParams<{ ok?: string; hp?: string; from?: string }>();
+  /** `?from=dx`: opened from the diagnosis card; the result returns to the results screen (no chaining into the pitch match). */
+  const fromDx = params.from === 'dx';
   const ambientOk = params.ok === '1';
   const headphonesVerified = params.hp === '1';
   const maxVolume = useSettings((s) => s.maxVolume);
@@ -208,7 +211,7 @@ export default function HearingScreen() {
             <Button title={t('common.continue')} onPress={() => setPhase('mode')} />
           ) : (
             <>
-              <Button title={t('psy.hp.title')} onPress={() => router.replace('/assess/headphone-check?next=/assess/hearing')} />
+              <Button title={t('psy.hp.title')} onPress={() => router.replace(`/assess/headphone-check?next=${encodeURIComponent(fromDx ? '/assess/hearing?from=dx' : '/assess/hearing')}`)} />
               <Button variant="ghost" title={t('psy.hear.skipCheck')} onPress={() => setPhase('mode')} />
             </>
           )}
@@ -310,7 +313,7 @@ export default function HearingScreen() {
           ))}
           <Text variant="bodySmall" tone="secondary">{t('psy.hear.notchRule')}</Text>
           <Disclaimer textKey="psy.hear.disclaimer" />
-          <Button title={saved ? t('psy.hear.continuePitch') : t('psy.saveContinue')} onPress={() => { save(); router.replace('/assess/pitch'); }} />
+          <Button title={fromDx ? t('dx.backToResults') : saved ? t('psy.hear.continuePitch') : t('psy.saveContinue')} onPress={() => { save(); router.replace(fromDx ? DX_RETURN_ROUTE : '/assess/pitch'); }} />
           <Button variant="secondary" title={t('psy.hear.backHub')} onPress={() => { save(); router.back(); }} />
           <Button variant="ghost" title={t('psy.hear.redo')} onPress={redo} />
           <Disclaimer />

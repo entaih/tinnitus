@@ -139,6 +139,33 @@ export const soundStrings = {
     'sound.target.reached': 'Hedef süreye ulaştınız.',
     'sound.target.complete': 'Tamamlandı say',
     'sound.target.completed': 'Bugünün adımı tamamlandı olarak kaydedildi.',
+    'sound.target.maint': 'Bakım: günde 30 dakika arka plan ses yeterlidir.',
+
+    // --- 60-second trial (Sprint 3 C1): task-free, single button, works on the speaker ---
+    'sound.trial.title': '60 saniyelik deneme',
+    'sound.trial.body': 'Rahatlatıcı pembe gürültü, 60 saniye. Görev değildir; yalnızca nasıl hissettirdiğine bakın.',
+    'sound.trial.start': 'Başlat',
+    'sound.trial.a11y.start': '60 saniyelik denemeyi başlat',
+    'sound.trial.remaining': '{s} sn kaldı',
+    'sound.trial.speaker': 'Kulaklık yoksa hoparlörden de çalışır; sesi rahat bir düzeyde tutun.',
+    'sound.trial.done.title': 'Deneme bitti',
+    'sound.trial.done.body': 'Hoşunuza gittiyse program bunu her gün sizin için ayarlayacak.',
+
+    // --- Headphone check gate on the first sound (Sprint 3 C1) ---
+    'sound.hp.title': 'Kulaklık kontrolü (1 dk)',
+    'sound.hp.body': 'İlk ses için bir kez: sol/sağ kanal ve ortam gürültüsü. Hoparlörle de devam edebilirsiniz.',
+    'sound.hp.go': 'Kontrolü yap',
+    'sound.hp.skip': 'Hoparlörle devam',
+
+    // --- Night timer (Sprint 3 C3) ---
+    'player.timer.night': 'Sessiz saat: zamanlayıcı {n} dk (uyku hijyeni). İsterseniz değiştirin.',
+    'sleep.card.timerNight': 'Zamanlayıcı: {n} dk',
+
+    // --- Accessibility labels for links inside the player ---
+    'player.a11y.mixingLink': 'Karışma noktası ayarını aç',
+    'player.a11y.rematch': 'Perde eşlemeyi yinele',
+    'player.a11y.restoreTune': 'Otomatik ayara dön',
+    'player.a11y.closeSheet': 'Katman listesini kapat',
 
     // --- Mixing point ---
     'mixing.title': 'Karışma noktası',
@@ -397,6 +424,29 @@ export const soundStrings = {
     'sound.target.reached': 'You reached the target time.',
     'sound.target.complete': 'Count as done',
     'sound.target.completed': 'Today\'s step was recorded as done.',
+    'sound.target.maint': 'Maintenance: 30 minutes of background sound a day is enough.',
+
+    'sound.trial.title': '60-second trial',
+    'sound.trial.body': 'Soothing pink noise for 60 seconds. Not a task; just see how it feels.',
+    'sound.trial.start': 'Start',
+    'sound.trial.a11y.start': 'Start the 60-second trial',
+    'sound.trial.remaining': '{s} s left',
+    'sound.trial.speaker': 'Works on the speaker too if you have no headphones; keep the level comfortable.',
+    'sound.trial.done.title': 'Trial finished',
+    'sound.trial.done.body': 'If you liked it, the programme will set this up for you every day.',
+
+    'sound.hp.title': 'Headphone check (1 min)',
+    'sound.hp.body': 'Once, before the first sound: left/right channel and room noise. You can also continue on the speaker.',
+    'sound.hp.go': 'Run the check',
+    'sound.hp.skip': 'Continue on the speaker',
+
+    'player.timer.night': 'Quiet hours: timer {n} min (sleep hygiene). Change it if you like.',
+    'sleep.card.timerNight': 'Timer: {n} min',
+
+    'player.a11y.mixingLink': 'Open the mixing-point setting',
+    'player.a11y.rematch': 'Repeat the pitch match',
+    'player.a11y.restoreTune': 'Back to auto-tune',
+    'player.a11y.closeSheet': 'Close the layer list',
 
     'mixing.title': 'Mixing point',
     'mixing.intro1': 'The mixing point is the level at which an outside sound starts to blend with your tinnitus. Sound enrichment sits just below it: the tinnitus is not covered, only made less prominent.',

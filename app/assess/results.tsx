@@ -1,12 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Share, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Share2, FileText, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react-native';
 import { Screen, Text, Card, Button, Chip, EvidenceChip, Banner, Disclaimer, useCitation } from '@/components';
 import { Gauge, useInfoSheet, ReferralList, CauseList, DiagnosisCard } from '@/components/assess';
-import { diagnose, diagnosisStatement } from '@/clinical/diagnosis';
+import { compareDxSnapshot, diagnose, diagnosisStatement, snapshotOf, type DxDelta } from '@/clinical/diagnosis';
+import { journeyRemaining } from '@/clinical/journey';
+import { useJourney } from '@/hooks/useJourney';
 import { programGate } from '@/components/assess/programGate';
 import { CheckRow, Collapsible, GlossaryTerm, useGlossary } from '@/components/home';
 import { useTheme } from '@/theme';
@@ -40,16 +42,32 @@ export default function ResultsScreen() {
   const program = useClinical((s) => s.program);
   const setProgram = useClinical((s) => s.setProgram);
   const setProgramPrefs = useClinical((s) => s.setProgramPrefs);
+  const saveDxSnapshot = useClinical((s) => s.saveDxSnapshot);
+  const markPreviewSeen = useClinical((s) => s.markPreviewSeen);
   const { open, sheet } = useCitation();
   const info = useInfoSheet();
   const glossary = useGlossary();
   const [pdfBusy, setPdfBusy] = useState(false);
   const [pdfError, setPdfError] = useState(false);
   const [acked, setAcked] = useState(false);
+  /** `?preview=1`: the "ön sonuç" card after the THI (sprint 3 A2); `?raised=1`: back from a diagnosis-card measurement. */
+  const params = useLocalSearchParams<{ preview?: string; raised?: string }>();
+  const preview = params.preview === '1';
+  const raised = params.raised === '1';
+  const { journey, go } = useJourney();
 
   const tier = assessment ? computeTriage(assessment).tier : null;
   const gate = programGate(profile, tier);
   const canStart = !gate.blocked && (!gate.needsAck || acked);
+
+  /** Preliminary diagnosis + its comparison with the snapshot taken the last time this screen opened ("kesinlik arttı"). */
+  const dx = useMemo(() => (assessment ? diagnose(assessment) : null), [assessment]);
+  const [dxDelta] = useState<DxDelta | null>(() => (assessment && dx ? compareDxSnapshot(assessment.dxSnapshot, dx, assessment) : null));
+  useEffect(() => {
+    // Snapshot on every full open (not on the preview card), so the next open compares against today's certainty.
+    if (assessment && dx && !preview) saveDxSnapshot(snapshotOf(dx, assessment));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /** Default preferences (15 min a day, CBT); setup lets the user change duration and style. */
   const prefs = useMemo<ProgramPrefs>(() => ({ minutesPerDay: 15, style: 'cbt', ...assessmentPrefs(assessment) }), [assessment]);
@@ -133,8 +151,48 @@ export default function ResultsScreen() {
     }
   };
 
+  // --- Preview card (journey step after the THI): gauge, programme-length line, "Devam: n soru daha" ---
+  if (preview) {
+    const lengthLine = determinants.find((c) => c.key.startsWith('consequence.thi.length'));
+    const left = journeyRemaining(journey);
+    const onContinue = () => { markPreviewSeen(); go(); };
+    return (
+      <Screen footer={<Button title={t('results.preview.continue', { n: left.questions, min: Math.max(1, left.minutes) })} icon={<ArrowRight size={18} color={colors.onPrimary} />} onPress={onContinue} />}>
+        <Stack.Screen options={{ title: t('results.preview.title') }} />
+        <Card style={{ alignItems: 'center', gap: space[3] }}>
+          <Text variant="overline" tone="secondary">{t('results.preview.overline')}</Text>
+          {thi ? (
+            <>
+              <Gauge value={thi.total} band={thi.band} label={`${thi.total}`} accessibilityLabel={t('results.gauge.a11y', { band: t(`severity.${thi.band}`), score: thi.total })} />
+              <Text variant="caption" tone="secondary" center style={{ marginTop: -space[2] }}>{t('results.gauge.caption', { band: t(`severity.${thi.band}`) })}</Text>
+              <Text variant="body" center>{t(thi.key)}</Text>
+            </>
+          ) : (
+            <Text variant="bodySmall" tone="secondary" center>{t('results.hero.noThi.body')}</Text>
+          )}
+        </Card>
+        {lengthLine ? (
+          <Card variant="tinted">
+            <Text variant="body">{consequenceText(t, lengthLine)}</Text>
+          </Card>
+        ) : null}
+        <Text variant="bodySmall" tone="secondary" center>{t('results.preview.hint')}</Text>
+        <Disclaimer textKey="disclaimer.short" />
+      </Screen>
+    );
+  }
+
   const selfcare = profile.triage === 'selfcare';
   const triageTone = profile.triage === 'urgent' ? 'danger' : 'warning';
+  /** "Kesinlik arttı" / "ön tanı güncellendi" banners above the diagnosis card (the "unchanged" line only after a measurement). */
+  const certaintyName = (c: DxDelta['before']) => t(`dx.certainty.short.${c}`);
+  const dxBanner = dxDelta && dxDelta.kind === 'changed' ? (
+    <Banner tone="info" title={t('dx.changed.title')} body={t('dx.changed', { old: t(`cause.${dxDelta.prevPrimaryId ?? 'central'}.name`), new: t(`cause.${dxDelta.primaryId ?? 'central'}.name`) })} />
+  ) : dxDelta && dxDelta.kind === 'raised' ? (
+    <Banner tone="success" title={t('dx.raised.title')} body={t('dx.raised', { before: certaintyName(dxDelta.before), after: certaintyName(dxDelta.after), names: (dxDelta.measurements.length ? dxDelta.measurements : ['measurement']).map((m) => t(m === 'measurement' ? 'dx.raised.measurement' : `dx.action.${m}`)).join(' + '), k: Math.max(1, dxDelta.metAfter - dxDelta.metBefore) })} />
+  ) : raised && dxDelta ? (
+    <Banner tone="info" title={t('dx.unchanged.title')} body={t('dx.unchanged', { missing: dxDelta.missing.slice(0, 3).map((k) => t(`feat.${k}`)).join(', ') || t('dx.unchanged.none') })} />
+  ) : null;
   const prev = thiHistory.length >= 2 ? thiHistory[thiHistory.length - 2] : null;
   const curr = thiHistory.length >= 2 ? thiHistory[thiHistory.length - 1] : null;
   const delta = prev && curr ? curr.total - prev.total : 0;
@@ -187,8 +245,9 @@ export default function ResultsScreen() {
         ) : null}
       </Card>
 
-      {/* Layer 1 — decisive preliminary diagnosis directly under the gauge (PM sprint 2 A2) */}
-      <DiagnosisCard d={diagnose(assessment)} assessment={assessment} profile={profile} />
+      {/* Layer 1 — decisive preliminary diagnosis directly under the gauge (PM sprint 2 A2); certainty banners (sprint 3 A2) */}
+      {dxBanner}
+      <DiagnosisCard d={dx ?? diagnose(assessment)} assessment={assessment} profile={profile} />
 
       {!selfcare ? (
         <>

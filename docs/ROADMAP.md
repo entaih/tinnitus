@@ -84,3 +84,19 @@ Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
 | C2 | Perde eşleme → ses otomatik ayarlanır ("Çınlamanıza göre ayarlandı ≈{hz} Hz") | ✅ |
 | C3 | Hiperakuzi: "Rahat sesinizi bulun" (−40 dBFS'ten başlar, tavan −18), haftalık +2 dB önerisi | ✅ |
 | C4 | Sessiz saatlerde hatırlatma reddi, hafif doz metni, Ayarlar'da program dozu | ✅ |
+
+## 8. Sprint 3 — "ilk değer 3 dakikada, program hiç bitmez" (Ekim 2026, `docs/reviews/pm-sprint3.md`)
+| # | Madde | Durum |
+|---|---|---|
+| A1 | Program sonu + bakım modu (4 haftalık bloklar, her 4. Pazar THI) + THI +13'te tazeleme bloğu; yeniden başlat | ✅ |
+| A2 | "Kesinlik arttı" döngüsü (tanı anlık görüntüsü, ölçüm sonrası karşılaştırma, kesinlik çubuğu); yolculuk: güvenlik → sesi dene → THI → ön izleme → öykü → koşullu → ruh hali tek ekran → sonuç (≈9 dk) | ✅ |
+| A3 | Üretici: hiperakuzi 1. gün numaralı "Rahat sesinizi bulun", modül kaydırma Pazar'a gitmez, hafif doz 2 dk özetlerle ≤8 dk, RI 4. güne | ✅ |
+| A4 | THI-S (madde tablosu doğrulanamadı → kapalı); depolama budama (oturum ≤500, günlük ≤730 gün) | ✅ / 🧪 |
+| B1 | Tek ekran onboarding → doğrudan güvenlik taraması; bildirim izni ilk seans sonrası karta taşındı | ✅ |
+| B2 | Bitiş/bakım ana ekranı, haftalık hedef 3, "2 dk özet" etiketi | ✅ |
+| B3 | Paylaşım anları (ilk hafta, hedef, THI −7, program bitti, 12 hafta bakım; haftada en fazla 1) + davet bağlantısı + klinik kodu satırı | ✅ |
+| B4 | Değerlendirme sekmesi yolculukla uyumlu, erişilebilirlik değerleri, ana ekran performansı | ✅ |
+| C1 | "Sesi dene" 60 sn deneme modu; kulaklık kontrolü bir kez | ✅ |
+| C2 | Bakım hatırlatmaları haftada 3; program bitti bildirimi; izin-sonra-değer | ✅ |
+| C3 | Hafif doz/bakım ses hedefleri; sessiz saatte uyku sesi 45 dk zamanlayıcı | ✅ |
+| C4 | Ayarlar "Programım" (durum, doz, yeniden başlat, hatırlatma günleri) | ✅ |

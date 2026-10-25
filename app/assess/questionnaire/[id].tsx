@@ -9,7 +9,7 @@ import { useLocale, useT, pick } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { useAssessmentId } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
-import { QUESTIONNAIRES, scoreQuestionnaire, type QuestionnaireId } from '@/clinical/questionnaires';
+import { QUESTIONNAIRES, THIS_ENABLED, scoreQuestionnaire, type QuestionnaireId } from '@/clinical/questionnaires';
 import { consequencesOf, consequenceText, type Consequence } from '@/clinical/consequences';
 import { latestQuestionnaire, mergedLatest } from '@/store/clinical';
 import { useGrowth } from '@/store/growth';
@@ -39,7 +39,8 @@ export default function QuestionnaireScreen() {
   const { finish, inJourney, taskKey } = useJourney();
 
   const qid = (typeof id === 'string' ? id.toUpperCase() : '') as QuestionnaireId;
-  const q = QUESTIONNAIRES[qid];
+  // The THI-S stays unreachable until its item table is verified (sprint 3 A4, `THIS_ENABLED`).
+  const q = qid === 'THIS' && !THIS_ENABLED ? undefined : QUESTIONNAIRES[qid];
 
   const [phase, setPhase] = useState<'intro' | 'items' | 'review' | 'done'>('intro');
   const [step, setStep] = useState(0);
@@ -112,9 +113,9 @@ export default function QuestionnaireScreen() {
       subscales: Object.keys(scored.subscales).length ? scored.subscales : screenedOut ? { screen: 2 } : undefined,
     };
     // Previous result of the same scale (week 4/8/12 change line) and the merged assessment, read before saving.
-    const before = useClinical.getState().assessments;
+    const { assessments: before, program } = useClinical.getState();
     const prev = latestQuestionnaire(before, rec.id);
-    setConsequences(consequencesOf(q.id, { total: scored.total, subscales: rec.subscales, answers: filled }, mergedLatest(before), prev));
+    setConsequences(consequencesOf(q.id, { total: scored.total, subscales: rec.subscales, answers: filled }, mergedLatest(before), prev, { maintenance: program?.phase === 'maintenance' }));
     saveQuestionnaire(assessmentId, rec);
     if (taskKey) { completeTask(taskKey); track('measurementCompleted'); }
     if (screenedOut) track('questionnaireScreenedOut');

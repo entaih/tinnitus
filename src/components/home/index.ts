@@ -16,3 +16,5 @@ export * from './BackgroundSoundRow';
 export * from './WeeklyGoalRing';
 export * from './milestones';
 export * from './SessionComplete';
+export * from './reminderPrompt';
+export * from './ReminderPromptCard';

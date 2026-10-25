@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { clinicChecksumChar, formatClinicCode, isValidClinicCode, makeClinicCode, normalizeClinicCode } from '../src/components/growth/clinicCode.ts';
 import { buildShareText, computeProgressStats, sparklinePoints, thiBandKey } from '../src/components/growth/progressCard.ts';
+import { reminderPromptEligible, REMINDER_REASK_DAYS } from '../src/components/home/reminderPrompt.ts';
 import type { Assessment, Program } from '../src/clinical/types.ts';
 
 // --- clinic code ---------------------------------------------------------------------------------
@@ -55,4 +56,16 @@ test('progress stats: no data yields nulls and zero days', () => {
   assert.equal(stats.programWeek, null);
   assert.equal(stats.activeDays, 0);
   assert.equal(sparklinePoints([], 10, 10), '');
+});
+
+// --- reminder prompt (PM sprint 3 §B1): after value, once, re-asked once after 7 days ----------------------------
+
+test('reminder prompt: first completed session asks once; "Sonra" re-asks once after 7 days; never a third time', () => {
+  const now = new Date('2026-10-20T20:00:00');
+  assert.ok(reminderPromptEligible({ reminderIds: [], shownCount: 0, promptedAt: null, now }));
+  assert.ok(!reminderPromptEligible({ reminderIds: ['a'], shownCount: 0, promptedAt: null, now }), 'already scheduled');
+  assert.ok(!reminderPromptEligible({ reminderIds: [], shownCount: 1, promptedAt: '2026-10-15T20:00:00', now }), '5 days later: not yet');
+  assert.ok(reminderPromptEligible({ reminderIds: [], shownCount: 1, promptedAt: new Date(now.getTime() - REMINDER_REASK_DAYS * 86_400_000).toISOString(), now }));
+  assert.ok(!reminderPromptEligible({ reminderIds: [], shownCount: 1, promptedAt: null, now }), 'no timestamp (settings field missing): no re-ask');
+  assert.ok(!reminderPromptEligible({ reminderIds: [], shownCount: 2, promptedAt: '2026-01-01T00:00:00', now }));
 });

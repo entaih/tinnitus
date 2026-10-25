@@ -21,7 +21,7 @@ export function WeeklyGoalRing({ done, goal = WEEKLY_GOAL_DAYS, size = 84 }: { d
       <View style={{ flex: 1, gap: 2 }}>
         <Text variant="caption" tone="secondary">{t('home.weekly.goal')}</Text>
         <Text variant="bodyStrong" tone={met ? 'success' : 'default'}>{met ? t('home.weekly.goalMet') : t('home.weekly.goalBody', { left: goal - done })}</Text>
-        <Text variant="caption" tone="muted">{t('home.weekly.goalHint')}</Text>
+        <Text variant="caption" tone="muted">{t('home.weekly.goalHint', { goal })}</Text>
       </View>
     </View>
   );

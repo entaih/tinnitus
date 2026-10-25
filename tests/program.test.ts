@@ -1,8 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ACUTE_WEEK1_POOL, DAILY_PRACTICE_POOL, dailyPracticeFor, generateProgram, hyperExposureMinutes, measurementTasksFor, regenerateProgram, tasksForDay, type ProgramPrefs } from '../src/clinical/program.ts';
+import {
+  ACUTE_WEEK1_POOL, DAILY_PRACTICE_POOL, MODULE_DAY_ORDER, REFRESHER_SLOTS, adaptationAdvice, buildMaintenanceWeeks, dailyPracticeFor, enterMaintenance, extendMaintenance,
+  generateProgram, hyperExposureMinutes, isProgramFinished, maintenanceWeekOf, measurementTasksFor, programDateOf, programPosition, refresherActive, regenerateProgram,
+  startRefresher, structuredWeeksOf, tasksForDay, thiWeeksOf, type ProgramPrefs,
+} from '../src/clinical/program.ts';
 import { splitByBudget } from '../src/components/home/taskBudget.ts';
 import { UNITS } from '../src/content/registry.ts';
+import { THIS_ENABLED } from '../src/clinical/questionnaires.ts';
 import type { Profile, Program, ProgramTask } from '../src/clinical/types.ts';
 
 const profile = (over: Partial<Profile> = {}): Profile => ({
@@ -12,8 +17,8 @@ const profile = (over: Partial<Profile> = {}): Profile => ({
 const prefs = (over: Partial<ProgramPrefs> = {}): ProgramPrefs => ({ minutesPerDay: 15, style: 'cbt', pitchHz: 6000, riPositive: true, hearingDone: true, ...over });
 const ids = (p: Program, w: number, d: number) => tasksForDay(p, w, d).map((t) => t.id);
 const PRACTICE = new Set(['exercise.pmr', 'exercise.breathing', 'mind.breathingSpace', 'cbt.relax3', 'cbt.relax5', 'cbt.relax6', 'cbt.concentration', 'mind.bodyScan']);
-/** Background sound (long player presets) is not an active minute; the mixing point and the RI test are. */
-const isBackground = (t: ProgramTask) => t.type === 'sound' && t.route.startsWith('/sound/player');
+/** Background sound (long player presets) is not an active minute; the mixing point, the RI test and a `numbered` player step are. */
+const isBackground = (t: ProgramTask) => t.type === 'sound' && t.route.startsWith('/sound/player') && !t.numbered;
 const activeMin = (p: Program, w: number, d: number) => tasksForDay(p, w, d).filter((t) => !isBackground(t)).reduce((s, t) => s + t.minutes, 0);
 const allTasks = (p: Program) => p.weeks.flatMap((w) => w.days.flatMap((d) => d.tasks.map((t) => ({ w: w.week, d: d.day, t }))));
 
@@ -47,13 +52,13 @@ test('day 1: check-in → mixing point (core) → welcome, no PMR, sound enrichm
   assert.ok(activeMin(p, 1, 1) <= 14, `active minutes ${activeMin(p, 1, 1)}`);
   // Measurements already done: PMR on day 2 (first relaxation skill), breathing on days 3/4.
   assert.ok(ids(p, 1, 2).includes('exercise.pmr'));
-  // Missing measurements: pitch d2 (6 min → no practice that day), causes + RI d3, exam d5 (D3: no longer d4); w1d4 ≤ 15 min.
+  // Missing measurements: pitch d2 (6 min → no practice that day), causes d3, RI d4 (sprint 3 E7), exam d5 (D3: no longer d4); w1d4 ≤ 15 min.
   const p2 = SIM.moderateInsomnia;
   assert.ok(ids(p2, 1, 2).includes('assess.pitch'));
   assert.ok(!ids(p2, 1, 2).some((id) => PRACTICE.has(id)), 'a ≥6-min assessment day carries no practice');
   assert.ok(!ids(p2, 1, 2).includes('assess.exam'));
   assert.ok(ids(p2, 1, 3).includes('assess.causes'));
-  assert.ok(ids(p2, 1, 3).includes('sound.ri'));
+  assert.ok(ids(p2, 1, 4).includes('sound.ri'));
   assert.ok(!ids(p2, 1, 4).includes('assess.exam'));
   assert.ok(ids(p2, 1, 5).includes('assess.exam'));
   assert.ok(activeMin(p2, 1, 4) <= 15, `w1d4 ${activeMin(p2, 1, 4)} min`);
@@ -291,4 +296,205 @@ test('regenerateProgram (A3): light dose keeps id, startDate, completed and past
   assert.equal(restored.dose, 'full');
   assert.deepEqual(restored.completed, full.completed);
   assert.deepEqual(restored.weeks[3].days.map((d) => d.tasks.map((t) => t.id)), full.weeks[3].days.map((d) => d.tasks.map((t) => t.id)));
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Sprint 3 A3: generator fixes (E2 hyperacusis day 1, E3 Sunday never a module day, E4 light dose ≤ 8 min, E7 RI on w1d4)
+// ---------------------------------------------------------------------------------------------------------------------
+
+const moduleOf = (t: ProgramTask) => (t.type === 'mind' || t.type === 'sleep') && t.route.startsWith('/mind/') && !PRACTICE.has(t.id);
+
+test('A3-E2 hyperacusis day 1: numbered steps = check-in, "find your comfortable sound" (core, numbered) and the welcome summary', () => {
+  const d1 = tasksForDay(SIM.severeHyperacusis, 1, 1);
+  const ex = d1.find((t) => t.id === 'hyper.exposure')!;
+  assert.equal(ex.numbered, true);
+  assert.equal(ex.core, true);
+  assert.ok(!isBackground(ex), 'the day-1 sound step is not a background row');
+  const { shown } = splitByBudget(d1, 15);
+  assert.deepEqual(shown.filter((t) => !isBackground(t)).map((t) => t.id), ['diary.daily', 'hyper.exposure', 'cbt.welcome']);
+  assert.equal(d1.find((t) => t.id === 'cbt.welcome')!.params?.summary, '1', 'welcome fits the budget as its 2-minute summary');
+  // From day 2 the exposure is the background row again, and it is never numbered.
+  for (const week of SIM.severeHyperacusis.weeks) for (const day of week.days) {
+    if (week.week === 1 && day.day === 1) continue;
+    const bg = day.tasks.find((t) => t.id === 'hyper.exposure')!;
+    assert.ok(isBackground(bg) && !bg.numbered, `w${week.week}d${day.day}`);
+  }
+});
+
+test('A3-E3 Sunday is never a module day: no arm has w1d7 > 8 active minutes; displaced modules land on d6 then d4', () => {
+  assert.deepEqual(MODULE_DAY_ORDER, [1, 3, 5, 6, 4, 2]);
+  const arms: Record<string, Program> = { ...SIM, sleepFirst: generateProgram(profile({ drivers: ['distress', 'insomnia'] }), prefs()), mindfulness: generateProgram(profile(), prefs({ style: 'mindfulness' })), act: generateProgram(profile(), prefs({ style: 'act' })) };
+  for (const [name, p] of Object.entries(arms)) {
+    assert.ok(activeMin(p, 1, 7) <= 8, `${name} w1d7 ${activeMin(p, 1, 7)} min`);
+    for (const week of p.weeks) assert.ok(!week.days[6].tasks.some(moduleOf), `${name} w${week.week}d7 carries a module: ${week.days[6].tasks.map((t) => t.id).join(',')}`);
+  }
+  // Week 1 of the insomnia sim: exam on d5 pushes the third module to Saturday (not Sunday).
+  assert.ok(ids(SIM.moderateInsomnia, 1, 6).includes('cbt.relax1'));
+  assert.ok(!ids(SIM.moderateInsomnia, 1, 7).includes('cbt.relax1'));
+  // Week 8 of the insomnia sim (red flags d4, mood d5, sleep d6, THI d7): both modules land on d1/d3, none on d4–d7.
+  const w8 = SIM.moderateInsomnia.weeks[7].days;
+  assert.deepEqual(w8.map((d) => d.tasks.some(moduleOf)), [true, false, true, false, false, false, false]);
+  // Preference once d5 and d6 are both taken: d4 before d2, never d7.
+  assert.deepEqual(MODULE_DAY_ORDER.filter((d) => d !== 5 && d !== 6), [1, 3, 4, 2]);
+});
+
+test('A3-E7 residual inhibition: w1d4, core, shown in the numbered list, no practice that day', () => {
+  const p = SIM.moderateInsomnia;
+  const d4 = tasksForDay(p, 1, 4);
+  const ri = d4.find((t) => t.id === 'sound.ri')!;
+  assert.equal(ri.core, true);
+  assert.ok(!ids(p, 1, 3).includes('sound.ri'));
+  assert.ok(!d4.some((t) => PRACTICE.has(t.id)), 'RI day carries no practice');
+  const { shown } = splitByBudget(d4, 15);
+  assert.ok(shown.some((t) => t.id === 'sound.ri'), 'RI is in the shown list');
+  assert.ok(!shown.some((t) => t.id === 'sound.ri' && isBackground(t)));
+  assert.equal(d4.filter((t) => t.core).length, 1);
+  // Already measured → no RI task anywhere.
+  assert.ok(!allTasks(SIM.mild).some(({ t }) => t.id === 'sound.ri'));
+});
+
+test('A3-E4 light dose: modules are 2-minute summaries, add-on modules on even weeks only (in sequence), no day > 8 active minutes from week 2', () => {
+  const now = new Date('2026-10-25T12:00:00');
+  const start = new Date(now.getTime() - 7 * 86_400_000); // day index 7 → week 2 day 1
+  const sims: Record<string, [Profile, ProgramPrefs]> = {
+    moderateInsomnia: [profile(), prefs({ pitchHz: undefined, riPositive: undefined, causesDone: false, examDone: false })],
+    severeHyperacusis: [profile({ severityBand: 'severe', severityScore: 62, drivers: ['distress', 'hyperacusis'], phenotypes: ['chronic', 'hyperacusis'] }), prefs({ examDone: false })],
+    mild: [profile({ severityBand: 'mild', severityScore: 20, drivers: [] }), prefs()],
+    acute: [profile({ phenotypes: ['acute', 'tonal'], drivers: ['distress'] }), prefs()],
+    hearing: [profile({ drivers: ['distress', 'hearingLoss'], phenotypes: ['chronic', 'tonal', 'hearingLossAssociated'] }), prefs()],
+  };
+  for (const [name, [pr, pf]] of Object.entries(sims)) {
+    const light = regenerateProgram(generateProgram(pr, pf, start), pr, pf, { dose: 'light', now });
+    for (const week of light.weeks.slice(1)) for (const day of week.days) {
+      const tag = `${name} light w${week.week}d${day.day}`;
+      assert.ok(activeMin(light, week.week, day.day) <= 8, `${tag}: ${activeMin(light, week.week, day.day)} active min (${day.tasks.map((t) => `${t.id}:${t.minutes}`).join(',')})`);
+      for (const t of day.tasks) if (moduleOf(t)) { assert.equal(t.params?.summary, '1', `${tag}: ${t.id} not a summary`); assert.equal(t.minutes, 2, `${tag}: ${t.id} minutes`); }
+      for (const t of day.tasks) if (PRACTICE.has(t.id) && !t.core) assert.ok(t.minutes <= 5, `${tag}: practice ${t.id} ${t.minutes} min`);
+      if (week.week % 2 === 1) assert.ok(!day.tasks.some((t) => t.type === 'sleep' || t.id.startsWith('hyper.') && t.type === 'mind'), `${tag}: add-on module on an odd week`);
+    }
+  }
+  // Add-on sequence at half pace: CBT-I education w2, stimulus control w4, compression w6, cognitions w8, wind-down w10, relapse w12.
+  const ins = regenerateProgram(generateProgram(profile(), prefs(), start), profile(), prefs(), { dose: 'light', now });
+  const cbti = (w: number) => ins.weeks[w - 1].days.flatMap((d) => d.tasks).filter((t) => t.type === 'sleep' && t.route.startsWith('/mind/')).map((t) => t.id);
+  assert.deepEqual(cbti(2), ['cbti.education']); assert.deepEqual(cbti(3), []); assert.deepEqual(cbti(4), ['cbti.stimulusControl']);
+  assert.deepEqual(cbti(6), ['cbti.compression']); assert.deepEqual(cbti(12), ['cbti.relapse']);
+  // Light measurement week: anxiety moves to day 6 so day 5 stays ≤ 8 minutes.
+  assert.deepEqual(measurementTasksFor(8, 5, { acute: false, insomnia: true, totalWeeks: 12, light: true }), ['assess.mood']);
+  assert.deepEqual(measurementTasksFor(8, 6, { acute: false, insomnia: true, totalWeeks: 12, light: true }), ['assess.anxiety', 'assess.sleep']);
+  assert.deepEqual(measurementTasksFor(8, 5, { acute: false, insomnia: true, totalWeeks: 12 }), ['assess.mood', 'assess.anxiety']);
+  // Full dose is untouched: modules keep their full length.
+  for (const { t } of allTasks(SIM.moderateInsomnia)) if (moduleOf(t)) assert.notEqual(t.params?.summary, '1', t.id);
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Sprint 3 A1: programme end, maintenance mode, refresher block (E1)
+// ---------------------------------------------------------------------------------------------------------------------
+
+const at = (start: Date, dayIndex: number) => new Date(start.getTime() + dayIndex * 86_400_000 + 12 * 3_600_000);
+const MILD = profile({ severityBand: 'mild', severityScore: 20, drivers: [] });
+
+test('A1 6-week programme: finished on day 43 (index 42), not before; enterMaintenance → week 7 day 1, goal 3, THI on week 10 Sunday', () => {
+  const start = new Date('2026-09-13T00:00:00');
+  const p = generateProgram(MILD, prefs(), start);
+  assert.equal(p.weeks.length, 6);
+  assert.equal(isProgramFinished(p, at(start, 41)), false);
+  assert.equal(isProgramFinished(p, at(start, 42)), true);
+  assert.deepEqual(programPosition(p, at(start, 42)), { week: 6, day: 7, dayIndex: 41 }, 'before maintenance the position clamps to the last day');
+  const m = enterMaintenance(p, MILD, prefs(), at(start, 42));
+  assert.equal(m.phase, 'maintenance');
+  assert.equal(m.weeklyGoal, 3);
+  assert.equal(m.maintenanceStartDate, programDateOf(p.startDate, 42));
+  assert.equal(m.maintenanceStartDate, '2026-10-25');
+  assert.equal(m.weeks.length, 10);
+  assert.equal(structuredWeeksOf(m), 6);
+  assert.equal(isProgramFinished(m, at(start, 42)), false);
+  assert.deepEqual(programPosition(m, at(start, 42)), { week: 7, day: 1, dayIndex: 42 });
+  assert.equal(maintenanceWeekOf(m, 7), 1);
+  assert.equal(maintenanceWeekOf(m, 10), 4);
+  assert.deepEqual(m.weeks.slice(0, 6), p.weeks, 'structured weeks untouched');
+  assert.equal(m.completed, p.completed);
+  // Week 10 Sunday: THI (core) before the weekly card; weeks 7–9 have no THI; every day check-in + optional practice + 30-min sound.
+  const d7 = tasksForDay(m, 10, 7).map((t) => t.id);
+  assert.ok(d7.includes('assess.thi') && d7.includes('review.weekly'));
+  assert.ok(d7.indexOf('assess.thi') < d7.indexOf('review.weekly'));
+  assert.equal(tasksForDay(m, 10, 7).find((t) => t.id === 'assess.thi')!.core, true);
+  assert.deepEqual(thiWeeksOf(m), [4, 10]);
+  for (let w = 7; w <= 10; w++) for (let d = 1; d <= 7; d++) {
+    const tasks = tasksForDay(m, w, d);
+    assert.equal(tasks[0].id, 'diary.daily', `w${w}d${d}`);
+    assert.ok(tasks.filter((t) => t.core).length <= 1, `w${w}d${d} one core`);
+    assert.ok(!tasks.some(moduleOf), `w${w}d${d}: no module outside a refresher`);
+    const sound = tasks.find((t) => t.id === 'sound.enrichment');
+    assert.ok(sound && sound.minutes === 30 && isBackground(sound), `w${w}d${d} background sound 30 min`);
+    if (!(w === 10 && d === 7)) assert.ok(tasks.some((t) => PRACTICE.has(t.id) && !t.core), `w${w}d${d} optional practice`);
+    if (d === 7) assert.ok(tasks.some((t) => t.id === 'review.weekly'));
+    if (w < 10 || d < 7) assert.ok(!tasks.some((t) => t.id === 'assess.thi'), `w${w}d${d} no THI`);
+  }
+  assert.equal(m.weeks[6].themeKey, 'program.theme.maintenance');
+  // Idempotent: entering again does not append another block before the last week.
+  assert.equal(enterMaintenance(m, MILD, prefs(), at(start, 45)).weeks.length, 10);
+});
+
+test('A1 ensureMaintenance/extendMaintenance: a new 4-week block on the last week (THI cadence continues), nothing earlier; safety re-screen every 12th week', () => {
+  const start = new Date('2026-09-13T00:00:00');
+  const m = enterMaintenance(generateProgram(MILD, prefs(), start), MILD, prefs(), at(start, 42));
+  assert.equal(extendMaintenance(m, MILD, prefs(), at(start, 50)), m, 'same object while not on the last week');
+  const ext = extendMaintenance(m, MILD, prefs(), at(start, 63)); // week 10 = last generated week
+  assert.equal(ext.weeks.length, 14);
+  assert.deepEqual(thiWeeksOf(ext), [4, 10, 14], 'every 4th maintenance Sunday');
+  assert.deepEqual(programPosition(ext, at(start, 63)), { week: 10, day: 1, dayIndex: 63 });
+  // Far past the end (no Home open for weeks): enough blocks are appended so the position never clamps.
+  const far = extendMaintenance(m, MILD, prefs(), at(start, 42 + 70));
+  assert.ok(far.weeks.length > 16);
+  assert.deepEqual(programPosition(far, at(start, 112)), { week: 17, day: 1, dayIndex: 112 });
+  // Red-flag re-screen on the Wednesday of maintenance week 12 (core on that day).
+  const block = buildMaintenanceWeeks(MILD, prefs(), 4, { from: 8, weekStart: 15 });
+  assert.equal(block[3].week, 18);
+  assert.ok(block[3].days[3].tasks.some((t) => t.id === 'assess.redflagsShort' && t.core));
+  assert.ok(!block[2].days[3].tasks.some((t) => t.id === 'assess.redflagsShort'));
+  assert.ok(block[3].days[6].tasks.some((t) => t.id === 'assess.thi'), 'maintenance week 12 is also a THI week');
+});
+
+test('A1 refresher: THI 30 → 45 in maintenance → adapt.refresher; startRefresher rebuilds the next two weeks with 3 core modules and sets refresherUntil', () => {
+  const start = new Date('2026-09-13T00:00:00');
+  const m = enterMaintenance(generateProgram(MILD, prefs(), start), MILD, prefs(), at(start, 42));
+  const now = at(start, 69); // week 10 day 7: the maintenance THI Sunday
+  assert.deepEqual(adaptationAdvice(m, { week: 10, thiBaseline: 30, thiNow: 45, adherence14: 0.4, phase: 'maintenance' }), ['adapt.refresher']);
+  assert.deepEqual(adaptationAdvice(m, { week: 10, thiBaseline: 30, thiNow: 42, adherence14: 0.4 }), ['adapt.maintenanceSteady'], 'phase read from the programme; +12 is not enough; no week-based lines in maintenance');
+  assert.deepEqual(adaptationAdvice(m, { week: 10, thiBaseline: 45, thiNow: 30, adherence14: 1 }), ['adapt.maintenanceImproving']);
+  assert.deepEqual(adaptationAdvice(m, { week: 10, thiBaseline: 30, thiNow: 45, adherence14: 1, phqItem9: 1 }), ['adapt.safety', 'adapt.refresher']);
+  assert.ok(!adaptationAdvice(generateProgram(profile(), prefs()), { week: 8, thiBaseline: 30, thiNow: 45, adherence14: 1 }).includes('adapt.refresher'), 'never in the active phase');
+  const r = startRefresher(m, MILD, prefs(), now);
+  assert.equal(refresherActive(m, now), false);
+  assert.equal(refresherActive(r, now), true);
+  assert.equal(r.refresherUntil, programDateOf(r.startDate, 12 * 7 - 1));
+  assert.equal(refresherActive(r, at(start, 12 * 7 - 1)), true);
+  assert.equal(refresherActive(r, at(start, 12 * 7)), false);
+  assert.ok(r.weeks.length >= 12);
+  const cores = [11, 12].flatMap((w) => r.weeks[w - 1].days.flatMap((d) => d.tasks.filter((t) => t.core && moduleOf(t)).map((t) => `${w}-${d.day}-${t.id}`)));
+  assert.deepEqual(cores, ['11-1-cbt.restructuring', '11-5-cbt.exposure', '12-3-cbt.relapse']);
+  assert.deepEqual(REFRESHER_SLOTS, [[1, 1], [1, 5], [2, 3]]);
+  assert.equal(r.weeks[10].themeKey, 'program.theme.refresher');
+  assert.equal(r.weeks[12].themeKey, 'program.theme.maintenance');
+  for (const w of [11, 12]) for (const d of r.weeks[w - 1].days) assert.ok(d.tasks.some((t) => PRACTICE.has(t.id)), `refresher w${w}d${d.day} daily practice`);
+  assert.ok(!r.weeks.slice(6, 10).some((w) => w.days.some((d) => d.tasks.some(moduleOf))), 'maintenance weeks before the block untouched');
+  assert.deepEqual(thiWeeksOf(r), [4, 10, 14], 'the 4-weekly THI cadence is unchanged by the refresher');
+  // Hyperacusis arm: hyper.hierarchy replaces cbt.exposure; the background sound stays the graded exposure.
+  const HYPER = profile({ severityBand: 'severe', drivers: ['distress', 'hyperacusis'], phenotypes: ['chronic', 'hyperacusis'] });
+  const hb = buildMaintenanceWeeks(HYPER, prefs(), 2, { refresher: true });
+  const hm = hb.flatMap((w) => w.days.flatMap((d) => d.tasks)).filter((t) => t.core && moduleOf(t)).map((t) => t.id);
+  assert.deepEqual(hm, ['cbt.restructuring', 'hyper.hierarchy', 'cbt.relapse']);
+  assert.ok(hb[0].days[0].tasks.some((t) => t.id === 'hyper.exposure' && t.minutes === 30 && isBackground(t)));
+  assert.ok(!hb[0].days[0].tasks.some((t) => t.id === 'sound.enrichment'));
+  // Refresher week 1 skips a THI Sunday (the reminder rules skip Sundays before refresherUntil); week 2 keeps it.
+  const skip = buildMaintenanceWeeks(MILD, prefs(), 2, { refresher: true, from: 3 });
+  assert.ok(!skip[0].days[6].tasks.some((t) => t.id === 'assess.thi'));
+  const keep = buildMaintenanceWeeks(MILD, prefs(), 2, { refresher: true, from: 2 });
+  assert.ok(keep[1].days[6].tasks.some((t) => t.id === 'assess.thi'));
+  assert.equal(startRefresher(generateProgram(MILD, prefs(), start), MILD, prefs(), now).refresherUntil, undefined, 'no-op outside maintenance');
+});
+
+test('A4 THI-S: not scheduled while the item table is unverified (THIS_ENABLED=false)', () => {
+  assert.equal(THIS_ENABLED, false);
+  for (const [name, p] of Object.entries(SIM)) assert.ok(!allTasks(p).some(({ t }) => t.id === 'assess.thiShort'), name);
 });

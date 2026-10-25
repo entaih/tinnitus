@@ -6,6 +6,9 @@ import { BookOpenText, Check, Moon, NotebookPen, Wind } from 'lucide-react-nativ
 import { Screen, Text, Card, Row, SectionHeader, EvidenceChip, useCitation } from '@/components';
 import { ThemeProvider, useTheme } from '@/theme';
 import { useT } from '@/i18n';
+import { useSettings } from '@/store/settings';
+import { isQuietHour } from '@/notificationRules';
+import { NIGHT_SLEEP_TIMER_MINUTES } from '@/audio/tuning';
 
 const CHECKLIST = ['screens', 'caffeine', 'light', 'sound', 'worry'] as const;
 
@@ -23,6 +26,10 @@ function SleepHub() {
   const router = useRouter();
   const { open, sheet } = useCitation();
   const [done, setDone] = useState<Record<string, boolean>>({});
+  const nightStart = useSettings((s) => s.nightStart);
+  const nightEnd = useSettings((s) => s.nightEnd);
+  // Sprint 3 C3: inside the quiet hours the sleep preset starts with a 45-minute timer (sleep hygiene); say so on the card.
+  const nightNow = isQuietHour(new Date().getHours(), nightStart, nightEnd);
 
   return (
     <>
@@ -32,13 +39,14 @@ function SleepHub() {
         <Text variant="h1">{t('sleep.title')}</Text>
         <Text variant="bodySmall" tone="secondary">{t('sleep.subtitle')}</Text>
 
-        <Card onPress={() => router.push({ pathname: '/sound/player', params: { preset: 'sleep' } })} title={t('sleep.card.sound')} right={<Moon size={24} color={colors.primary} />}>
+        <Card onPress={() => router.push({ pathname: '/sound/player', params: { preset: 'sleep' } })} title={t('sleep.card.sound')} right={<Moon size={24} color={colors.primary} />} accessibilityLabel={t('sleep.card.sound')}>
           <Text variant="bodySmall" tone="secondary">{t('sleep.card.soundDesc')}</Text>
+          {nightNow ? <Text variant="caption" tone="primary">{t('sleep.card.timerNight', { n: NIGHT_SLEEP_TIMER_MINUTES })}</Text> : null}
         </Card>
-        <Card onPress={() => router.push('/exercise/breathing')} title={t('sleep.card.breath')} right={<Wind size={24} color={colors.primary} />}>
+        <Card onPress={() => router.push('/exercise/breathing')} title={t('sleep.card.breath')} right={<Wind size={24} color={colors.primary} />} accessibilityLabel={t('sleep.card.breath')}>
           <Text variant="bodySmall" tone="secondary">{t('sleep.card.breathDesc')}</Text>
         </Card>
-        <Card onPress={() => router.push('/sleep/diary')} title={t('sleep.card.diary')} right={<NotebookPen size={24} color={colors.primary} />}>
+        <Card onPress={() => router.push('/sleep/diary')} title={t('sleep.card.diary')} right={<NotebookPen size={24} color={colors.primary} />} accessibilityLabel={t('sleep.card.diary')}>
           <Text variant="bodySmall" tone="secondary">{t('sleep.card.diaryDesc')}</Text>
         </Card>
 
@@ -48,7 +56,7 @@ function SleepHub() {
           {CHECKLIST.map((k) => {
             const on = !!done[k];
             return (
-              <Pressable key={k} accessibilityRole="checkbox" accessibilityState={{ checked: on }} onPress={() => setDone((d) => ({ ...d, [k]: !d[k] }))}
+              <Pressable key={k} accessibilityRole="checkbox" accessibilityLabel={t(`sleep.windDown.${k}`)} accessibilityState={{ checked: on }} onPress={() => setDone((d) => ({ ...d, [k]: !d[k] }))}
                 style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space[3], minHeight: 48, opacity: pressed ? 0.7 : 1 })}>
                 <View style={{ width: 26, height: 26, borderRadius: radius.sm, borderWidth: 1.5, borderColor: on ? colors.primary : colors.borderStrong, backgroundColor: on ? colors.primary : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
                   {on ? <Check size={16} color={colors.onPrimary} /> : null}

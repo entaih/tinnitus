@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { Stack, router } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { DX_RETURN_ROUTE } from '@/hooks/useJourney';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import { Play, RotateCcw } from 'lucide-react-native';
@@ -33,6 +34,8 @@ type StartPair = readonly [number, number];
 export default function PitchScreen() {
   useKeepAwake();
   const t = useT();
+  /** `?from=dx`: opened from the diagnosis card; the result returns to the results screen (no chaining). */
+  const fromDx = useLocalSearchParams<{ from?: string }>().from === 'dx';
   const { colors, space, radius } = useTheme();
   const maxVolume = useSettings((s) => s.maxVolume);
   const savePsycho = useClinical((s) => s.savePsycho);
@@ -303,7 +306,8 @@ export default function PitchScreen() {
             <EvidenceChip level="rct" onPress={() => open('wunderlich2015')} />
             <Text variant="caption" tone="secondary" style={{ flex: 1 }}>{t('psy.pitch.evidence')}</Text>
           </View>
-          <Button title={saved ? t('psy.pitch.continueLoudness') : t('psy.saveContinue')} onPress={() => { save(); router.replace(`/assess/loudness?hz=${Math.round(finalHz)}`); }} />
+          {/* Opened from the diagnosis card (?from=dx): back to the results with the "kesinlik arttı" banner instead of chaining the loudness match. */}
+          <Button title={fromDx ? t('dx.backToResults') : saved ? t('psy.pitch.continueLoudness') : t('psy.saveContinue')} onPress={() => { save(); router.replace(fromDx ? DX_RETURN_ROUTE : `/assess/loudness?hz=${Math.round(finalHz)}`); }} />
           <Button variant="secondary" title={t('common.save')} disabled={saved} onPress={save} />
           <Button variant="ghost" title={t('psy.redo')} onPress={restart} />
           <Disclaimer />

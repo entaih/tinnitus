@@ -9,7 +9,7 @@
  */
 import type { SeverityBand } from '@/theme/tokens';
 
-export type QuestionnaireId = 'THI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'SCI02' | 'THS';
+export type QuestionnaireId = 'THI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'SCI02' | 'THS' | 'THIS';
 
 export interface Option { value: number; tr: string; en: string }
 export interface Item { tr: string; en: string; subscale?: string; reverse?: boolean }
@@ -285,7 +285,33 @@ export const RASST: Questionnaire = {
   interpret: (t) => (t >= 2 ? { band: 'moderate', key: 'rasst.positive' } : { band: 'none', key: 'rasst.negative' }),
 };
 
-export const QUESTIONNAIRES: Record<QuestionnaireId, Questionnaire> = { THI, HQ, PHQ9, GAD7, SCI, RASST, SCI02, THS };
+/**
+ * THI-S (Newman, Sandridge & Bolek 2008, Otol Neurotol 29:276–81): the 10-item screening version of the THI, 0–40,
+ * used only as an interim *trend* in weeks 2 and 6 (no band, no decision — PM sprint 3 A4).
+ *
+ * The 10 items must be taken one-to-one from Table 1 of the 2008 paper. Engineering could not verify that table
+ * against the source at the time of writing (the item list is not reproduced in the secondary literature available
+ * offline), so `THIS_ITEM_INDICES` stays `null` and `THIS_ENABLED` stays `false`: the scale is not scheduled, the route
+ * shows "unknown questionnaire", and `consequencesOf('THIS', …)` is only reachable from imported results. To enable:
+ * fill the 0-based THI item indices from the verified table and flip the flag; nothing else changes.
+ */
+export const THIS_ITEM_INDICES: number[] | null = null;
+export const THIS_ENABLED: boolean = ((THIS_ITEM_INDICES as number[] | null)?.length ?? 0) === 10;
+
+export const THIS: Questionnaire = {
+  id: 'THIS',
+  name: { tr: 'Hızlı kontrol (THI-S)', en: 'Quick check (THI-S)' },
+  description: { tr: 'Çınlama etki puanının 10 soruluk ara eğilim sürümü. Yalnızca eğilim gösterir; bant ya da karar vermez.', en: 'The 10-item interim trend version of the tinnitus impact score. Shows a trend only; no band and no decision.' },
+  minutes: 2,
+  citation: 'newman2008',
+  evidence: 'rct',
+  options: THI_OPTIONS,
+  max: 40,
+  items: (THIS_ITEM_INDICES ?? []).map((i) => ({ tr: THI.items[i].tr, en: THI.items[i].en })),
+  interpret: () => ({ band: 'none', key: 'this.trend' }),
+};
+
+export const QUESTIONNAIRES: Record<QuestionnaireId, Questionnaire> = { THI, HQ, PHQ9, GAD7, SCI, RASST, SCI02, THS, THIS };
 
 export function scoreQuestionnaire(q: Questionnaire, answers: number[]) {
   const total = answers.reduce((a, b) => a + b, 0);

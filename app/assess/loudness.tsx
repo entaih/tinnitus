@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { DX_RETURN_ROUTE } from '@/hooks/useJourney';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import Slider from '@react-native-community/slider';
@@ -26,7 +27,9 @@ export default function LoudnessScreen() {
   useKeepAwake();
   const t = useT();
   const { colors, space, radius } = useTheme();
-  const params = useLocalSearchParams<{ hz?: string }>();
+  const params = useLocalSearchParams<{ hz?: string; from?: string }>();
+  /** `?from=dx`: opened from the diagnosis card; the result returns to the results screen (no chaining into the MML). */
+  const fromDx = params.from === 'dx';
   const { assessment } = useProfile();
   const pitchHz = Number(params.hz) > 0 ? Number(params.hz) : assessment?.psycho?.pitchHz;
   const maxVolume = useSettings((s) => s.maxVolume);
@@ -214,7 +217,7 @@ export default function LoudnessScreen() {
             <Text variant="bodySmall" tone="secondary">{t('psy.loud.result.typical')}</Text>
           </Card>
           {atypical ? <Banner tone="warning" title={t('psy.loud.result.atypical')} primary={{ title: t('psy.repeat'), onPress: restart }} /> : null}
-          <Button title={saved ? t('psy.loud.continueMml') : t('psy.saveContinue')} onPress={() => { save(); router.replace('/assess/mml'); }} />
+          <Button title={fromDx ? t('dx.backToResults') : saved ? t('psy.loud.continueMml') : t('psy.saveContinue')} onPress={() => { save(); router.replace(fromDx ? DX_RETURN_ROUTE : '/assess/mml'); }} />
           <Button variant="secondary" title={t('common.save')} disabled={saved} onPress={save} />
           <Button variant="ghost" title={t('psy.repeat')} onPress={restart} />
           <Disclaimer />

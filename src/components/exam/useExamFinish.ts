@@ -11,7 +11,7 @@ const HUB = '/assess/exam';
  * guided journey (?journey=1) or simply goes back.
  */
 export function useExamFinish(step: ExamStepId) {
-  const params = useLocalSearchParams<{ seq?: string; journey?: string }>();
+  const params = useLocalSearchParams<{ seq?: string; journey?: string; from?: string }>();
   const journey = useJourney();
   const { assessment } = useProfile();
   const inSequence = params.seq === '1';
@@ -20,7 +20,10 @@ export function useExamFinish(step: ExamStepId) {
   const finish = () => {
     if (inSequence) {
       const next = nextExamRoute(step, { pulsatile, eligibility });
-      if (next) { router.replace(`${next}?seq=1` as never); return; }
+      const fromDx = params.from === 'dx' ? '&from=dx' : '';
+      if (next) { router.replace(`${next}?seq=1${fromDx}` as never); return; }
+      // Opened from the diagnosis card: return to the results so the "kesinlik arttı" comparison runs.
+      if (params.from === 'dx') { router.replace('/assess/results?raised=1' as never); return; }
       router.dismissTo(HUB as never);
       return;
     }

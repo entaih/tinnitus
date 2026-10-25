@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  HYPER_COMFORT_CEILING_DB, HYPER_COMFORT_START_DB, TUNE_MAX_HZ,
-  clampComfortDb, comfortGain, hyperStartDb, shouldNudgeComfort, stepComfortDb, targetMinutes, tuneFor,
+  HYPER_COMFORT_CEILING_DB, HYPER_COMFORT_START_DB, MAINTENANCE_SOUND_MINUTES, NIGHT_SLEEP_TIMER_MINUTES, TRIAL_DETAIL, TRIAL_SECONDS, TUNE_MAX_HZ,
+  clampComfortDb, comfortGain, hyperNudgeIntervalWeeks, hyperStartDb, resolveTargetMinutes, shouldNudgeComfort, sleepTimerFor, stepComfortDb, targetMinutes, trialFinished, tuneFor,
 } from '../src/audio/tuning.ts';
+import { soundStrings } from '../src/i18n/areas/sound.ts';
 import { resolveNamedPreset } from '../src/audio/presets.ts';
 import { dbToGain } from '../src/audio/dsp.ts';
 
@@ -82,4 +83,61 @@ test('targetMinutes: minutes param wins, otherwise 20', () => {
   assert.equal(targetMinutes(undefined, 30), 30);
   const hyper = resolveNamedPreset('hyperacusis', { hyperVolume: dbToGain(-40) })!;
   assert.ok(Math.abs(hyper.volume - 0.01) < 1e-9);
+});
+
+// --- Sprint 3 C1/C3/C4 ------------------------------------------------------------------------------
+
+test('trial: 60 seconds, stops itself at 60, session detail is "trial"', () => {
+  assert.equal(TRIAL_SECONDS, 60);
+  assert.equal(TRIAL_DETAIL, 'trial');
+  assert.equal(trialFinished(59.5), false);
+  assert.equal(trialFinished(60), true);
+  assert.equal(soundStrings.tr['sound.trial.title'], '60 saniyelik deneme');
+});
+
+test('resolveTargetMinutes: 30 in maintenance, minutes param, then the task\'s own minutes (light dose), hyperacusis 20, no task → no target', () => {
+  assert.equal(MAINTENANCE_SOUND_MINUTES, 30);
+  assert.equal(resolveTargetMinutes({ taskKey: '7-1-sound.enrichment', phase: 'maintenance', minutesParam: '10', taskMinutes: 15 }), 30);
+  assert.equal(resolveTargetMinutes({ taskKey: '7-1-hyper.exposure', phase: 'maintenance', preset: 'hyperacusis' }), 30);
+  assert.equal(resolveTargetMinutes({ taskKey: '1-1-hyper.exposure', phase: 'active', minutesParam: '10', taskMinutes: 15, preset: 'hyperacusis' }), 10);
+  assert.equal(resolveTargetMinutes({ taskKey: '3-2-sound.enrichment', phase: 'active', taskMinutes: 15, preset: 'enrichment' }), 15);
+  assert.equal(resolveTargetMinutes({ taskKey: '3-2-sound.enrichment', phase: 'active', minutesParam: 'abc', taskMinutes: 12.4, preset: 'enrichment' }), 12);
+  assert.equal(resolveTargetMinutes({ taskKey: '1-1-hyper.exposure', phase: 'active', preset: 'hyperacusis' }), 20);
+  assert.equal(resolveTargetMinutes({ taskKey: '1-1-sound.enrichment', phase: 'active', preset: 'enrichment' }), null);
+  assert.equal(resolveTargetMinutes({ taskKey: undefined, phase: 'maintenance', preset: 'hyperacusis', minutesParam: '10' }), null);
+  assert.equal(resolveTargetMinutes({ taskKey: '', phase: 'active', preset: 'hyperacusis' }), null);
+});
+
+test('night timer: the sleep preset opened inside the quiet hours starts with a 45-minute timer, otherwise the preset default', () => {
+  assert.equal(NIGHT_SLEEP_TIMER_MINUTES, 45);
+  const sleep = resolveNamedPreset('sleep', {})!;
+  assert.equal(sleep.timerMinutes, 90);
+  assert.equal(sleepTimerFor('sleep', 23, 22, 6, sleep.timerMinutes), 45);
+  assert.equal(sleepTimerFor('sleep', 2, 22, 6, sleep.timerMinutes), 45);
+  assert.equal(sleepTimerFor('sleep', 14, 22, 6, sleep.timerMinutes), 90);
+  assert.equal(sleepTimerFor('sleep', 6, 22, 6, sleep.timerMinutes), 90);
+  assert.equal(sleepTimerFor('enrichment', 23, 22, 6, null), null);
+  assert.equal(sleepTimerFor('hyperacusis', 23, 22, 6, 30), 30);
+  assert.equal(soundStrings.tr['sleep.card.timerNight'].replace('{n}', '45'), 'Zamanlayıcı: 45 dk');
+});
+
+test('hyperacusis +2 dB nudge: weekly in the programme, every 2 weeks in maintenance', () => {
+  assert.equal(hyperNudgeIntervalWeeks('active'), 1);
+  assert.equal(hyperNudgeIntervalWeeks(undefined), 1);
+  assert.equal(hyperNudgeIntervalWeeks('maintenance'), 2);
+  assert.equal(shouldNudgeComfort(-30, 7, 8, hyperNudgeIntervalWeeks('maintenance')), false);
+  assert.equal(shouldNudgeComfort(-30, 7, 9, hyperNudgeIntervalWeeks('maintenance')), true);
+  assert.equal(shouldNudgeComfort(-30, 7, 8, hyperNudgeIntervalWeeks('active')), true);
+  assert.equal(shouldNudgeComfort(-18, 7, 12, 2), false);
+});
+
+test('sound copy: no treatment claims and every key exists in both locales', () => {
+  const banned = ['tedavi eder', 'iyileştirir', 'geçirir', 'cures'];
+  for (const locale of ['tr', 'en'] as const) {
+    for (const [key, value] of Object.entries(soundStrings[locale])) {
+      const lower = value.toLocaleLowerCase('tr-TR');
+      for (const w of banned) assert.ok(!lower.includes(w), `${locale} ${key} contains "${w}"`);
+    }
+  }
+  assert.deepEqual(Object.keys(soundStrings.tr).sort(), Object.keys(soundStrings.en).sort());
 });

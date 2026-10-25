@@ -47,7 +47,7 @@ export interface CaseHistory {
 }
 
 export interface QuestionnaireResult {
-  id: 'THI' | 'TFI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'ISI' | 'TCQ' | 'SCI02' | 'THS';
+  id: 'THI' | 'TFI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'ISI' | 'TCQ' | 'SCI02' | 'THS' | 'THIS';
   date: string;
   answers: number[];
   total: number;
@@ -127,8 +127,16 @@ export interface Assessment {
   causeAnswers?: Record<string, boolean>;
   /** guided self-examination results */
   exam?: ExamResult;
-  /** Snapshot of the preliminary diagnosis when the results screen was last opened (for the "kesinlik arttı" comparison). */
-  dxSnapshot?: { date: string; primaryId: string | null; certainty: 'high' | 'moderate' | 'low' | null; met: number; missing: number };
+  /**
+   * Snapshot of the preliminary diagnosis when the results screen was last opened (for the "kesinlik arttı" comparison).
+   * `measurements` lists the in-app measurements present at that time ('pitch' | 'hearing' | 'exam' | 'causes') so the
+   * banner can name the ones completed since.
+   */
+  dxSnapshot?: { date: string; primaryId: string | null; certainty: 'high' | 'moderate' | 'low' | null; met: number; missing: number; measurements?: string[] };
+  /** When the "ön sonuç" (preview) card was shown after the THI in the guided journey (sprint 3 A2). */
+  previewSeenAt?: string;
+  /** When the optional "Sesi dene" step was offered or skipped in the guided journey (the step never blocks the journey). */
+  soundTryAt?: string;
 }
 
 export type Triage = 'urgent' | 'audiology' | 'selfcare';

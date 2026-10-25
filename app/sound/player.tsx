@@ -3,25 +3,26 @@ import { Modal, Platform, Pressable, ScrollView, Switch, View } from 'react-nati
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import { CheckCircle2, FlaskConical, Moon, Plus, Square, Waves, X } from 'lucide-react-native';
+import { CheckCircle2, FlaskConical, Headphones, Moon, Play, Plus, Square, Waves, X } from 'lucide-react-native';
 import { Screen, Text, Button, Card, Chip, EvidenceChip, PlayControl, Banner, useCitation, SectionHeader } from '@/components';
 import { Collapsible } from '@/components/home';
 import { LayerRow, TIMER_OPTIONS, TimerChips, VolumeSlider, formatClock, mixer, useSoundEngine, useTicker } from '@/components/sound';
 import { ThemeProvider, useTheme } from '@/theme';
 import { useT } from '@/i18n';
-import { useSettings } from '@/store/settings';
+import { markHeadphoneChecked, needsHeadphoneCheck, useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
 import { useProfile } from '@/hooks/useProfile';
-import { programPosition } from '@/clinical/program';
+import { programPosition, tasksForDay } from '@/clinical/program';
+import { isQuietHour } from '@/notificationRules';
 import { bumpReentryNudge } from '@/notifications';
 import { describeSpec, type SoundSpec } from '@/audio/sounds';
 import { PRESETS, presetById, resolveNamedPreset, resolveSpec, type NamedPreset } from '@/audio/presets';
 import { useMixingPoint, useOnceFlag } from '@/audio/mixingPoint';
 import { hyperacusisCeilingDb } from '@/audio/examTests';
 import { dbToGain } from '@/audio/dsp';
-import { HYPER_COMFORT_START_DB, TUNE_BAND_LEVEL, comfortGain, hyperStartDb, shouldNudgeComfort, stepComfortDb, targetMinutes, tuneFor } from '@/audio/tuning';
+import { HYPER_COMFORT_START_DB, NIGHT_SLEEP_TIMER_MINUTES, TRIAL_DETAIL, TRIAL_SECONDS, TUNE_BAND_LEVEL, comfortGain, hyperNudgeIntervalWeeks, hyperStartDb, resolveTargetMinutes, shouldNudgeComfort, sleepTimerFor, stepComfortDb, trialFinished, tuneFor } from '@/audio/tuning';
 
-type Params = { preset?: string; spec?: string; id?: string; octaves?: string; taskKey?: string; minutes?: string };
+type Params = { preset?: string; spec?: string; id?: string; octaves?: string; taskKey?: string; minutes?: string; trial?: string; hp?: string; ok?: string };
 const NAMED: NamedPreset[] = ['enrichment', 'sleep', 'hyperacusis', 'notched', 'ri', 'custom'];
 const KEEP_AWAKE_TAG = 'dingin.player';
 const TUNED_LAYER_ID = 'narrowband.pitch';
@@ -42,6 +43,8 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   const router = useRouter();
   const params = useLocalSearchParams<Params>();
   const maxVolume = useSettings((s) => s.maxVolume);
+  const nightStart = useSettings((s) => s.nightStart);
+  const nightEnd = useSettings((s) => s.nightEnd);
   const soundTuneOverride = useSettings((s) => s.soundTuneOverride);
   const setSoundTuneOverride = useSettings((s) => s.setSoundTuneOverride);
   const hyperComfortDb = useSettings((s) => s.hyperComfortDb);
@@ -62,8 +65,13 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   const [sheetOpen, setSheetOpen] = useState(false);
   const [missingPitch, setMissingPitch] = useState(false);
 
-  const presetName = (NAMED as string[]).includes(params.preset ?? '') ? (params.preset as NamedPreset) : null;
-  const taskKey = typeof params.taskKey === 'string' && params.taskKey ? params.taskKey : undefined;
+  // Sprint 3 C1 — `?trial=1`: the 60-second, task-free, single-button trial from the journey (preset defaults to enrichment).
+  const trial = params.trial === '1';
+  const namedParam = (NAMED as string[]).includes(params.preset ?? '') ? (params.preset as NamedPreset) : null;
+  const presetName: NamedPreset | null = trial ? namedParam ?? 'enrichment' : namedParam;
+  const taskKey = !trial && typeof params.taskKey === 'string' && params.taskKey ? params.taskKey : undefined;
+  const phase: 'active' | 'maintenance' = program?.phase === 'maintenance' ? 'maintenance' : 'active';
+  const nightNow = isQuietHour(new Date().getHours(), nightStart, nightEnd);
   const customSpec = useMemo<SoundSpec | undefined>(() => {
     if (!params.spec) return undefined;
     try { return JSON.parse(params.spec) as SoundSpec; } catch { return undefined; }
@@ -84,10 +92,18 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   const hyperStartGain = hyperGain(hyperStartDb(hyperComfortDb));
   const hyperStartRef = useRef(hyperStartGain);
   hyperStartRef.current = hyperStartGain;
-  const nudge = presetName === 'hyperacusis' && shouldNudgeComfort(hyperComfortDb, hyperComfortWeek, week);
+  // Weekly "+2 dB" in the programme, every 2 weeks in maintenance (Sprint 3 C3).
+  const nudge = !trial && presetName === 'hyperacusis' && shouldNudgeComfort(hyperComfortDb, hyperComfortWeek, week, hyperNudgeIntervalWeeks(program?.phase));
 
-  // Task target (C3): the task's minute target from the `minutes` param (default 20) for the hyperacusis preset or any task that passes minutes.
-  const target = taskKey && (presetName === 'hyperacusis' || params.minutes) ? targetMinutes(params.minutes, 20) : null;
+  // Task target (Sprint 3 C3): 30 min in maintenance; otherwise the `minutes` param, else the task's own minutes
+  // (light dose: the reduced length), else 20 for the hyperacusis preset. Looked up from the programme by taskKey (`week-day-taskId`).
+  const taskMinutes = useMemo(() => {
+    if (!taskKey || !program) return null;
+    const m = /^(\d+)-(\d+)-(.+)$/.exec(taskKey);
+    if (!m) return null;
+    return tasksForDay(program, Number(m[1]), Number(m[2])).find((x) => x.id === m[3])?.minutes ?? null;
+  }, [taskKey, program]);
+  const target = resolveTargetMinutes({ taskKey, minutesParam: params.minutes, taskMinutes, phase, preset: presetName });
   const [done, setDone] = useState(false);
   const played = useRef({ sec: 0, last: null as number | null });
   useEffect(() => {
@@ -109,7 +125,8 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
     if (!resolved) { setMissingPitch(presetName === 'notched' || presetName === 'ri'); return; }
     setMissingPitch(false);
     setLoading(true);
-    const timer = presetName === 'hyperacusis' && target != null ? target : resolved.timerMinutes;
+    // Night timer (Sprint 3 C3): the sleep preset opened inside the quiet hours starts with a 45-minute timer. The trial has no timer; it stops itself at 60 s.
+    const timer = trial ? null : presetName === 'hyperacusis' && target != null ? target : sleepTimerFor(presetName, new Date().getHours(), nightStart, nightEnd, resolved.timerMinutes);
     void mixer.load(resolved.layers, Math.min(resolved.volume, maxVolume), timer, resolved.titleKey, resolved.presetId ?? null)
       .catch((e) => console.warn('player load failed', e))
       .finally(() => setLoading(false));
@@ -119,7 +136,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   // so a manual mixer change never triggers a reload that would wipe the user's layers.
   const loadedFor = useRef<string | null>(null);
   useEffect(() => {
-    if (!presetName || !mp.loaded) return;
+    if (!presetName || !mp.loaded || trial) return; // the trial starts on its own button
     const key = `${presetName}|${params.spec ?? ''}|${params.id ?? ''}|${octaves ?? ''}`;
     if (loadedFor.current === key) return;
     loadedFor.current = key;
@@ -139,9 +156,36 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
   detailRef.current = JSON.stringify({ preset: presetName ?? eng.presetId ?? 'custom', layers: eng.layers.map((l) => l.id), master: Math.round(eng.master * 100) / 100, tunedHz: tunedLayerOn ? tune.hz : undefined });
   const flush = () => {
     const minutes = mixer.takeElapsedMinutes();
+    if (trial) return; // the trial logs exactly one `detail: 'trial'` session when it completes (below), never a mixer session
     if (minutes > 0) logSession({ type: 'sound', minutes, detail: detailRef.current });
   };
-  useEffect(() => () => { flush(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => { flush(); if (trial) void mixer.stopAll(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sprint 3 C1 — trial: single "Başlat", 60 s countdown, stops itself, logs `{ type: 'sound', minutes: 1, detail: 'trial' }`, completes no task.
+  const [trialPhase, setTrialPhase] = useState<'idle' | 'playing' | 'done'>('idle');
+  const trialElapsed = trial && trialPhase === 'playing' ? mixer.elapsedSec() : 0;
+  const trialRemaining = Math.max(0, TRIAL_SECONDS - Math.floor(trialElapsed));
+  const startTrial = () => { setTrialPhase('playing'); loadPreset(); };
+  useEffect(() => {
+    if (!trial || trialPhase !== 'playing' || !trialFinished(mixer.elapsedSec())) return;
+    void mixer.stopAll();
+    setTrialPhase('done');
+    logSession({ type: 'sound', minutes: 1, detail: TRIAL_DETAIL });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [now, trial, trialPhase]);
+
+  // Sprint 3 C1 — headphone check once before the first real sound (`settings.headphoneCheckedAt`); never for the trial.
+  // Coming back from /assess/headphone-check (`hp`/`ok` params present) counts as checked, passed or skipped.
+  const [hpGate, setHpGate] = useState(() => !trial && needsHeadphoneCheck());
+  useEffect(() => {
+    if (params.hp != null || params.ok != null) { markHeadphoneChecked(); setHpGate(false); }
+  }, [params.hp, params.ok]);
+  const goHeadphoneCheck = () => {
+    const keep: (keyof Params)[] = ['preset', 'spec', 'id', 'octaves', 'taskKey', 'minutes'];
+    const q = keep.filter((k) => typeof params[k] === 'string' && params[k]).map((k) => `${k}=${encodeURIComponent(params[k] as string)}`).join('&');
+    router.replace(`/assess/headphone-check?next=${encodeURIComponent(`/sound/player${q ? `?${q}` : ''}`)}`);
+  };
+  const skipHeadphoneCheck = () => { markHeadphoneChecked(); setHpGate(false); };
 
   const first = eng.layers[0];
   const title = eng.titleKey ? t(eng.titleKey) : first ? describeSpec(first.spec, t) : t('player.title');
@@ -180,14 +224,39 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
     void bumpReentryNudge();
   };
 
-  const headerOpts = { title, headerStyle: { backgroundColor: colors.bg }, headerTintColor: colors.primary, headerTitleStyle: { color: colors.text, fontWeight: '600' as const }, contentStyle: { backgroundColor: colors.bg } };
+  const headerOpts = { title: trial ? t('sound.trial.title') : title, headerStyle: { backgroundColor: colors.bg }, headerTintColor: colors.primary, headerTitleStyle: { color: colors.text, fontWeight: '600' as const }, contentStyle: { backgroundColor: colors.bg } };
   const timerOptions = target != null && !TIMER_OPTIONS.includes(target) ? [target, ...TIMER_OPTIONS] : TIMER_OPTIONS;
 
   return (
     <>
       <Stack.Screen options={headerOpts} />
       {night ? <StatusBar style="light" /> : null}
+      {trial ? (
+        <Screen>
+          <View style={{ alignItems: 'center', gap: space[3], paddingVertical: space[5] }}>
+            <Text variant="h2" center>{t('sound.trial.title')}</Text>
+            <Text variant="body" tone="secondary" center>{t('sound.trial.body')}</Text>
+            {trialPhase === 'playing' ? (
+              <Text variant="numeric" accessibilityLabel={t('sound.trial.remaining', { s: trialRemaining })} accessibilityLiveRegion="polite">{formatClock(trialRemaining)}</Text>
+            ) : null}
+            {trialPhase === 'idle' ? (
+              <Button title={t('sound.trial.start')} icon={<Play size={20} color={colors.onPrimary} />} loading={loading} onPress={startTrial} accessibilityLabel={t('sound.trial.a11y.start')} />
+            ) : null}
+            {trialPhase === 'playing' ? <Text variant="caption" tone="secondary">{t('sound.trial.remaining', { s: trialRemaining })}</Text> : null}
+          </View>
+          {trialPhase === 'done' ? (
+            <Card variant="tinted" title={t('sound.trial.done.title')}>
+              <Text variant="body">{t('sound.trial.done.body')}</Text>
+              <Button title={t('common.continue')} icon={<CheckCircle2 size={18} color={colors.onPrimary} />} onPress={() => router.back()} />
+            </Card>
+          ) : null}
+          <Text variant="caption" tone="secondary" center>{t('sound.trial.speaker')}</Text>
+        </Screen>
+      ) : (
       <Screen contentStyle={{ opacity: sleepMode ? 0.82 : 1 }}>
+        {hpGate ? (
+          <Banner tone="info" title={t('sound.hp.title')} body={t('sound.hp.body')} primary={{ title: t('sound.hp.go'), onPress: goHeadphoneCheck }} secondary={{ title: t('sound.hp.skip'), onPress: skipHeadphoneCheck }} />
+        ) : null}
         {/* Hero: play control + clock */}
         <View style={{ alignItems: 'center', gap: space[3], paddingVertical: space[4] }}>
           <PlayControl size={88} playing={eng.isPlaying} onPress={onPlayPress} onLongPress={() => setSheetOpen(true)}
@@ -235,6 +304,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
         {/* Task target and completion (C3) */}
         {target != null ? (
           <Card title={t('sound.target.title', { n: target })}>
+            {phase === 'maintenance' ? <Text variant="caption" tone="secondary">{t('sound.target.maint')}</Text> : null}
             {done ? (
               <Text variant="bodySmall" tone="success">{t('sound.target.completed')}</Text>
             ) : (
@@ -250,6 +320,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
         <SectionHeader title={t('player.timer.title')} />
         <TimerChips value={eng.timerMinutes} options={timerOptions} onChange={(m) => mixer.setTimer(m)} />
         <Text variant="caption" tone="secondary">{t('player.timer.hint')}</Text>
+        {presetName === 'sleep' && nightNow ? <Text variant="caption" tone="primary">{t('player.timer.night', { n: NIGHT_SLEEP_TIMER_MINUTES })}</Text> : null}
 
         {/* Volume */}
         <Card>
@@ -261,10 +332,10 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
           {presetName === 'enrichment' && tune.reason === 'override' ? (
             <View style={{ gap: space[1] }}>
               <Text variant="caption" tone="secondary">{t('sound.tuned.manual')}</Text>
-              <Pressable accessibilityRole="button" onPress={onRestoreTune} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="bodySmall" tone="primary">{t('sound.tuned.restore')}</Text></Pressable>
+              <Pressable accessibilityRole="button" accessibilityLabel={t('player.a11y.restoreTune')} onPress={onRestoreTune} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="bodySmall" tone="primary">{t('sound.tuned.restore')}</Text></Pressable>
             </View>
           ) : null}
-          <Pressable accessibilityRole="link" onPress={() => router.push('/sound/mixing-point')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="bodySmall" tone="primary">{t('player.mixingLink')}</Text></Pressable>
+          <Pressable accessibilityRole="link" accessibilityLabel={t('player.a11y.mixingLink')} onPress={() => router.push('/sound/mixing-point')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="bodySmall" tone="primary">{t('player.mixingLink')}</Text></Pressable>
         </Card>
 
         {/* Preset-specific guidance */}
@@ -294,7 +365,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
               <Chip small tone="warning" icon={<FlaskConical size={14} color={colors.warning} />} label={t('lab.experimental')} />
               <EvidenceChip level="rct" onPress={() => open('stein2016')} />
             </View>
-            <Pressable accessibilityRole="link" onPress={() => router.push('/assess/pitch')}><Text variant="bodySmall" tone="primary">{t('lab.rematch')}</Text></Pressable>
+            <Pressable accessibilityRole="link" accessibilityLabel={t('player.a11y.rematch')} onPress={() => router.push('/assess/pitch')} style={{ minHeight: 44, justifyContent: 'center' }}><Text variant="bodySmall" tone="primary">{t('lab.rematch')}</Text></Pressable>
           </Card>
         ) : null}
         {presetName === 'sleep' ? <Text variant="bodySmall" tone="secondary">{t('player.sleepHint')}</Text> : null}
@@ -334,10 +405,11 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
         </Card>
         {sheet}
       </Screen>
+      )}
 
       {/* Add-layer sheet */}
       <Modal visible={sheetOpen} transparent animationType="slide" onRequestClose={() => setSheetOpen(false)}>
-        <Pressable style={{ flex: 1, backgroundColor: colors.overlay }} onPress={() => setSheetOpen(false)} accessibilityLabel={t('common.close')} />
+        <Pressable style={{ flex: 1, backgroundColor: colors.overlay }} onPress={() => setSheetOpen(false)} accessibilityRole="button" accessibilityLabel={t('player.a11y.closeSheet')} />
         <View style={{ backgroundColor: colors.elevated, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: space[5], gap: space[3], maxHeight: '70%' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text variant="h3">{t('player.addLayer')}</Text>
@@ -348,7 +420,7 @@ function PlayerScreen({ sleepMode, onSleepMode }: { sleepMode: boolean; onSleepM
               const spec = resolveSpec(p, { pitchHz, octaves });
               const already = eng.layers.some((l) => l.id === p.id);
               return (
-                <Pressable key={p.id} accessibilityRole="button" accessibilityState={{ disabled: !spec || already }} disabled={!spec || already} onPress={() => spec && addLayer(p.id, spec)}
+                <Pressable key={p.id} accessibilityRole="button" accessibilityLabel={t(p.nameKey)} accessibilityState={{ disabled: !spec || already }} disabled={!spec || already} onPress={() => spec && addLayer(p.id, spec)}
                   style={({ pressed }) => ({ minHeight: 56, paddingHorizontal: space[4], paddingVertical: space[2], borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card, opacity: !spec || already ? 0.45 : pressed ? 0.8 : 1, flexDirection: 'row', alignItems: 'center', gap: space[2] })}>
                   <View style={{ flex: 1 }}>
                     <Text variant="bodyStrong">{t(p.nameKey)}</Text>

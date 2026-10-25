@@ -126,3 +126,21 @@ test('honesty rule: no consequence line promises a cure ("tedavi eder", "geçer"
     assert.ok(Object.keys(assessStrings[loc]).filter((k) => k.startsWith('consequence.')).length >= 24, `${loc} consequence keys present`);
   }
 });
+
+test('maintenance THI line (sprint 3 A1): +13 → refresher block; meaningful drop stays "good"; otherwise "bakım sürüyor"', () => {
+  const prev: QuestionnaireResult = { id: 'THI', date: '2026-09-01', answers: thiAnswers(30), total: 30 };
+  const up = consequencesOf('THI', scoredThi(thiAnswers(44)), base(), prev, { maintenance: true });
+  assert.equal(up[0].key, 'consequence.thi.maint.refresher');
+  assert.equal(up[0].params?.d, 14);
+  assert.equal(up[0].tone, 'warning');
+  assert.match(consequenceText(t, up[0]), /tazeleme bloğu/);
+  const flat = consequencesOf('THI', scoredThi(thiAnswers(36)), base(), prev, { maintenance: true });
+  assert.equal(flat[0].key, 'consequence.thi.maint.steady');
+  assert.equal(flat[0].params?.d, '+6');
+  assert.match(consequenceText(t, flat[0]), /bakım sürüyor/);
+  const good = consequencesOf('THI', scoredThi(thiAnswers(20)), base(), prev, { maintenance: true });
+  assert.equal(good[0].key, 'consequence.thi.change.good');
+  // +12 in maintenance is not a refresher; in the active phase +12 is "worse" (≥ 11).
+  assert.equal(consequencesOf('THI', scoredThi(thiAnswers(42)), base(), prev, { maintenance: true })[0].key, 'consequence.thi.maint.steady');
+  assert.equal(consequencesOf('THI', scoredThi(thiAnswers(42)), base(), prev)[0].key, 'consequence.thi.change.worse');
+});

@@ -37,6 +37,7 @@ function ChipScale({ value, onSelect, a11yKey, lowKey = 'diary.scale.low', highK
               accessibilityRole="radio"
               accessibilityState={{ selected: sel }}
               accessibilityLabel={t(a11yKey, { v })}
+              accessibilityValue={{ min: 0, max: 10, now: v, text: t(a11yKey, { v }) }}
               onPress={() => onSelect(v)}
               style={({ pressed }) => ({ width: 44, height: 44, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center', backgroundColor: sel ? colors.primary : colors.primarySoft, borderWidth: sel ? 0 : 1, borderColor: colors.border, opacity: pressed ? 0.8 : 1 })}
             >
@@ -53,8 +54,8 @@ function ChipScale({ value, onSelect, a11yKey, lowKey = 'diary.scale.low', highK
   );
 }
 
-/** Seven 8 pt bars for the last 7 days of annoyance (plain Views, theme colours). Days without an entry show a faint stub. */
-function MiniBars({ diary, date }: { diary: DiaryEntry[]; date: string }) {
+/** Seven 8 pt bars for the last 7 days of annoyance (plain Views, theme colours). Days without an entry show a faint stub. Memoised: re-renders only when the diary or the day changes. */
+const MiniBars = React.memo(function MiniBars({ diary, date }: { diary: DiaryEntry[]; date: string }) {
   const { colors, space } = useTheme();
   const t = useT();
   const locale = useLocale();
@@ -77,7 +78,7 @@ function MiniBars({ diary, date }: { diary: DiaryEntry[]; date: string }) {
       })}
     </View>
   );
-}
+});
 
 /**
  * One-tap daily check-in on Home (PM §S1-04): tap an annoyance chip → diary entry upserted, today's `diary.daily`
@@ -90,7 +91,10 @@ export function QuickCheckIn() {
   const { colors, space, radius } = useTheme();
   const t = useT();
   const locale = useLocale();
-  const { diary, program, upsertDiary, completeTask } = useClinical();
+  const diary = useClinical((s) => s.diary);
+  const program = useClinical((s) => s.program);
+  const upsertDiary = useClinical((s) => s.upsertDiary);
+  const completeTask = useClinical((s) => s.completeTask);
   const track = useGrowth((s) => s.track);
   const date = today();
   const existing = diary.find((d) => d.date === date);

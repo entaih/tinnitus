@@ -19,8 +19,9 @@ export function DinginMark({ size = 28, color }: { size?: number; color: string 
 /**
  * The shareable progress card. Rendered on-screen and captured as an image with react-native-view-shot.
  * Shows only the user's own numbers (first vs latest THI, programme week, active days) and a "not a diagnosis" footer.
+ * `headline` is the share-moment line ("1. hafta tamam · 5 etkin gün"), rendered inside the captured card.
  */
-export const ProgressCardView = forwardRef<React.ComponentRef<typeof View>, { stats: ProgressStats }>(function ProgressCardView({ stats }, ref) {
+export const ProgressCardView = forwardRef<React.ComponentRef<typeof View>, { stats: ProgressStats; headline?: string }>(function ProgressCardView({ stats, headline }, ref) {
   const { colors, space, radius, shadow } = useTheme();
   const t = useT();
   const band = (total: number) => t(`severity.${thiBandKey(total)}`);
@@ -37,6 +38,8 @@ export const ProgressCardView = forwardRef<React.ComponentRef<typeof View>, { st
         <View style={{ flex: 1 }} />
         <Text variant="caption" tone="muted">{stats.programWeek != null ? t('growth.share.card.week', { n: stats.programWeek }) : t('growth.share.card.noProgram')}</Text>
       </View>
+
+      {headline ? <Text variant="h3" tone="primary" accessibilityRole="header">{headline}</Text> : null}
 
       <View style={{ gap: 2 }}>
         <Text variant="caption" tone="secondary">{t('growth.share.card.thi')}</Text>

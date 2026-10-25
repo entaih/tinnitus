@@ -14,7 +14,10 @@ import { QUESTIONNAIRES, type QuestionnaireId } from '@/clinical/questionnaires'
 import type { Assessment } from '@/clinical/types';
 
 type Evidence = 'guideline' | 'rct' | 'expert';
-interface Module { key: string; route: string; minutes: number; items?: number; evidence: Evidence; citation: string; icon: React.ComponentType<{ size?: number; color?: string }>; lastDone: (a: Assessment[]) => string | null }
+interface Module { key: string; route: string; minutes: number; items?: number; evidence: Evidence; citation: string; icon: React.ComponentType<{ size?: number; color?: string }>; lastDone: (a: Assessment[]) => string | null; /** i18n key of a sub-line (e.g. "full form only if positive"). */ note?: string; noteParams?: Record<string, string | number> }
+
+/** Base items of the case history (app/assess/history.tsx `BASE_ITEMS`: 11, plus up to 3 conditional follow-ups), as the journey shows it. */
+const HISTORY_BASE_ITEMS = 11;
 
 const REFRESH_DAYS = 28;
 const DAY = 24 * 60 * 60 * 1000;
@@ -33,17 +36,18 @@ const MODULES: { section: string; items: Module[] }[] = [
     section: 'assess.section.required',
     items: [
       { key: 'triage', route: '/assess/triage', minutes: 2, items: 12, evidence: 'guideline', citation: 'nice2020', icon: ShieldAlert, lastDone: (as) => lastWith(as, (a) => (a.redFlags ? a.date : null)) },
-      { key: 'history', route: '/assess/history', minutes: 4, items: 14, evidence: 'guideline', citation: 'cima2019', icon: ClipboardList, lastDone: (as) => lastWith(as, (a) => (a.history ? a.date : null)) },
+      { key: 'history', route: '/assess/history', minutes: 2, items: HISTORY_BASE_ITEMS, evidence: 'guideline', citation: 'cima2019', icon: ClipboardList, lastDone: (as) => lastWith(as, (a) => (a.history ? a.date : null)), note: 'assess.tab.conditional', noteParams: { n: 3 } },
     ],
   },
   {
     section: 'assess.section.questionnaires',
     items: [
       { key: 'THI', route: '/assess/questionnaire/THI', minutes: QUESTIONNAIRES.THI.minutes, items: QUESTIONNAIRES.THI.items.length, evidence: QUESTIONNAIRES.THI.evidence, citation: QUESTIONNAIRES.THI.citation, icon: Activity, lastDone: qDate('THI') },
-      { key: 'HQ', route: '/assess/questionnaire/HQ', minutes: QUESTIONNAIRES.HQ.minutes, items: QUESTIONNAIRES.HQ.items.length, evidence: QUESTIONNAIRES.HQ.evidence, citation: QUESTIONNAIRES.HQ.citation, icon: Ear, lastDone: qDate('HQ') },
+      // Same inventory as the journey (sprint 3 E10): the 2-item screens; the full HQ-14 / SCI-8 open only when positive.
+      { key: 'THS', route: '/assess/questionnaire/THS', minutes: QUESTIONNAIRES.THS.minutes, items: QUESTIONNAIRES.THS.items.length, evidence: QUESTIONNAIRES.THS.evidence, citation: QUESTIONNAIRES.THS.citation, icon: Ear, lastDone: (as) => qDate('THS')(as) ?? qDate('HQ')(as), note: 'assess.tab.fullIfPositive', noteParams: { name: 'HQ-14', n: QUESTIONNAIRES.HQ.items.length } },
       { key: 'PHQ9', route: '/assess/questionnaire/PHQ9', minutes: QUESTIONNAIRES.PHQ9.minutes, items: QUESTIONNAIRES.PHQ9.items.length, evidence: QUESTIONNAIRES.PHQ9.evidence, citation: QUESTIONNAIRES.PHQ9.citation, icon: HeartPulse, lastDone: qDate('PHQ9') },
       { key: 'GAD7', route: '/assess/questionnaire/GAD7', minutes: QUESTIONNAIRES.GAD7.minutes, items: QUESTIONNAIRES.GAD7.items.length, evidence: QUESTIONNAIRES.GAD7.evidence, citation: QUESTIONNAIRES.GAD7.citation, icon: Brain, lastDone: qDate('GAD7') },
-      { key: 'SCI', route: '/assess/questionnaire/SCI', minutes: QUESTIONNAIRES.SCI.minutes, items: QUESTIONNAIRES.SCI.items.length, evidence: QUESTIONNAIRES.SCI.evidence, citation: QUESTIONNAIRES.SCI.citation, icon: Moon, lastDone: qDate('SCI') },
+      { key: 'SCI02', route: '/assess/questionnaire/SCI02', minutes: QUESTIONNAIRES.SCI02.minutes, items: QUESTIONNAIRES.SCI02.items.length, evidence: QUESTIONNAIRES.SCI02.evidence, citation: QUESTIONNAIRES.SCI02.citation, icon: Moon, lastDone: (as) => qDate('SCI02')(as) ?? qDate('SCI')(as), note: 'assess.tab.fullIfPositive', noteParams: { name: 'SCI-8', n: QUESTIONNAIRES.SCI.items.length } },
       { key: 'RASST', route: '/assess/questionnaire/RASST', minutes: QUESTIONNAIRES.RASST.minutes, items: QUESTIONNAIRES.RASST.items.length, evidence: QUESTIONNAIRES.RASST.evidence, citation: QUESTIONNAIRES.RASST.citation, icon: Stethoscope, lastDone: qDate('RASST') },
     ],
   },
@@ -104,7 +108,9 @@ export default function AssessScreen() {
             const status = statusOf(m);
             const locked = !triageDone && m.key !== 'triage';
             const Icon = m.icon;
-            const name = t(`assess.module.${m.key}`);
+            // THS / SCI02 names and descriptions live in core.ts (assess.tab.*); the rest in assess.ts (assess.module.*).
+            const nameKey = m.key === 'THS' || m.key === 'SCI02' ? `assess.tab.module.${m.key}` : `assess.module.${m.key}`;
+            const name = t(nameKey);
             return (
               <Card
                 key={m.key}
@@ -117,9 +123,10 @@ export default function AssessScreen() {
                   </View>
                   <View style={{ flex: 1, gap: space[1] }}>
                     <Text variant="h3">{name}</Text>
-                    <Text variant="bodySmall" tone="secondary">{t(`assess.module.${m.key}.desc`)}</Text>
+                    <Text variant="bodySmall" tone="secondary">{t(`${nameKey}.desc`)}</Text>
+                    {m.note ? <Text variant="caption" tone="secondary">{t(m.note, m.noteParams)}</Text> : null}
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space[2], marginTop: space[1] }}>
-                      <Text variant="caption" tone="muted">{t('assess.minutes', { n: m.minutes })}{m.items ? ` · ${t('assess.items', { n: m.items })}` : ''}</Text>
+                      <Text variant="caption" tone="muted">{t('common.minutes', { n: m.minutes })}{m.items ? ` · ${t('assess.items', { n: m.items })}` : ''}</Text>
                       <EvidenceChip level={m.evidence} onPress={() => open(m.citation)} />
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[1] }}>
