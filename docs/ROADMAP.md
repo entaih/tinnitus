@@ -110,3 +110,9 @@ Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
 - ✅ "Programı başlat" artık onay kutusu beklemiyor; 2. kademe sevkte hatırlatma ekranda yazar. Acil durumlarda program yerine "Önce doktora gidin" gösterilir.
 - ✅ Yalnızca takip amaçlı sorular kaldırıldı: günlük check-in görevi ve ana ekran puanlama kartı, 4. hafta THI, 8/12. hafta kaygı ve uyku tekrarları. Tedaviyi veya güvenliği değiştirenler kaldı: 8. hafta ve program sonu THI, ruh hali taraması, 3 soruluk kırmızı bayrak kontrolü, bakım modunda 4 haftada bir THI (tazeleme kararı).
 - ✅ Uyku sorularında seçenekler şıklarda; sorular arasında kayma geçişi; ek ruh hali sorularının nedeni ve ayrı "Ek soru" sayacı; 60 sn deneme sayacı düzeltildi.
+
+## 11. Yayına hazırlık (Ekim 2026)
+- ✅ Deneme sesi yolculuktan çıkarıldı (ses, 1. günde çınlamaya göre ayarlanan "Sesinizi bulun" ile geliyor).
+- ✅ Mağaza yapılandırması, EAS profilleri, gizlilik bildirimi, izin metinleri, bildirim ikonu, hata ekranı, gizlilik/KVKK ve kullanım koşulları ekranı, yayın kapısı betiği, lint kurulumu.
+- ✅ Bağımsız yayın denetimi: engelleyiciler ve metin sorunları giderildi; sonuç ekranı program varken de sade adımlarla açılıyor.
+- ⏭ Sahibin yapacakları: `docs/RELEASE.md` §2 (hesaplar, veri sorumlusu bilgisi, gizlilik politikası adresi, THI izni, ekran görüntüleri).

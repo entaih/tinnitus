@@ -42,7 +42,6 @@ function toRedFlags(a: boolean[]): RedFlags {
 
 export default function TriageScreen() {
   const t = useT();
-  const router = useRouter();
   const { colors, space } = useTheme();
   const id = useAssessmentId();
   const saveRedFlags = useClinical((s) => s.saveRedFlags);

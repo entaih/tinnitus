@@ -6,12 +6,11 @@ import { Banner, Button, Card, Chip, Screen, Text, useCitation } from '@/compone
 import { RationaleList, TaskRow, WeekTimeline, activeMinutes, hasBackgroundSound, openTask, splitByBudget, type DayState, type TimelineDay } from '@/components/home';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
-import { useClinical } from '@/store/clinical';
+import { useClinical , mergedLatest } from '@/store/clinical';
 import { adaptationAdvice, adherence, assessmentPrefs, dayCompletion, isProgramFinished, maintenanceWeekOf, programPosition, refresherActive, regenerateProgram, taskKey, tasksForDay, type Dose, type ProgramPrefs } from '@/clinical/program';
 import { useProfile } from '@/hooks/useProfile';
 import { consequencesOf, consequenceText } from '@/clinical/consequences';
 import { QUESTIONNAIRES, scoreQuestionnaire } from '@/clinical/questionnaires';
-import { mergedLatest } from '@/store/clinical';
 import type { QuestionnaireResult } from '@/clinical/types';
 
 export default function ProgramScreen() {

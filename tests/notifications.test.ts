@@ -115,12 +115,12 @@ test('reminderWeekdays: all 7 in the active programme, settings.reminderDays (de
   assert.deepEqual(normalizeReminderDays([5, 5, 2, 0, 8]), [2, 5]);
 });
 
-test('daily reminder copy: maintenance uses the "5 dk uygulama ya da yalnız check-in" body on weekdays, Sunday keeps the card', () => {
+test('daily reminder copy: maintenance uses the short-practice copy on weekdays, Sunday keeps the card', () => {
   assert.deepEqual(dailyReminderKeys(3, 'full', 'maintenance'), { title: 'notif.day.maint.title', body: 'notif.day.maint.body' });
   assert.deepEqual(dailyReminderKeys(3, 'light', 'maintenance'), { title: 'notif.day.maint.title', body: 'notif.day.maint.body' });
   assert.deepEqual(dailyReminderKeys(1, 'full', 'maintenance'), { title: 'notif.day.1.title', body: 'notif.day.1.body' });
   assert.deepEqual(dailyReminderKeys(3, 'full', 'active'), { title: 'notif.day.3.title', body: 'notif.day.3.body' });
-  assert.equal(notifyStrings.tr['notif.day.maint.title'], 'Bakım: 5 dk uygulama ya da yalnız check-in');
+  assert.equal(notifyStrings.tr['notif.day.maint.title'], 'Bakım: 5 dakikalık kısa uygulama');
   assert.ok(notifyStrings.tr['notif.programDone.title'].startsWith('Programı tamamladınız'));
 });
 

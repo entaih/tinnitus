@@ -116,8 +116,8 @@ export function applicableExamSteps(opts: ExamStepOptions): ExamStepDef[] {
 }
 
 /** Steps hidden by the eligibility gate, with their reasons (i18n keys). */
-export function gatedExamSteps(e: ExamEligibility): Array<{ id: ExamStepId; reasons: string[] }> {
-  const out: Array<{ id: ExamStepId; reasons: string[] }> = [];
+export function gatedExamSteps(e: ExamEligibility): { id: ExamStepId; reasons: string[] }[] {
+  const out: { id: ExamStepId; reasons: string[] }[] = [];
   if (!e.pressure) out.push({ id: 'pressure', reasons: e.pressureReasons });
   if (!e.ldl) out.push({ id: 'ldl', reasons: e.ldlReasons });
   if (!e.balance) out.push({ id: 'balance', reasons: e.balanceReasons });

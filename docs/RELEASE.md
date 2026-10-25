@@ -12,10 +12,11 @@ Güncelleme: 25 Ekim 2026 · sürüm 1.0.0 · Expo SDK 58
 | iOS gizlilik bildirimi | `ios.privacyManifests`: takip yok, veri toplama yok, gerekli API gerekçeleri tanımlı; şifreleme beyanı `usesNonExemptEncryption: false` |
 | Yalnız telefon | iPad desteği kapalı (iPad ekran görüntüsü gerekmez) |
 | Derleme profilleri | `eas.json`: `preview` (iç dağıtım, Android APK) ve `production` (mağaza, Android App Bundle, otomatik derleme numarası) |
+| Yayın öncesi denetim | Bağımsız denetimdeki tüm engelleyiciler giderildi: tanı/MDR ifadeleri "olası neden · kesin tanıyı hekim koyar" çizgisine çekildi, "prototip/araştırma sürümü" ifadeleri kaldırıldı, hata ayıklama sayaçları yalnızca geliştirmede görünür |
 | Hata ekranı | Beklenmeyen bir hatada boş ekran yerine "Bir şeyler ters gitti · Tekrar dene" ekranı (`app/_layout.tsx`) |
 | Gizlilik ve koşullar | Uygulama içinde (`/privacy`, Ayarlar → Gizlilik ve ilk ekran) ve mağaza için `docs/privacy-policy.md` |
 | Mağaza metni | `docs/store-listing.md` (TR + EN, ekran görüntüsü planı) |
-| Kalite | TypeScript hatasız, birim testleri geçiyor, iOS ve Android paketleri derleniyor, `expo-doctor` 18/20 (kalan 2 kontrol yalnızca internet erişimi ister) |
+| Kalite | TypeScript hatasız, 180 birim testi geçiyor, `npx expo lint` 0 hata (32 uyarı: React Compiler uyumluluk önerileri, derleyici kapalı), iOS ve Android paketleri derleniyor, `expo-doctor` 18/20 (kalan 2 kontrol yalnızca internet erişimi ister) |
 | Yayın kapısı | `npm run release:check`: gizlilik iletişim bilgisi boşsa derlemeyi durdurur |
 
 ## 2. Yalnızca sizin yapabileceğiniz adımlar
@@ -66,6 +67,7 @@ Mağaza incelemesi açısından: Apple Yönergesi 1.4.1 ve Google Play sağlık 
 
 ## 6. Bilinen sınırlar
 
-- `npx expo lint` bu geliştirme ortamında çalıştırılamadı (ESLint yapılandırması internetten indirilemedi). TypeScript ve birim testleri temiz.
+- Lint uyarıları (32) React Compiler etkinleştirilirse ele alınmalı; şu an derleyici kapalı.
+- Klinik kodu ekranı (`/clinic`) bir klinik paneli olmadığı için menülerden kaldırıldı; dosya duruyor.
 - Uzaktan güncelleme (EAS Update) kurulu değil; her değişiklik yeni derleme gerektirir. İstenirse sonradan eklenebilir.
 - THI-S kısa formu kapalı: madde tablosu doğrulanana kadar kullanılmıyor.

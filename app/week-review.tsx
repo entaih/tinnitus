@@ -6,12 +6,11 @@ import { Button, Card, Disclaimer, Screen, Text } from '@/components';
 import { WeeklyGoalRing, activeTasks, formatAvg, isBackground, isMaintenance, maintenanceWeek, planForToday, programFinished, programWeekWindow, taskTitle, weekActiveDays, weekCompare, weeklyGoalOf } from '@/components/home';
 import { ProgressCardView, STORE_ANDROID, STORE_IOS, storeLinesText, ShareMomentCard, computeProgressStats, shareCardImage, shareMoments, thiSeries } from '@/components/growth';
 import { useTheme } from '@/theme';
-import { useLocale, useT } from '@/i18n';
+import { useLocale, useT , pick } from '@/i18n';
 import { today, useClinical } from '@/store/clinical';
 import { useGrowth } from '@/store/growth';
 import { programPosition, taskKey, tasksForDay } from '@/clinical/program';
 import { getModule } from '@/content/modules';
-import { pick } from '@/i18n';
 import type { ProgramTask } from '@/clinical/types';
 
 /**

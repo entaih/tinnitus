@@ -43,8 +43,8 @@ export const notifyStrings = {
     'settings.dose.sub': 'Değiştirmek için program kurulumunu açın. Hafif doz: günde yaklaşık 8 dk, haftada tek modül.',
 
     // --- Maintenance (Sprint 3 C2): weekdays 2–7 share one body; Sunday keeps the weekly card ---
-    'notif.day.maint.title': 'Bakım: 5 dk uygulama ya da yalnız check-in',
-    'notif.day.maint.body': 'Kısa bir uygulama ya da yalnızca günlük kontrol; ikisi de sayılır.',
+    'notif.day.maint.title': 'Bakım: 5 dakikalık kısa uygulama',
+    'notif.day.maint.body': 'Kısa bir uygulama ya da arka plan sesi; ikisi de sayılır.',
 
     // --- Programme completed (one-shot, last programme day 18:00) ---
     'notif.programDone.title': 'Programı tamamladınız — bakım modunu açın',
@@ -105,8 +105,8 @@ export const notifyStrings = {
     'settings.dose.light': 'Light',
     'settings.dose.sub': 'Open the programme setup to change it. Light dose: about 8 min a day, one module a week.',
 
-    'notif.day.maint.title': 'Maintenance: 5 min practice or just the check-in',
-    'notif.day.maint.body': 'A short practice or only the daily check-in; both count.',
+    'notif.day.maint.title': 'Maintenance: a 5-minute practice',
+    'notif.day.maint.body': 'A short practice or background sound; both count.',
 
     'notif.programDone.title': 'You completed the programme — open maintenance mode',
     'notif.programDone.body': 'Maintenance: a short practice 3 days a week, the Sunday card and a measurement every 4 weeks.',

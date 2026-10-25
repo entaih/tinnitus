@@ -45,7 +45,7 @@ function programParts(profile: Profile): { key: string; Icon: typeof Volume2 }[]
  * 1 the score in words, 2 the doctor to see and when (only if needed), 3 the likely cause in everyday words,
  * 4 the programme with one big start button. Everything technical stays on the detailed report.
  */
-export function ResultsSteps({ thi, dx, assessment, profile, gate, plan, onStart, onDetails }: {
+export function ResultsSteps({ thi, dx, assessment, profile, gate, plan, onStart, onDetails, hasProgram = false }: {
   thi: { total: number; band: SeverityBand } | null;
   dx: Diagnosis;
   assessment: Assessment;
@@ -53,6 +53,8 @@ export function ResultsSteps({ thi, dx, assessment, profile, gate, plan, onStart
   gate: ProgramGate;
   plan: { weeks: number; min: number } | null;
   onStart: () => void;
+  /** A programme already runs: the last step says so and the button goes to today's step. */
+  hasProgram?: boolean;
   onDetails: () => void;
 }) {
   const { colors, space, radius } = useTheme();
@@ -84,7 +86,7 @@ export function ResultsSteps({ thi, dx, assessment, profile, gate, plan, onStart
       <Button title={t('simple.blocked.cta')} onPress={() => router.replace('/(tabs)')} />
     ) : (
       <View style={{ gap: space[2] }}>
-        <Button title={t('simple.start')} icon={<ArrowRight size={20} color={colors.onPrimary} />} onPress={start} />
+        <Button title={hasProgram ? t('simple.goToday') : t('simple.start')} icon={<ArrowRight size={20} color={colors.onPrimary} />} onPress={hasProgram ? onStart : start} />
         <Button variant="ghost" size="sm" title={t('simple.details')} icon={<FileText size={18} color={colors.primary} />} onPress={onDetails} />
       </View>
     )
@@ -186,7 +188,7 @@ export function ResultsSteps({ thi, dx, assessment, profile, gate, plan, onStart
           ) : (
             <>
               {bigIcon(<CalendarDays size={48} color={colors.success} />, colors.successBg)}
-              <Text variant="h1" center accessibilityRole="header">{t('simple.program.title')}</Text>
+              <Text variant="h1" center accessibilityRole="header">{t(hasProgram ? 'simple.program.running' : 'simple.program.title')}</Text>
               <View style={{ gap: space[3] }}>
                 {plan ? (
                   <View style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>

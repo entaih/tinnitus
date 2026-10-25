@@ -38,9 +38,8 @@ export const growthStrings = {
 
     // --- Invite ---
     'growth.invite.title': 'Arkadaşınızı davet edin',
-    'growth.invite.body': 'Kulak çınlamasıyla yaşayan bir tanıdığınız varsa Dingin\'i önerebilirsiniz. Davet bağlantısı yalnızca uygulamayı açar; kişisel veri taşımaz.',
+    'growth.invite.body': 'Kulak çınlamasıyla yaşayan bir tanıdığınız varsa Dingin\'i önerebilirsiniz. Mesaj yalnızca mağaza bağlantılarını içerir; kişisel veri taşımaz.',
     'growth.invite.cta': 'Davet gönder',
-    'growth.invite.code': 'Davet kodunuz: {code}',
     'growth.invite.message': 'Kulak çınlaması için Türkçe, kanıta dayalı bir uygulama kullanıyorum: Dingin. Kısa testlerle ön değerlendirme yapıyor ve kişisel bir program hazırlıyor.\n\n{stores}',
 
     // --- Crisis card ---
@@ -110,17 +109,17 @@ export const growthStrings = {
     'growth.evidence.claims.title': 'Neyi iddia ederiz, neyi etmeyiz',
     'growth.evidence.claims.do.title': 'Söylediklerimiz',
     'growth.evidence.claims.do.1': 'Kanıta dayalı bir öz yönetim programı sunar.',
-    'growth.evidence.claims.do.2': 'Valide ölçeklerle ölçer, izler ve uygun uzmana yönlendirir (NICE NG155, AAO-HNS).',
+    'growth.evidence.claims.do.2': 'Geçerliliği gösterilmiş ölçeklerle ölçer ve uygun uzmana yönlendirir (NICE NG155, AAO-HNS).',
     'growth.evidence.claims.do.3': 'Tinnitusla ilgili sıkıntıyı yönetmenize yardımcı olabilecek BDT temelli egzersizler içerir.',
     'growth.evidence.claims.do.4': 'Deneysel yöntemleri (çentikli gürültü, 40 Hz modülasyon, rezidüel inhibisyon) açıkça "deneysel" olarak etiketler.',
     'growth.evidence.claims.dont.title': 'Söylemediklerimiz',
     'growth.evidence.claims.dont.1': '"Tedavi eder", "iyileştirir" ya da "çınlamayı geçirir".',
-    'growth.evidence.claims.dont.2': '"Tanı koyar" ya da hekim muayenesinin yerini tutar.',
+    'growth.evidence.claims.dont.2': 'Kesin tanı koyar ya da hekim muayenesinin yerini tutar.',
     'growth.evidence.claims.dont.3': '"Klinik olarak kanıtlanmış uygulama": Dingin\'in kendi kontrollü çalışması henüz yoktur.',
     'growth.evidence.claims.dont.4': 'Öncesi/sonrası hasta görselleri ya da hasta teşekkür mesajları kullanmayız.',
     'growth.evidence.ownData': 'Kendi verimizle ilgili yalnızca betimleyici ifadeler kullanırız; kontrol grubu iddiası içermez.',
     'growth.evidence.regulatory.title': 'Düzenleyici durum ve gizlilik',
-    'growth.evidence.regulatory.body': 'Dingin bir prototiptir ve tıbbi cihaz değildir; kullanım amacı eğitim, öz izlem ve yönlendirmedir. KVKK: tüm veriler cihazınızda kalır, sunucuya gönderilmez. Sağlık verinizi yalnızca siz, kendi başlattığınız paylaşımla aktarırsınız.',
+    'growth.evidence.regulatory.body': 'Dingin bir ön değerlendirme ve öz yönetim uygulamasıdır; kesin tanıyı hekim koyar. KVKK: tüm veriler cihazınızda kalır, sunucuya gönderilmez. Sağlık verinizi yalnızca siz, kendi başlattığınız paylaşımla aktarırsınız.',
     'growth.evidence.advisory': 'Danışma kurulu (KBB, odyoloji, klinik psikoloji, sağlık hukuku) oluşturulduğunda isimler yalnızca bu sayfada ve "danışman" sıfatıyla yer alacaktır.',
 
     // --- Weekly review reminder ---
@@ -149,7 +148,7 @@ export const growthStrings = {
     'growth.counters.event.programStarted': 'program başladı',
     'growth.counters.event.sessionCompleted': 'seans tamamlandı',
     'growth.counters.event.shareOpened': 'paylaşım açıldı',
-    'growth.counters.event.checkinDone': 'check-in',
+    'growth.counters.event.checkinDone': 'günlük kontrol',
     'growth.counters.event.questionnaireScreenedOut': 'taramadan çıktı',
     'growth.counters.event.shortSessionUsed': 'kısa sürüm',
     'growth.counters.event.reentryUsed': 'yeniden giriş',
@@ -212,9 +211,8 @@ export const growthStrings = {
 
     // --- Invite ---
     'growth.invite.title': 'Invite a friend',
-    'growth.invite.body': 'If someone you know lives with tinnitus, you can recommend Dingin. The invite link only opens the app; it carries no personal data.',
+    'growth.invite.body': 'If someone you know lives with tinnitus, you can recommend Dingin. The message contains only the store links; it carries no personal data.',
     'growth.invite.cta': 'Send invite',
-    'growth.invite.code': 'Your invite code: {code}',
     'growth.invite.message': 'I am using Dingin, an evidence-based app for tinnitus. Short tests give a preliminary assessment and a personal programme.\n\n{stores}',
 
     // --- Crisis card ---
@@ -223,7 +221,7 @@ export const growthStrings = {
     'growth.crisis.row.subtitle': 'Works offline: 112, staying safe and your safety plan',
     'growth.crisis.banner.title': 'If you are at risk of harming yourself',
     'growth.crisis.banner.body': 'If you have thoughts of harming yourself right now, call 112 or go to the nearest hospital emergency department. The emergency department provides a psychiatric assessment.',
-    'growth.crisis.call112': 'Call 112 (emergency)',
+    'growth.crisis.call112': 'Call 112 (Turkey and EU emergency; elsewhere your local number)',
     'growth.crisis.er': 'Nearest hospital emergency department',
     'growth.crisis.er.body': 'Türkiye has no national 24/7 suicide prevention line. The right route is 112 and the nearest emergency department, where a psychiatric consultation is requested.',
     'growth.crisis.when.title': 'When to call 112 or go to an emergency department',
@@ -237,7 +235,7 @@ export const growthStrings = {
     'growth.crisis.safe.4': 'This feeling is like a wave; it rises and falls. Focus only on getting through the next hour.',
     'growth.crisis.support.title': 'Social support (not an emergency line)',
     'growth.crisis.support.body': 'ALO 183 is the social support line of the Ministry of Family and Social Services; it offers psychosocial support and guidance. It is not an emergency crisis line. In an emergency, call 112.',
-    'growth.crisis.call183': 'Call ALO 183 social support line',
+    'growth.crisis.call183': 'Call the ALO 183 social support line (Turkey)',
     'growth.crisis.plan.title': 'My safety plan (3-3-3)',
     'growth.crisis.plan.body': 'Fill it in during a calm moment so it is ready in a hard one. Stored only on this device.',
     'growth.crisis.plan.people': '3 people I can call',
@@ -284,17 +282,17 @@ export const growthStrings = {
     'growth.evidence.claims.title': 'What we claim and what we do not',
     'growth.evidence.claims.do.title': 'What we say',
     'growth.evidence.claims.do.1': 'It offers an evidence-based self-management programme.',
-    'growth.evidence.claims.do.2': 'It measures with validated scales, tracks and refers you to the right specialist (NICE NG155, AAO-HNS).',
+    'growth.evidence.claims.do.2': 'Measures with validated scales and refers you to the right specialist (NICE NG155, AAO-HNS).',
     'growth.evidence.claims.do.3': 'It includes CBT-based exercises that may help you manage tinnitus-related distress.',
     'growth.evidence.claims.do.4': 'Experimental methods (notched noise, 40 Hz modulation, residual inhibition) are clearly labelled "experimental".',
     'growth.evidence.claims.dont.title': 'What we do not say',
     'growth.evidence.claims.dont.1': '"Treats", "cures" or "makes the ringing go away".',
-    'growth.evidence.claims.dont.2': '"Diagnoses" or replaces a medical examination.',
+    'growth.evidence.claims.dont.2': 'Makes a final diagnosis or replaces a doctor\'s examination.',
     'growth.evidence.claims.dont.3': '"Clinically proven app": Dingin has no controlled trial of its own yet.',
     'growth.evidence.claims.dont.4': 'We do not use before/after patient images or patient testimonials.',
     'growth.evidence.ownData': 'About our own data we only use descriptive statements; no control-group claims.',
     'growth.evidence.regulatory.title': 'Regulatory status and privacy',
-    'growth.evidence.regulatory.body': 'Dingin is a prototype and not a medical device; its intended use is education, self-monitoring and referral. KVKK (Turkish data protection law): all data stays on your device and is never sent to a server. Only you transfer your health data, through a share you start yourself.',
+    'growth.evidence.regulatory.body': 'Dingin is a preliminary assessment and self-management app; a doctor makes the final diagnosis. KVKK (Turkish data protection law): all data stays on your device and is never sent to a server. Only you transfer your health data, through a share you start yourself.',
     'growth.evidence.advisory': 'Once the advisory board (ENT, audiology, clinical psychology, health law) is formed, names will appear only on this page and only as "advisor".',
 
     // --- Weekly review reminder ---

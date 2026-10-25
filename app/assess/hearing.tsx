@@ -177,7 +177,7 @@ export default function HearingScreen() {
   const notch = fake ? noiseNotch(fake) : false;
   const pta = fake ? pta4(fake) : null;
   const hl = pta != null ? toHlEstimate(pta) : null;
-  const notHeard: Array<{ ear: EarKey; freq: number }> = [];
+  const notHeard: { ear: EarKey; freq: number }[] = [];
   for (const ear of ears) for (const f of SCREENING_FREQS) if (results[ear] && results[ear]?.[f] === null) notHeard.push({ ear, freq: f });
   const concern = asym || notch || (hl != null && hl > 25) || notHeard.length > 0;
 

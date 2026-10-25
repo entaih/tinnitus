@@ -274,7 +274,7 @@ export const mindStrings = {
     'program.rationale.somatic': 'Boyun ya da çene ile değişen tinnitusta altı–dokuz haftalık egzersiz programları randomize çalışmalarda tinnitus şiddetini azaltmıştır; fizyoterapi yerine geçmez.',
     'program.rationale.hearing': 'İşitme kaybı iletişimi etkiliyorsa kılavuzlar işitme cihazı değerlendirmesini önerir; cihazlar anlamayı kolaylaştırır ve tinnitusun zemine karışmasına yardım eder.',
     'program.rationale.riPositive': 'Rezidüel inhibisyonunuz olduğu için ses zenginleştirme öne alındı; bir çalışmada bu grup ses zenginleştirmeden altı ayda daha fazla yarar gördü.',
-    'program.rationale.riNegative': 'Rezidüel inhibisyon görülmediği için BDT ve dikkat modülleri öne alındı; ses zenginleştirme yine de seçenek olarak sunulur.',
+    'program.rationale.riNegative': 'Geçici susma testinde ses çınlamayı bastırmadığı için düşünce ve dikkat çalışmaları öne alındı; rahatlatan ses yine de seçenek olarak sunulur.',
     'program.rationale.notched': 'Çentikli ses deneysel bir seçenektir: ilk çalışma olumlu, sonraki çift kör çalışma olumsuzdu; beklenti düşük tutulmalıdır.',
     // --- Adaptation advice ---
     'adapt.safety': 'Ruh hâli taramanız ek destek gerektiğini gösteriyor. Lütfen bir hekim ya da ruh sağlığı uzmanıyla görüşün; bu arada program yalnızca ses ve gevşeme bileşenleriyle sürer.',
@@ -551,7 +551,7 @@ export const mindStrings = {
     'program.rationale.somatic': 'For tinnitus that changes with the neck or jaw, six-to-nine-week exercise programmes reduced tinnitus severity in randomised trials; they do not replace physiotherapy.',
     'program.rationale.hearing': 'Where hearing loss affects communication, guidelines recommend a hearing-aid evaluation; aids ease understanding and help the tinnitus blend into the ground.',
     'program.rationale.riPositive': 'Sound enrichment was prioritised because you show residual inhibition; in one trial this group benefited more from sound enrichment at six months.',
-    'program.rationale.riNegative': 'CBT and attention modules were prioritised because no residual inhibition was seen; sound enrichment is still offered as an option.',
+    'program.rationale.riNegative': 'Thought and attention work was put first because sound did not briefly suppress the tinnitus in the test; soothing sound is still offered as an option.',
     'program.rationale.notched': 'Notched sound is an experimental option: the first trial was positive, the later double-blind trial negative; expectations should be kept low.',
     'adapt.safety': 'Your mood screen suggests you need extra support. Please speak to a doctor or mental health professional; meanwhile the programme continues with sound and relaxation only.',
     'adapt.lowAdherence': 'Fewer than half of the planned tasks were completed over the last two weeks. We suggest lowering the dose: one module a week and 5-minute relaxations; examine what makes it hard with a thought record.',

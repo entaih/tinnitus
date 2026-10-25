@@ -48,7 +48,7 @@ export function audioReportLines(a: Assessment, t: TFn): string[] {
   // ---- hearing screen ----
   if (h) {
     const mode = h.mode ?? 'separate';
-    const ears: Array<'right' | 'left'> = mode === 'both' ? ['right'] : ['right', 'left'];
+    const ears: ('right' | 'left')[] = mode === 'both' ? ['right'] : ['right', 'left'];
     for (const ear of ears) {
       const row = earRow(h, ear);
       if (row) lines.push(t('psy.rep.hear.ear', { ear: mode === 'both' ? t('psy.hear.ear.both') : t(`psy.hear.ear.${ear}`), rows: row }));

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { SAMPLE_RATE, encodeWav, makeRng, noise, notchFilter, rmsDb, sine, bandpassNoise, makeLoopable } from '../src/audio/dsp.ts';
+import { SAMPLE_RATE, encodeWav, makeRng, noise, notchFilter, sine, makeLoopable } from '../src/audio/dsp.ts';
 import { renderSound, renderToneBurst } from '../src/audio/sounds.ts';
 import { scoreQuestionnaire, THI, PHQ9 } from '../src/clinical/questionnaires.ts';
 import { computeTriage, buildProfile } from '../src/clinical/engine.ts';

@@ -52,7 +52,6 @@ const visibleSteps = (d: Draft) => STEPS.filter((s) => !s.when || s.when(d));
 
 export default function HistoryScreen() {
   const t = useT();
-  const router = useRouter();
   const { colors, space } = useTheme();
   const id = useAssessmentId();
   const saveHistory = useClinical((s) => s.saveHistory);

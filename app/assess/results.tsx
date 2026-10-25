@@ -22,7 +22,6 @@ import { useClinical } from '@/store/clinical';
 import { QUESTIONNAIRES, scoreQuestionnaire } from '@/clinical/questionnaires';
 import { audioReportLines } from '@/clinical/reportAudio';
 import type { Assessment, RedFlags } from '@/clinical/types';
-import { fmtHz } from '@/utils/format';
 
 const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
@@ -55,7 +54,7 @@ export default function ResultsScreen() {
   const raised = params.raised === '1';
   const { journey, go } = useJourney();
   /** First view after the tests: plain, one-message-per-screen steps. The detailed report is one tap away. */
-  const [simple, setSimple] = useState(() => !raised && !useClinical.getState().program);
+  const [simple, setSimple] = useState(() => !raised);
 
   const tier = assessment ? computeTriage(assessment).tier : null;
   const gate = programGate(profile, tier);
@@ -219,7 +218,7 @@ export default function ResultsScreen() {
     </View>
   );
 
-  if (simple && !program) {
+  if (simple) {
     return (
       <>
         <Stack.Screen options={{ title: t('results.title') }} />
@@ -230,7 +229,8 @@ export default function ResultsScreen() {
           profile={profile}
           gate={gate}
           plan={plan ? { weeks: plan.weeks, min: plan.min } : null}
-          onStart={doStart}
+          onStart={program ? () => router.replace('/(tabs)') : doStart}
+          hasProgram={!!program}
           onDetails={() => setSimple(false)}
         />
         {sheet}
@@ -241,7 +241,7 @@ export default function ResultsScreen() {
   return (
     <Screen footer={footer}>
       <Stack.Screen options={{ title: t('results.title') }} />
-      {!program ? <Button variant="ghost" size="sm" title={t('simple.backToSimple')} onPress={() => setSimple(true)} /> : null}
+      <Button variant="ghost" size="sm" title={t('simple.backToSimple')} onPress={() => setSimple(true)} />
 
       {/* Layer 1 — score shown once, one-line meaning, triage line */}
       <Card style={{ alignItems: 'center', gap: space[3] }}>

@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { router } from 'expo-router';
-import { ChevronDown, ChevronUp, Stethoscope, FlaskConical, HeartPulse } from 'lucide-react-native';
+import { ChevronDown, ChevronUp, Stethoscope, FlaskConical, HeartPulse , ShieldAlert } from 'lucide-react-native';
 import { useTheme } from '@/theme';
 import { Text } from '@/components/Text';
 import { Chip } from '@/components/Chip';
 import { Button } from '@/components/Button';
 import { useT } from '@/i18n';
 import { CAUSES, type CauseScore } from '@/clinical/causes';
-import { ShieldAlert } from 'lucide-react-native';
 
 /** Ranked probable causes with site, mechanism, confirmatory test and treatment path. */
 export function CauseList({ ranked, max = 4 }: { ranked: CauseScore[]; max?: number }) {

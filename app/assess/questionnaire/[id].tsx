@@ -6,12 +6,11 @@ import { Screen, Text, Card, Button, OptionCard, Banner, EvidenceChip, SeverityB
 import { QuestionStep } from '@/components/assess';
 import { useTheme } from '@/theme';
 import { useLocale, useT, pick } from '@/i18n';
-import { useClinical } from '@/store/clinical';
+import { useClinical , latestQuestionnaire, mergedLatest } from '@/store/clinical';
 import { useAssessmentId } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
 import { QUESTIONNAIRES, THIS_ENABLED, optionsFor, scoreQuestionnaire, type QuestionnaireId } from '@/clinical/questionnaires';
 import { consequencesOf, consequenceText, type Consequence } from '@/clinical/consequences';
-import { latestQuestionnaire, mergedLatest } from '@/store/clinical';
 import { useGrowth } from '@/store/growth';
 import type { QuestionnaireResult } from '@/clinical/types';
 

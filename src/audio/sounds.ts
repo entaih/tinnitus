@@ -73,7 +73,6 @@ export function renderSound(spec: SoundSpec): RenderedSound {
       return mono(out);
     }
     case 'am': {
-      const n = Math.round(seconds * SAMPLE_RATE) + LOOP_FADE;
       // keep whole modulation cycles inside the loop
       const cycles = Math.max(1, Math.round(spec.rateHz * seconds));
       const loopN = Math.round((cycles / spec.rateHz) * SAMPLE_RATE);

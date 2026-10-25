@@ -11,6 +11,11 @@ import {
   type RiRating,
 } from '../src/audio/psychoacoustics.ts';
 
+// --- doctor summary audio lines ------------------------------------------------------------------
+
+import { audioReportLines, AUDIO_PROTOCOL_VERSION } from '../src/clinical/reportAudio.ts';
+import type { Assessment } from '../src/clinical/types.ts';
+
 /** Simulate a listener whose tinnitus sits at `trueHz`: always pick the closer stimulus (in log frequency). */
 function runListener(trueHz: number, opts?: Parameters<typeof startPitchRun>[0]) {
   let s = startPitchRun(opts);
@@ -209,7 +214,7 @@ test('RI scoring with the 2 s first sample and a missed (unconfirmed) sample', (
   assert.equal(tiny.positive, false);
 });
 
-const r = (pairs: Array<[number, number]>): RiRating[] => pairs.map(([t, value]) => ({ t, value }));
+const r = (pairs: [number, number][]): RiRating[] => pairs.map(([t, value]) => ({ t, value }));
 
 test('RI scoring: complete, partial, none, censored, rebound', () => {
   const complete = scoreResidualInhibition(6, r([[0, 0], [5, 0], [10, 2], [15, 4], [20, 5], [25, 6]]));
@@ -331,11 +336,6 @@ test('utility helpers', () => {
   assert.equal(pta4FromThresholds([{ freq: 500, levelDb: -40 }, { freq: 1000, levelDb: -40 }, { freq: 2000, levelDb: -30 }, { freq: 4000, levelDb: -10 }, { freq: 8000, levelDb: 0 }]), -30);
   assert.equal(pta4FromThresholds([]), null);
 });
-
-// --- doctor summary audio lines ------------------------------------------------------------------
-
-import { audioReportLines, AUDIO_PROTOCOL_VERSION } from '../src/clinical/reportAudio.ts';
-import type { Assessment } from '../src/clinical/types.ts';
 
 /** Key + params stub so the structure (which lines, which values) is asserted without the real dictionaries. */
 const tStub = (k: string, p?: Record<string, string | number>) => (p ? `${k} ${JSON.stringify(p)}` : k);

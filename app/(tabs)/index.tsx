@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight, AudioWaveform, CalendarCheck, MoonStar, TrendingDown, TrendingUp, Minus, CheckCircle2, Share2, Trophy } from 'lucide-react-native';
 import { Banner, Button, Card, Screen, Text } from '@/components';
 import { BackgroundSoundRow, JourneyCard, TabHeader, WeeklyGoalRing, activeMinutes, activeTasks, backgroundTasks, coreTask, isBackground, isMaintenance, maintenanceWeek, openTask, planForToday, programFinished, refresherActive, structuredWeeks, taskIcon, taskMeta, taskTitle, totalActiveDays, weekActiveDays, weeklyGoalOf } from '@/components/home';
-import { ClinicCodeLine, thiSeries } from '@/components/growth';
+import { thiSeries } from '@/components/growth';
 import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
@@ -210,7 +210,6 @@ export default function HomeScreen() {
       ) : (
         <>
           <JourneyCard />
-          <ClinicCodeLine />
         </>
       )}
 

@@ -80,7 +80,7 @@ const DEFAULT_START_PAIR: [number, number] = [1000, 8000];
  * agreement a real reliability estimate instead of an artefact of a shared starting point). Use
  * `shuffleCandidates(PITCH_START_PAIRS)` to randomise the order per session.
  */
-export const PITCH_START_PAIRS: ReadonlyArray<readonly [number, number]> = [[1000, 8000], [500, 6000], [2000, 10000]];
+export const PITCH_START_PAIRS: readonly (readonly [number, number])[] = [[1000, 8000], [500, 6000], [2000, 10000]];
 
 /** How the listener describes the percept; drives the stimulus bandwidth. */
 export type PitchPercept = 'tonal' | 'hiss' | 'buzz' | 'multiple';
@@ -94,7 +94,7 @@ export const pitchBandwidthOctaves = (percept: PitchPercept) => (percept === 'hi
  * from `renderSound({kind:'narrowband', color:'white', octaves:0.33})` with its fixed seed. The spread is
  * small (≈1.5 dB) but systematic, so stimuli are gain-compensated to equal RMS before the 2AFC comparison.
  */
-const NBN_RMS_DB: ReadonlyArray<readonly [number, number]> = [
+const NBN_RMS_DB: readonly (readonly [number, number])[] = [
   [250, -17.3], [500, -18.3], [1000, -18.7], [2000, -18.0], [3000, -18.6], [4000, -17.8],
   [6000, -17.7], [8000, -17.7], [10000, -17.8], [12000, -17.2], [14000, -18.1], [16000, -17.4],
 ];

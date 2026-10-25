@@ -26,7 +26,6 @@ export default function ShareScreen() {
   const diary = useClinical((s) => s.diary);
   const sessions = useClinical((s) => s.sessions);
   const track = useGrowth((s) => s.track);
-  const inviteCode = useGrowth((s) => s.inviteCode);
   const cardRef = useRef<React.ComponentRef<typeof View>>(null);
   const [busy, setBusy] = useState<'image' | 'pdf' | 'text' | null>(null);
   const headline = typeof headlineParam === 'string' && headlineParam.trim() ? headlineParam : undefined;

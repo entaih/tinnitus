@@ -18,6 +18,8 @@ export {
 type NotificationsModule = typeof import('expo-notifications');
 let cached: NotificationsModule | null = null;
 function Notifications(): NotificationsModule {
+  // Lazy require on purpose: importing expo-notifications at module load prints warnings in Expo Go (Android).
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   if (!cached) cached = require('expo-notifications') as NotificationsModule;
   return cached;
 }

@@ -41,7 +41,7 @@ export const SOUND_TRY_ROUTE = '/sound/player?preset=enrichment&trial=1';
 /** Triage tiers 0–2 ("urgent") skip the sound trial. */
 export const SOUND_TRY_MAX_TIER = 2;
 /** Base questions of the short history (misophonia / OSA follow-ups are conditional). */
-export const HISTORY_BASE_QUESTIONS = 11;
+export const HISTORY_BASE_QUESTIONS = 9; // base items of app/assess/history.tsx (STEPS without a `when`); up to 3 follow-ups
 /** The mood screen asks PHQ-2, PHQ item 9 and GAD-2 (five items; the full scales open only on a positive screen). */
 export const MOOD_QUESTIONS = 5;
 

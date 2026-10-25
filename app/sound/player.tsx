@@ -3,7 +3,7 @@ import { Modal, Platform, Pressable, ScrollView, Switch, View } from 'react-nati
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import { CheckCircle2, FlaskConical, Headphones, Moon, Play, Plus, Square, Waves, X } from 'lucide-react-native';
+import { CheckCircle2, FlaskConical, Moon, Play, Plus, Square, Waves, X } from 'lucide-react-native';
 import { Screen, Text, Button, Card, Chip, EvidenceChip, PlayControl, Banner, useCitation, SectionHeader } from '@/components';
 import { Collapsible } from '@/components/home';
 import { LayerRow, TIMER_OPTIONS, TimerChips, VolumeSlider, formatClock, mixer, useSoundEngine, useTicker } from '@/components/sound';

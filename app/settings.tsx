@@ -3,7 +3,7 @@ import { Alert, Pressable, Switch, TextInput, View } from 'react-native';
 import { Stack, router } from 'expo-router';
 import Constants from 'expo-constants';
 import Slider from '@react-native-community/slider';
-import { BookOpen, Gauge, RotateCcw, Share2, Users } from 'lucide-react-native';
+import { Gauge, RotateCcw, Share2, Users } from 'lucide-react-native';
 import { Button, Card, Disclaimer, Row, Screen, SectionHeader, Stepper, Text } from '@/components';
 import { Segmented } from '@/components/home';
 import { useTheme } from '@/theme';
@@ -186,7 +186,6 @@ export default function SettingsScreen() {
         <SectionHeader title={t('settings.about')} />
         <Card>
           <Row title={t('settings.about.version')} right={<Text variant="bodySmall" tone="secondary">{version}</Text>} />
-          <Row icon={<BookOpen size={20} color={colors.primary} />} title={t('settings.about.evidence')} onPress={() => router.push('/education/digital-therapeutics-evidence')} />
           <AboutGrowthRows />
           <Text variant="bodySmall" tone="secondary">{t('settings.about.regulatory')}</Text>
         </Card>

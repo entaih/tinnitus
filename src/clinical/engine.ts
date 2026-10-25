@@ -36,7 +36,7 @@ export function hearingAsymmetry(a: Assessment): boolean {
 export function pta4(a: Assessment): number | null {
   const h = a.hearing;
   if (!h) return null;
-  const ears: Array<'left' | 'right'> = ['left', 'right'];
+  const ears: ('left' | 'right')[] = ['left', 'right'];
   const avgs = ears.map((ear) => {
     const v = [500, 1000, 2000, 4000].map((f) => h.thresholds.find((t) => t.ear === ear && t.freq === f)?.levelDb).filter((x): x is number => x != null);
     return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null;

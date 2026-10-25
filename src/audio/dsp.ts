@@ -190,7 +190,7 @@ export function swell(x: Float32Array, periodSec: number, depth = 0.6, fs = SAMP
   return out;
 }
 
-export function mix(parts: Array<{ buf: Float32Array; gain: number }>, n: number): Float32Array {
+export function mix(parts: { buf: Float32Array; gain: number }[], n: number): Float32Array {
   const out = new Float32Array(n);
   for (const p of parts) for (let i = 0; i < n; i++) out[i] += p.buf[i] * p.gain;
   return out;

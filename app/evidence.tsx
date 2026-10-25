@@ -87,7 +87,6 @@ export default function EvidenceScreen() {
             <ShieldCheck size={22} color={colors.primary} />
             <Text variant="body" style={{ flex: 1 }}>{t('growth.evidence.regulatory.body')}</Text>
           </View>
-          <Text variant="bodySmall" tone="secondary">{t('growth.evidence.advisory')}</Text>
         </Card>
         <Disclaimer textKey="settings.about.regulatory" />
       </Screen>
