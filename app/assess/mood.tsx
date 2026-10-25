@@ -45,7 +45,7 @@ export default function MoodScreen() {
   const { open, sheet } = useCitation();
   const { finish, taskKey } = useJourney();
 
-  const [phase, setPhase] = useState<'intro' | 'items' | 'done'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'items' | 'more' | 'done'>('intro');
   const [items, setItems] = useState<MoodItem[]>(BASE_ITEMS);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -89,7 +89,12 @@ export default function MoodScreen() {
         const extra: MoodItem[] = [];
         if (sum(next, 'PHQ9', [0, 1]) >= GATE_CUTOFF) extra.push(...PHQ_REST);
         if (sum(next, 'GAD7', [0, 1]) >= GATE_CUTOFF) extra.push(...GAD_REST);
-        if (extra.length) { list = [...list, ...extra]; setItems(list); }
+        if (extra.length) {
+          list = [...list, ...extra]; setItems(list);
+          // Explain the extension before the counter jumps from 5 to the longer total.
+          setStep(step + 1); setPhase('more');
+          return;
+        }
       }
       if (step + 1 >= list.length) submit(next, list); else setStep(step + 1);
     }, AUTO_ADVANCE_MS);
@@ -97,8 +102,15 @@ export default function MoodScreen() {
 
   const back = () => {
     if (timer.current) clearTimeout(timer.current);
-    if (step === 0) setPhase('intro'); else setStep(step - 1);
+    if (step === 0) { setPhase('intro'); return; }
+    // Going back from the first extra item returns to the explanation, from there to the last base item.
+    if (step === BASE_ITEMS.length && items.length > BASE_ITEMS.length && phase === 'items') { setPhase('more'); return; }
+    setStep(step - 1);
   };
+  const backFromMore = () => { setItems(BASE_ITEMS); setStep(BASE_ITEMS.length - 1); setPhase('items'); };
+  const extraCount = items.length - BASE_ITEMS.length;
+  const extraScales = Array.from(new Set(items.slice(BASE_ITEMS.length).map((it) => it.scale)));
+  const inExtra = step >= BASE_ITEMS.length && extraCount > 0;
 
   const call = (num: string) => { void Linking.openURL(`tel:${num}`); };
   const current = items[step];
@@ -122,11 +134,30 @@ export default function MoodScreen() {
       ) : null}
 
       {phase === 'items' && current ? (
-        <QuestionStep index={step} total={items.length} stem={pick(q.items[current.index], locale)} hint={pick(q.description, locale)} onBack={back}>
+        <QuestionStep
+          index={inExtra ? step - BASE_ITEMS.length : step}
+          total={inExtra ? extraCount : BASE_ITEMS.length}
+          progressLabel={inExtra ? t('mood.more.progress', { n: step - BASE_ITEMS.length + 1, total: extraCount }) : undefined}
+          stem={pick(q.items[current.index], locale)}
+          hint={pick(q.description, locale)}
+          onBack={back}
+        >
           {q.options.map((o) => (
             <OptionCard key={o.value} label={pick(o, locale)} selected={answers[keyOf(current)] === o.value} onPress={() => select(o.value)} />
           ))}
         </QuestionStep>
+      ) : null}
+
+      {phase === 'more' ? (
+        <Card>
+          <Text variant="h2">{t('mood.more.title')}</Text>
+          <Text variant="body" tone="secondary">
+            {t(extraScales.length === 2 ? 'mood.more.body.both' : extraScales[0] === 'PHQ9' ? 'mood.more.body.phq' : 'mood.more.body.gad', { n: extraCount })}
+          </Text>
+          <Text variant="bodySmall" tone="secondary">{t('mood.more.note')}</Text>
+          <Button title={t('mood.more.cta', { n: extraCount })} onPress={() => setPhase('items')} />
+          <Button variant="ghost" size="sm" title={t('common.back')} onPress={backFromMore} />
+        </Card>
       ) : null}
 
       {phase === 'done' ? (

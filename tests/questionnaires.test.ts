@@ -43,3 +43,18 @@ test('storage pruning (E11): sessions capped at 500 with detail ≤ 120 chars, d
   const all = pruneForStorage({ sessions, diary, program: null, readArticles: ['a'] });
   assert.equal(all.sessions.length, 500); assert.equal(all.diary.length, 730); assert.deepEqual(all.readArticles, ['a']); assert.equal(all.program, null);
 });
+
+test('SCI items carry their own answer wording; stems hold no parenthesised scale', async () => {
+  const { SCI, SCI02, optionsFor } = await import('../src/clinical/questionnaires.ts');
+  for (const q of [SCI, SCI02]) {
+    q.items.forEach((it, i) => {
+      assert.ok(!/\(\s*\d/.test(it.tr) && !/\(\s*\d/.test(it.en), `${q.id} item ${i + 1} still has the scale in the stem`);
+      const opts = optionsFor(q, i);
+      assert.equal(opts.length, 5);
+      assert.deepEqual([...opts.map((o) => o.value)].sort(), [0, 1, 2, 3, 4]);
+      assert.ok(opts.every((o) => !/^\d$/.test(o.tr)), 'options are words, not bare numbers');
+    });
+  }
+  // Scoring is unchanged: best answers score 4 per item.
+  assert.equal(SCI02.items.length, 2);
+});

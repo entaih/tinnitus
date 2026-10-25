@@ -1,6 +1,14 @@
 /** i18n strings for the "assess" area. Keys are flat, dot-separated. */
 export const assessStrings = {
   tr: {
+    'q.gate.expanded': 'İlk yanıtlarınız biraz daha ayrıntı gerektiriyor; ölçeğin kalan {n} sorusu açıldı. Bu bir tanı değildir.',
+    'mood.more.title': 'Birkaç soru daha',
+    'mood.more.body.phq': 'Ruh hali sorularındaki yanıtlarınız biraz daha ayrıntı gerektiriyor. Aynı ölçeğin kalan {n} kısa sorusunu soracağız.',
+    'mood.more.body.gad': 'Kaygı sorularındaki yanıtlarınız biraz daha ayrıntı gerektiriyor. Aynı ölçeğin kalan {n} kısa sorusunu soracağız.',
+    'mood.more.body.both': 'Ruh hali ve kaygı sorularındaki yanıtlarınız biraz daha ayrıntı gerektiriyor. İki ölçeğin kalan {n} kısa sorusunu soracağız.',
+    'mood.more.note': 'Bu bir tanı değildir. Uluslararası kullanımda kısa tarama pozitif çıkınca tam ölçek doldurulur; sonuç programınızın önceliğini ve gerekirse sevk önerisini belirler. Yaklaşık 1–2 dakika.',
+    'mood.more.cta': '{n} soruya devam et',
+    'mood.more.progress': 'Ek soru {n} / {total}',
     'feat.suddenHL': 'Ani işitme düşmesi (≤72 saat)',
     'feat.rapidWorsening': 'Hızla kötüleşen işitme',
     'feat.unilateral': 'Tek taraflı çınlama',
@@ -795,7 +803,7 @@ export const assessStrings = {
     'mood.title': 'Ruh hali ve kaygı',
     'mood.intro.title': 'Ruh hali ve kaygı',
     'mood.intro.body': 'Son 2 haftayı düşünerek yanıtlayın. İki soru ruh hali, bir soru güvenlik, iki soru kaygı için; yalnızca gerekirse devamı açılır.',
-    'mood.intro.items': '{n} soru · yaklaşık 1 dk',
+    'mood.intro.items': '{n} soru · yaklaşık 1 dk · yanıtlara göre en fazla 11 soru daha açılabilir',
     'mood.done.title': 'Tamamlandı',
     'mood.done.body': 'Ruh hali ve kaygı taramanız kaydedildi; sonuç ekranında programınızı nasıl etkilediğini göreceksiniz.',
     // --- Sprint 3 A1: programme end, maintenance mode, refresher block ---
@@ -829,6 +837,14 @@ export const assessStrings = {
   } as Record<string, string>,
 
   en: {
+    'q.gate.expanded': 'Your first answers need a little more detail, so the remaining {n} questions of the scale have opened. This is not a diagnosis.',
+    'mood.more.title': 'A few more questions',
+    'mood.more.body.phq': 'Your answers on mood need a little more detail. We will ask the remaining {n} short questions of the same scale.',
+    'mood.more.body.gad': 'Your answers on anxiety need a little more detail. We will ask the remaining {n} short questions of the same scale.',
+    'mood.more.body.both': 'Your answers on mood and anxiety need a little more detail. We will ask the remaining {n} short questions of both scales.',
+    'mood.more.note': 'This is not a diagnosis. When a short screen is positive, the full scale is standard practice; the result sets your programme priorities and, if needed, a referral suggestion. About 1–2 minutes.',
+    'mood.more.cta': 'Continue with {n} questions',
+    'mood.more.progress': 'Extra question {n} / {total}',
     'feat.suddenHL': 'Sudden hearing drop (≤72 h)',
     'feat.rapidWorsening': 'Rapidly worsening hearing',
     'feat.unilateral': 'One-sided tinnitus',
@@ -1623,7 +1639,7 @@ export const assessStrings = {
     'mood.title': 'Mood and anxiety',
     'mood.intro.title': 'Mood and anxiety',
     'mood.intro.body': 'Think about the last 2 weeks. Two questions on mood, one on safety, two on anxiety; the rest opens only if needed.',
-    'mood.intro.items': '{n} questions · about 1 min',
+    'mood.intro.items': '{n} questions · about 1 min · up to 11 more may open depending on your answers',
     'mood.done.title': 'Completed',
     'mood.done.body': 'Your mood and anxiety screen is saved; the results screen shows how it shapes your programme.',
     // --- Sprint 3 A1: programme end, maintenance mode, refresher block ---

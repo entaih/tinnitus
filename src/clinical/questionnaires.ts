@@ -12,7 +12,8 @@ import type { SeverityBand } from '@/theme/tokens';
 export type QuestionnaireId = 'THI' | 'HQ' | 'PHQ9' | 'GAD7' | 'SCI' | 'RASST' | 'SCI02' | 'THS' | 'THIS';
 
 export interface Option { value: number; tr: string; en: string }
-export interface Item { tr: string; en: string; subscale?: string; reverse?: boolean }
+/** `options` overrides the questionnaire's shared answer set for this item (e.g. SCI items, each with its own wording). */
+export interface Item { tr: string; en: string; subscale?: string; reverse?: boolean; options?: Option[] }
 
 export interface Questionnaire {
   id: QuestionnaireId;
@@ -216,6 +217,42 @@ export const THS: Questionnaire = {
 const SCI_OPTIONS: Option[] = [
   { value: 0, tr: '0', en: '0' }, { value: 1, tr: '1', en: '1' }, { value: 2, tr: '2', en: '2' }, { value: 3, tr: '3', en: '3' }, { value: 4, tr: '4', en: '4' },
 ];
+// SCI answer sets (Espie et al. 2014). Shown in natural reading order; each option carries its scoring value (0–4, higher = better sleep).
+const SCI_MINUTES: Option[] = [
+  { value: 4, tr: '0–15 dakika', en: '0–15 minutes' },
+  { value: 3, tr: '16–30 dakika', en: '16–30 minutes' },
+  { value: 2, tr: '31–45 dakika', en: '31–45 minutes' },
+  { value: 1, tr: '46–60 dakika', en: '46–60 minutes' },
+  { value: 0, tr: '61 dakika veya daha uzun', en: '61 minutes or more' },
+];
+const SCI_NIGHTS: Option[] = [
+  { value: 4, tr: '0–1 gece', en: '0–1 nights' },
+  { value: 3, tr: '2 gece', en: '2 nights' },
+  { value: 2, tr: '3 gece', en: '3 nights' },
+  { value: 1, tr: '4 gece', en: '4 nights' },
+  { value: 0, tr: '5–7 gece', en: '5–7 nights' },
+];
+const SCI_QUALITY: Option[] = [
+  { value: 4, tr: 'Çok iyi', en: 'Very good' },
+  { value: 3, tr: 'İyi', en: 'Good' },
+  { value: 2, tr: 'Orta', en: 'Average' },
+  { value: 1, tr: 'Kötü', en: 'Poor' },
+  { value: 0, tr: 'Çok kötü', en: 'Very poor' },
+];
+const SCI_IMPACT: Option[] = [
+  { value: 4, tr: 'Hiç', en: 'Not at all' },
+  { value: 3, tr: 'Biraz', en: 'A little' },
+  { value: 2, tr: 'Orta derecede', en: 'Somewhat' },
+  { value: 1, tr: 'Oldukça', en: 'Much' },
+  { value: 0, tr: 'Çok fazla', en: 'Very much' },
+];
+const SCI_DURATION: Option[] = [
+  { value: 4, tr: 'Uyku sorunum yok / 1 aydan kısa', en: 'No problem / less than 1 month' },
+  { value: 3, tr: '1–2 ay', en: '1–2 months' },
+  { value: 2, tr: '3–6 ay', en: '3–6 months' },
+  { value: 1, tr: '7–12 ay', en: '7–12 months' },
+  { value: 0, tr: '1 yıldan uzun', en: 'More than 1 year' },
+];
 
 /** Sleep Condition Indicator (Espie et al. 2014, BMJ Open) — free to use; 8 items, 0–32, ≤16 suggests probable insomnia disorder. */
 export const SCI: Questionnaire = {
@@ -228,14 +265,14 @@ export const SCI: Questionnaire = {
   options: SCI_OPTIONS,
   max: 32,
   items: [
-    { tr: 'Uykuya dalmanız ne kadar sürer? (4: 0–15 dk, 3: 16–30 dk, 2: 31–45 dk, 1: 46–60 dk, 0: 61 dk ve üzeri)', en: 'How long does it take you to fall asleep? (4: 0–15 min, 3: 16–30, 2: 31–45, 1: 46–60, 0: 61 min or more)' },
-    { tr: 'Gece boyunca toplam ne kadar süre uyanık kalırsınız? (4: 0–15 dk, 3: 16–30 dk, 2: 31–45 dk, 1: 46–60 dk, 0: 61 dk ve üzeri)', en: 'If you wake up during the night, how long are you awake in total? (4: 0–15 min, 3: 16–30, 2: 31–45, 1: 46–60, 0: 61 min or more)' },
-    { tr: 'Haftada kaç gece uyku sorunu yaşarsınız? (4: 0–1 gece, 3: 2 gece, 2: 3 gece, 1: 4 gece, 0: 5–7 gece)', en: 'How many nights a week do you have a problem with your sleep? (4: 0–1, 3: 2, 2: 3, 1: 4, 0: 5–7 nights)' },
-    { tr: 'Uyku kalitenizi nasıl değerlendirirsiniz? (0: çok kötü … 4: çok iyi)', en: 'How would you rate your sleep quality? (0: very poor … 4: very good)' },
-    { tr: 'Kötü uyku ruh halinizi, enerjinizi veya ilişkilerinizi ne kadar etkiliyor? (0: çok fazla … 4: hiç)', en: 'How much has poor sleep affected your mood, energy or relationships? (0: very much … 4: not at all)' },
-    { tr: 'Kötü uyku odaklanmanızı, verimliliğinizi veya uyanık kalmanızı ne kadar etkiliyor? (0: çok fazla … 4: hiç)', en: 'How much has poor sleep affected your concentration, productivity or ability to stay awake? (0: very much … 4: not at all)' },
-    { tr: 'Kötü uyku genel olarak sizi ne kadar rahatsız ediyor? (0: çok fazla … 4: hiç)', en: 'How much has poor sleep troubled you in general? (0: very much … 4: not at all)' },
-    { tr: 'Uyku sorununuz ne zamandır sürüyor? (0: >1 yıl, 1: 7–12 ay, 2: 3–6 ay, 3: 1–2 ay, 4: <1 ay / sorun yok)', en: 'How long have you had a problem with your sleep? (0: >1 year, 1: 7–12 months, 2: 3–6 months, 3: 1–2 months, 4: <1 month / no problem)' },
+    { tr: 'Uykuya dalmanız genellikle ne kadar sürer?', en: 'How long does it usually take you to fall asleep?', options: SCI_MINUTES },
+    { tr: 'Gece uyanırsanız toplam ne kadar süre uyanık kalırsınız?', en: 'If you wake up during the night, how long are you awake in total?', options: SCI_MINUTES },
+    { tr: 'Haftada kaç gece uyku sorunu yaşarsınız?', en: 'How many nights a week do you have a problem with your sleep?', options: SCI_NIGHTS },
+    { tr: 'Uyku kalitenizi nasıl değerlendirirsiniz?', en: 'How would you rate your sleep quality?', options: SCI_QUALITY },
+    { tr: 'Kötü uyku ruh halinizi, enerjinizi veya ilişkilerinizi ne kadar etkiliyor?', en: 'How much has poor sleep affected your mood, energy or relationships?', options: SCI_IMPACT },
+    { tr: 'Kötü uyku odaklanmanızı, verimliliğinizi veya uyanık kalmanızı ne kadar etkiliyor?', en: 'How much has poor sleep affected your concentration, productivity or ability to stay awake?', options: SCI_IMPACT },
+    { tr: 'Kötü uyku genel olarak sizi ne kadar rahatsız ediyor?', en: 'How much has poor sleep troubled you in general?', options: SCI_IMPACT },
+    { tr: 'Uyku sorununuz ne zamandır sürüyor?', en: 'How long have you had a problem with your sleep?', options: SCI_DURATION },
   ],
   interpret: (t) => {
     if (t > 16) return { band: 'none', key: 'sci.ok' };
@@ -312,6 +349,9 @@ export const THIS: Questionnaire = {
 };
 
 export const QUESTIONNAIRES: Record<QuestionnaireId, Questionnaire> = { THI, HQ, PHQ9, GAD7, SCI, RASST, SCI02, THS, THIS };
+
+/** Answer options of one item: its own set when it has one, otherwise the questionnaire's shared set. */
+export const optionsFor = (q: Questionnaire, index: number): Option[] => q.items[index]?.options ?? q.options;
 
 export function scoreQuestionnaire(q: Questionnaire, answers: number[]) {
   const total = answers.reduce((a, b) => a + b, 0);

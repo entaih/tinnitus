@@ -9,7 +9,7 @@ import { useLocale, useT, pick } from '@/i18n';
 import { useClinical } from '@/store/clinical';
 import { useAssessmentId } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
-import { QUESTIONNAIRES, THIS_ENABLED, scoreQuestionnaire, type QuestionnaireId } from '@/clinical/questionnaires';
+import { QUESTIONNAIRES, THIS_ENABLED, optionsFor, scoreQuestionnaire, type QuestionnaireId } from '@/clinical/questionnaires';
 import { consequencesOf, consequenceText, type Consequence } from '@/clinical/consequences';
 import { latestQuestionnaire, mergedLatest } from '@/store/clinical';
 import { useGrowth } from '@/store/growth';
@@ -149,9 +149,10 @@ export default function QuestionnaireScreen() {
           index={tail != null && GATE[q.id] ? GATE[q.id]!.items + tail : step}
           total={GATE[q.id] && (tail != null || step < GATE[q.id]!.items) ? gatedCount(GATE[q.id]!) : total}
           stem={pick(q.items[step], locale)}
+          hint={GATE[q.id] && tail == null && step === GATE[q.id]!.items ? t('q.gate.expanded', { n: total - GATE[q.id]!.items }) : undefined}
           onBack={back}
         >
-          {q.options.map((o) => (
+          {optionsFor(q, step).map((o) => (
             <OptionCard
               key={o.value}
               label={pick(o, locale)}
@@ -168,7 +169,7 @@ export default function QuestionnaireScreen() {
           <Text variant="bodySmall" tone="secondary">{t('q.review.body')}</Text>
           <View style={{ gap: space[2] }}>
             {q.items.map((it, i) => {
-              const opt = q.options.find((o) => o.value === answers[i]);
+              const opt = optionsFor(q, i).find((o) => o.value === answers[i]);
               return (
                 <Pressable
                   key={i}
