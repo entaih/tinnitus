@@ -127,6 +127,8 @@ export interface Assessment {
   causeAnswers?: Record<string, boolean>;
   /** guided self-examination results */
   exam?: ExamResult;
+  /** Snapshot of the preliminary diagnosis when the results screen was last opened (for the "kesinlik arttı" comparison). */
+  dxSnapshot?: { date: string; primaryId: string | null; certainty: 'high' | 'moderate' | 'low' | null; met: number; missing: number };
 }
 
 export type Triage = 'urgent' | 'audiology' | 'selfcare';
@@ -170,6 +172,8 @@ export interface ProgramTask {
   citation?: string;
   /** The one thing that defines the day (module, measurement, day-1 sound step); always shown whatever the budget. */
   core?: boolean;
+  /** A sound task that is a numbered step (e.g. the hyperacusis day-1 comfort level) rather than a background row. */
+  numbered?: boolean;
 }
 
 export interface ProgramDay { day: number; tasks: ProgramTask[] }
@@ -186,4 +190,11 @@ export interface Program {
   /** 'light' after a dose reduction (15 min, one module a week); undefined/'full' otherwise. */
   dose?: 'full' | 'light';
   doseChangedAt?: string;
+  /** 'active' during the structured weeks; 'maintenance' after the programme end (weeks appended by enterMaintenance). */
+  phase?: 'active' | 'maintenance';
+  maintenanceStartDate?: string;   // YYYY-MM-DD
+  /** End date (YYYY-MM-DD) of a running refresher block inside maintenance. */
+  refresherUntil?: string;
+  /** Active days per week the goal ring targets (5 in the programme, 3 in maintenance). */
+  weeklyGoal?: number;
 }
