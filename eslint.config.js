@@ -6,7 +6,7 @@ const expoConfig = require('eslint-config-expo/flat');
 module.exports = defineConfig([
   expoConfig,
   {
-    ignores: ['dist/*', 'node_modules/*', 'ios/*', 'android/*', 'docs/*'],
+    ignores: ['dist/*', 'node_modules/*', 'ios/*', 'android/*', 'docs/*', 'scripts/marketing/out/*'],
   },
   {
     // React Compiler is not enabled (app.json experiments.reactCompiler is unset), so the compiler-safety rules

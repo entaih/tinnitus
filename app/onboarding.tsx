@@ -6,6 +6,7 @@ import { ArrowRight, CalendarDays, ClipboardList, Lock } from 'lucide-react-nati
 import { Button, Card, Screen, Text } from '@/components';
 import { CheckRow, Segmented } from '@/components/home';
 import { WelcomeArt } from '@/components/illustrations';
+import { MadeByAihear } from '@/components/brand/AihearMark';
 import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
@@ -69,6 +70,7 @@ export default function Onboarding() {
           {link(t('onb.consent.terms'), () => router.push('/privacy?doc=terms'))}
         </View>
       </Card>
+      <MadeByAihear />
     </Screen>
   );
 }

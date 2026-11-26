@@ -4,6 +4,9 @@
  */
 export const coreStrings = {
   tr: {
+    'brand.madeBy': 'Bir',
+    'brand.madeBy.post': 'uygulaması',
+    'brand.madeBy.a11y': 'Bir AIHEAR uygulaması',
     'onb.point.1': 'Çınlamanızın olası nedenini öğrenin',
     'onb.point.2': 'Günde 15 dakikalık kişisel program',
     'onb.point.3': 'Verileriniz yalnızca telefonunuzda',
@@ -490,6 +493,9 @@ export const coreStrings = {
   } as Record<string, string>,
 
   en: {
+    'brand.madeBy': 'An app by',
+    'brand.madeBy.post': '',
+    'brand.madeBy.a11y': 'An app by AIHEAR',
     'onb.point.1': 'Learn the likely cause of your tinnitus',
     'onb.point.2': 'A personal 15-minute daily programme',
     'onb.point.3': 'Your data stays on your phone',

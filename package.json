@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
     "test": "tsx --test tests/*.test.ts",
-    "release:check": "node scripts/release-check.js"
+    "release:check": "node scripts/release-check.js",
+    "store:assets": "bash scripts/marketing/build-store-assets.sh"
   },
   "dependencies": {
     "@expo/metro-runtime": "~58.0.15",

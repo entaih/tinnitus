@@ -10,6 +10,7 @@ import { useTheme } from '@/theme';
 import { formatDate, useLocale, useT } from '@/i18n';
 import { useSettings } from '@/store/settings';
 import { useClinical } from '@/store/clinical';
+import { MadeByAihear } from '@/components/brand/AihearMark';
 import { selectActiveProfile, useProfiles } from '@/store/profiles';
 import { cancelReminders, reminderHourBlocked, scheduleWeekdayReminders } from '@/notifications';
 import { localDateISO, normalizeReminderDays, programDayDate, programEndDate, reminderWeekdays } from '@/notificationRules';
@@ -178,6 +179,7 @@ export default function SettingsScreen() {
 
         <SectionHeader title={t('settings.about')} />
         <Card>
+          <MadeByAihear center={false} />
           <Row title={t('settings.about.version')} right={<Text variant="bodySmall" tone="secondary">{version}</Text>} />
           <AboutGrowthRows />
           <Text variant="bodySmall" tone="secondary">{t('settings.about.regulatory')}</Text>
