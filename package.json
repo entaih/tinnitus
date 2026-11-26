@@ -12,7 +12,8 @@
     "lint": "expo lint",
     "test": "tsx --test tests/*.test.ts",
     "release:check": "node scripts/release-check.js",
-    "store:assets": "bash scripts/marketing/build-store-assets.sh"
+    "store:assets": "bash scripts/marketing/build-store-assets.sh",
+    "promo:video": "bash scripts/marketing/build-reel.sh"
   },
   "dependencies": {
     "@expo/metro-runtime": "~58.0.15",

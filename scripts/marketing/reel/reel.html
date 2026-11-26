@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Dingin reel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #04050c; }
+  body { font-family: 'Inter', 'Inter Display', system-ui, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  .layer { position: absolute; inset: 0; will-change: opacity, transform; }
+  #night { background: radial-gradient(ellipse at 50% 38%, #141a3a 0%, #070912 55%, #020309 100%); }
+  #indigo { background: linear-gradient(170deg, #5b4ff0 0%, #4338ca 45%, #2a2580 100%); opacity: 0; }
+  #glow { background: radial-gradient(circle at 50% 55%, rgba(199,210,254,0.55) 0%, rgba(199,210,254,0) 55%); opacity: 0; mix-blend-mode: screen; }
+  #vignette { background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%); }
+  .stars span { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #c7d2fe; }
+  .txt { position: absolute; left: 90px; right: 90px; text-align: center; text-shadow: 0 6px 30px rgba(0,0,0,0.45); }
+  .small { font-weight: 600; font-size: 44px; letter-spacing: 10px; color: #a5b4fc; text-transform: uppercase; }
+  .big { font-weight: 800; font-size: 104px; line-height: 1.08; letter-spacing: -1.5px; }
+  .mid { font-weight: 700; font-size: 76px; line-height: 1.12; letter-spacing: -0.8px; }
+  .body { font-weight: 500; font-size: 46px; line-height: 1.3; color: #e0e7ff; }
+  .word { display: inline-block; will-change: transform, opacity, filter; }
+  #head { position: absolute; left: 50%; top: 760px; width: 760px; height: 760px; margin-left: -380px; }
+  #people { position: absolute; left: 0; right: 0; top: 1220px; display: flex; justify-content: center; gap: 34px; }
+  #people svg { width: 92px; height: 170px; }
+  #phone { position: absolute; left: 50%; top: 560px; width: 640px; height: 1300px; margin-left: -320px; border-radius: 86px; background: #0b1020; padding: 20px; box-shadow: 0 60px 120px rgba(10,8,50,0.6), 0 0 0 3px rgba(255,255,255,0.08) inset; }
+  #phone .screen { position: relative; width: 100%; height: 100%; border-radius: 68px; overflow: hidden; background: #f6f7fb; }
+  #phone img { position: absolute; left: 0; top: 0; width: 100%; height: auto; }
+  #icon { position: absolute; left: 50%; top: 640px; width: 260px; height: 260px; margin-left: -130px; border-radius: 62px; box-shadow: 0 40px 90px rgba(10,8,50,0.55); }
+  #endicon { position: absolute; left: 50%; top: 380px; width: 220px; height: 220px; margin-left: -110px; border-radius: 52px; box-shadow: 0 30px 80px rgba(10,8,50,0.5); }
+  .pill { display: inline-flex; align-items: center; justify-content: center; height: 118px; padding: 0 54px; border-radius: 60px; background: #fff; color: #312e81; font-weight: 700; font-size: 44px; margin: 0 14px; box-shadow: 0 20px 50px rgba(10,8,50,0.35); }
+  #logo { position: absolute; left: 50%; bottom: 470px; height: 64px; transform: translateX(-50%); }
+  #disclaimer { position: absolute; left: 130px; right: 160px; bottom: 360px; text-align: center; font-size: 30px; line-height: 1.35; color: rgba(224,231,255,0.8); font-weight: 500; }
+  #scrim { background: linear-gradient(180deg, rgba(42,37,128,0.0) 0%, rgba(42,37,128,0.0) 60%, rgba(30,27,90,0.9) 100%); opacity: 0; }
+</style>
+</head>
+<body>
+  <div id="night" class="layer"></div>
+  <div id="stars" class="layer stars"></div>
+  <div id="indigo" class="layer"></div>
+  <div id="glow" class="layer"></div>
+
+  <!-- Head in profile with sound waves (tense amber → calm indigo) -->
+  <svg id="head" viewBox="0 0 760 760" aria-hidden="true">
+    <defs>
+      <linearGradient id="headFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d63ff"/><stop offset="1" stop-color="#3f37c9"/></linearGradient>
+    </defs>
+    <g id="waves"></g>
+    <path id="headShape" fill="url(#headFill)" d="M250 740C250 660 230 610 205 560C160 470 160 330 230 240C300 150 440 130 520 190C590 240 610 320 600 380C600 400 612 420 652 470L612 492C616 520 610 540 600 552C612 565 606 585 588 595C560 610 520 612 480 606C470 650 470 700 480 740Z"/>
+    <path id="ear" d="M335 345c-34 0-52 30-50 66 2 32 24 46 24 70 0 18 14 28 30 24 36-10 52-54 50-96-2-38-20-64-54-64z" fill="#5a50f0" stroke="#c7d2fe" stroke-width="7"/>
+    <path id="eye" d="M520 372q22 16 44 0" stroke="#e0e7ff" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <g id="moon" opacity="0"><path d="M610 90a70 70 0 1 0 70 92a56 56 0 1 1-70-92z" fill="#fbbf24"/><circle cx="560" cy="70" r="7" fill="#fde68a"/><circle cx="700" cy="250" r="5" fill="#fde68a"/></g>
+  </svg>
+
+  <div id="people"></div>
+
+  <div id="phone"><div class="screen"><img id="shotA" alt=""><img id="shotB" alt=""></div></div>
+  <img id="icon" alt="">
+  <img id="endicon" alt="">
+
+  <div id="t1" class="txt small" style="top:520px"></div>
+  <div id="t2" class="txt big" style="top:610px"></div>
+  <div id="t3" class="txt big" style="top:300px"></div>
+  <div id="t4" class="txt mid" style="top:330px"></div>
+  <div id="t5" class="txt big" style="top:300px"></div>
+  <div id="t6" class="txt big" style="top:960px"></div>
+  <div id="t7" class="txt body" style="top:1110px"></div>
+  <div id="cap" class="txt mid" style="top:190px"></div>
+  <div id="t8" class="txt big" style="top:300px"></div>
+  <div id="end1" class="txt big" style="top:700px"></div>
+  <div id="end2" class="txt body" style="top:850px"></div>
+  <div id="end3" class="txt" style="top:960px"></div>
+  <div id="end4" class="txt body" style="top:1230px;font-size:38px;color:#c7d2fe"></div>
+  <img id="logo" alt="AIHEAR">
+  <div id="disclaimer"></div>
+  <div id="scrim" class="layer"></div>
+  <div id="vignette" class="layer"></div>
+  <script src="reel.js"></script>
+</body>
+</html>
