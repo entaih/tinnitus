@@ -133,3 +133,11 @@ Sprint 2 adayları ve KPI'lar: `docs/reviews/pm-sprint1.md` §4.
 - ✅ Koyu tema tüm ekranlarda kontrol edildi; ekran okuyucu rolleri tamamlandı; telefon testleri ve ses adları sadeleştirildi.
 - ✅ Mağaza ekran görüntüsü taslakları (`docs/store-screenshots/`).
 - 🧪 Uzman onayı bekleyenler: içerik incelemesinin "klinisyene sorulacaklar" listesi (akut/kronik süre eşikleri, uyku sıkıştırma, doğrulanamayan bazı sayılar, kulak tıkacı önerisi).
+
+## 14. Yayın hazırlığı: iOS + Android, AIHEAR (Kasım 2026)
+- ✅ iOS ve Android yerel projeleri üretilerek doğrulandı (izinler, sürüm, şifreleme beyanı, gizlilik bildirimi, iki dilli izin metinleri); App Store için saydamlıksız ikon; tüm modüller SDK 58 uyumlu.
+- ✅ AIHEAR markası (yer tutucu logo yuvası `assets/brand/`), "Bir AIHEAR uygulaması", veri sorumlusu AIHEAR.
+- ✅ ASO: TR/EN mağaza metni, anahtar kelimeler, A/B varyantları; ikna edici mağaza görselleri (App Store + Google Play, öne çıkan görsel, 512 ikon) ve yeniden üretim betiği.
+- ✅ SEO açılış sayfası (`docs/site/`), yayımlanabilir gizlilik sayfası.
+- ✅ 30 sn Reels tanıtım videosu (`docs/marketing/`), yeniden üretim betiği.
+- ⏭ Sahibin yapacakları: `docs/RELEASE.md` §2–6 (paket kimliği kararı, destek e-postası, resmi logo, hesaplar, EAS derleme ve gönderim, mağaza formları).
