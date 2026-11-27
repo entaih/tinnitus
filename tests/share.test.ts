@@ -109,5 +109,5 @@ test('buildShareText carries only the user\'s numbers and no banned word; invite
   assert.equal(findBannedShareWord(text), null, text);
   assert.match(text, /48/);
   assert.match(text, /36/);
-  assert.equal(inviteLink('AB12 Z'), 'dingin://invite?from=AB12%20Z');
+  assert.equal(inviteLink('AB12 Z'), 'aihear://invite?from=AB12%20Z');
 });

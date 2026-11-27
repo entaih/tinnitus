@@ -15,7 +15,7 @@ export function storeLinesText(ios: string | null | undefined, android: string |
 }
 
 /** Deep link carried by an invite; the code is random and non-identifying (growth store). */
-export const inviteLink = (inviteCode: string) => `dingin://invite?from=${encodeURIComponent(inviteCode)}`;
+export const inviteLink = (inviteCode: string) => `aihear://invite?from=${encodeURIComponent(inviteCode)}`;
 
 /**
  * Words that must never appear in share copy (PM sprint 3 §2 "tedavi dili yok"): the app describes self-management

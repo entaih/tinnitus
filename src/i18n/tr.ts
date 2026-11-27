@@ -1,5 +1,5 @@
 export const tr = {
-  'app.name': 'Dingin',
+  'app.name': 'AIHEAR',
   'app.tagline': 'Çınlama için ön değerlendirme ve öz yönetim',
   'tab.home': 'Ana sayfa', 'tab.assess': 'Testler', 'tab.sound': 'Sesler', 'tab.mind': 'Dersler', 'tab.progress': 'İlerleme',
   'common.continue': 'Devam et', 'common.back': 'Geri', 'common.start': 'Başla', 'common.save': 'Kaydet', 'common.done': 'Tamam', 'common.skip': 'Atla', 'common.cancel': 'Vazgeç',

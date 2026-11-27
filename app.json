@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Dingin",
-    "slug": "dingin",
+    "name": "AIHEAR",
+    "slug": "aihear-tinnitus",
     "version": "1.0.0",
-    "scheme": "dingin",
+    "scheme": "aihear",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.aiheartech.tinnova",
+      "bundleIdentifier": "com.aiheartech.tinnitus",
       "infoPlist": {
         "UIBackgroundModes": [
           "audio"
@@ -60,7 +60,7 @@
       }
     },
     "android": {
-      "package": "com.aiheartech.tinnova",
+      "package": "com.aiheartech.tinnitus",
       "adaptiveIcon": {
         "backgroundColor": "#0B0F1A",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -123,7 +123,7 @@
     "experiments": {
       "typedRoutes": false
     },
-    "description": "Çınlama için ön değerlendirme ve kişisel, kanıta dayalı öz yönetim programı.",
+    "description": "Kulak çınlaması için ön değerlendirme ve kişisel, kanıta dayalı öz yönetim programı. Bir AIHEAR uygulaması.",
     "primaryColor": "#4F46E5",
     "locales": {
       "tr": "./locales/tr.json",
@@ -132,7 +132,7 @@
     "extra": {
       "storeUrls": {
         "ios": null,
-        "android": "https://play.google.com/store/apps/details?id=com.aiheartech.tinnova"
+        "android": "https://play.google.com/store/apps/details?id=com.aiheartech.tinnitus"
       },
       "legal": {
         "controller": "AIHEAR",

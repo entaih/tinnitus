@@ -1,5 +1,5 @@
 export const en = {
-  'app.name': 'Dingin',
+  'app.name': 'AIHEAR',
   'app.tagline': 'Tinnitus assessment and self-management',
   'tab.home': 'Home', 'tab.assess': 'Tests', 'tab.sound': 'Sounds', 'tab.mind': 'Lessons', 'tab.progress': 'Progress',
   'common.continue': 'Continue', 'common.back': 'Back', 'common.start': 'Start', 'common.save': 'Save', 'common.done': 'Done', 'common.skip': 'Skip', 'common.cancel': 'Cancel',

@@ -27,20 +27,20 @@ export const growthStrings = {
     'growth.share.card.change.up': 'Çınlama etki puanı {n} puan arttı',
     'growth.share.card.change.flat': 'Çınlama etki puanı değişmedi',
     'growth.share.card.change.none': 'Değişim ikinci ölçümden sonra görünür',
-    'growth.share.card.footer': 'Dingin · Kişisel öz izlem · Tanı değildir',
+    'growth.share.card.footer': 'AIHEAR · Kişisel öz izlem · Tanı değildir',
     'growth.share.image': 'Görsel olarak paylaş',
     'growth.share.text': 'Metin olarak paylaş',
     'growth.share.pdf': 'PDF olarak paylaş',
     'growth.share.fail': 'Paylaşım hazırlanamadı. Lütfen tekrar deneyin.',
-    'growth.share.shareTitle': 'Dingin ilerleme kartı',
+    'growth.share.shareTitle': 'AIHEAR ilerleme kartı',
     'growth.share.empty': 'Kart için henüz veri yok. Değerlendirmeyi tamamlayıp programa başladığınızda puanlarınız burada görünecek.',
     'growth.share.privacy': 'Paylaşım yalnızca sizin başlattığınız işlemle gerçekleşir; uygulama kendiliğinden hiçbir şey göndermez.',
 
     // --- Invite ---
     'growth.invite.title': 'Arkadaşınızı davet edin',
-    'growth.invite.body': 'Kulak çınlamasıyla yaşayan bir tanıdığınız varsa Dingin\'i önerebilirsiniz. Mesaj yalnızca mağaza bağlantılarını içerir; kişisel veri taşımaz.',
+    'growth.invite.body': 'Kulak çınlamasıyla yaşayan bir tanıdığınız varsa AIHEAR\'ı önerebilirsiniz. Mesaj yalnızca mağaza bağlantılarını içerir; kişisel veri taşımaz.',
     'growth.invite.cta': 'Davet gönder',
-    'growth.invite.message': 'Kulak çınlaması için Türkçe, kanıta dayalı bir uygulama kullanıyorum: Dingin. Kısa testlerle ön değerlendirme yapıyor ve kişisel bir program hazırlıyor.\n\n{stores}',
+    'growth.invite.message': 'Kulak çınlaması için Türkçe, kanıta dayalı bir uygulama kullanıyorum: AIHEAR. Kısa testlerle ön değerlendirme yapıyor ve kişisel bir program hazırlıyor.\n\n{stores}',
 
     // --- Crisis card ---
     'growth.crisis.title': 'Acil yardım',
@@ -75,7 +75,7 @@ export const growthStrings = {
     'growth.crisis.plan.clearConfirm': 'Güvenlik planı silinsin mi?',
     'growth.crisis.plan.item': '{group} {n}',
     'growth.crisis.offline': 'Bu sayfa internet bağlantısı olmadan da açılır; metinler uygulamanın içinde gömülüdür.',
-    'growth.crisis.disclaimer': 'Dingin bir kriz hizmeti değildir. Bu sayfa yalnızca doğru yere yönlendirmek için hazırlanmıştır.',
+    'growth.crisis.disclaimer': 'AIHEAR bir kriz hizmeti değildir. Bu sayfa yalnızca doğru yere yönlendirmek için hazırlanmıştır.',
 
     // --- Clinic code ---
     'growth.clinic.title': 'Klinik kodu',
@@ -99,7 +99,7 @@ export const growthStrings = {
     // --- Evidence page ---
     'growth.evidence.title': 'Kanıt ve kaynaklar',
     'growth.evidence.row': 'Kanıt sayfası',
-    'growth.evidence.intro': 'Dingin neye dayanıyor? Uygulamadaki her kanıt rozeti aşağıdaki kaynaklardan birine bağlanır. Kaynaklar düzeye göre gruplanmıştır.',
+    'growth.evidence.intro': 'AIHEAR neye dayanıyor? Uygulamadaki her kanıt rozeti aşağıdaki kaynaklardan birine bağlanır. Kaynaklar düzeye göre gruplanmıştır.',
     'growth.evidence.level.guideline': 'Kılavuzlar ve sistematik derlemeler',
     'growth.evidence.level.rct': 'Randomize kontrollü çalışmalar ve ölçek çalışmaları',
     'growth.evidence.level.expert': 'Uzman uzlaşısı',
@@ -115,11 +115,11 @@ export const growthStrings = {
     'growth.evidence.claims.dont.title': 'Söylemediklerimiz',
     'growth.evidence.claims.dont.1': '"Tedavi eder", "iyileştirir" ya da "çınlamayı geçirir".',
     'growth.evidence.claims.dont.2': 'Kesin tanı koyar ya da hekim muayenesinin yerini tutar.',
-    'growth.evidence.claims.dont.3': '"Klinik olarak kanıtlanmış uygulama": Dingin\'in kendi kontrollü çalışması henüz yoktur.',
+    'growth.evidence.claims.dont.3': '"Klinik olarak kanıtlanmış uygulama": AIHEAR\'ın kendi kontrollü çalışması henüz yoktur.',
     'growth.evidence.claims.dont.4': 'Öncesi/sonrası hasta görselleri ya da hasta teşekkür mesajları kullanmayız.',
     'growth.evidence.ownData': 'Kendi verimizle ilgili yalnızca betimleyici ifadeler kullanırız; kontrol grubu iddiası içermez.',
     'growth.evidence.regulatory.title': 'Düzenleyici durum ve gizlilik',
-    'growth.evidence.regulatory.body': 'Dingin bir ön değerlendirme ve öz yönetim uygulamasıdır; kesin tanıyı hekim koyar. KVKK: tüm veriler cihazınızda kalır, sunucuya gönderilmez. Sağlık verinizi yalnızca siz, kendi başlattığınız paylaşımla aktarırsınız.',
+    'growth.evidence.regulatory.body': 'AIHEAR bir ön değerlendirme ve öz yönetim uygulamasıdır; kesin tanıyı hekim koyar. KVKK: tüm veriler cihazınızda kalır, sunucuya gönderilmez. Sağlık verinizi yalnızca siz, kendi başlattığınız paylaşımla aktarırsınız.',
     'growth.evidence.advisory': 'Danışma kurulu (KBB, odyoloji, klinik psikoloji, sağlık hukuku) oluşturulduğunda isimler yalnızca bu sayfada ve "danışman" sıfatıyla yer alacaktır.',
 
     // --- Weekly review reminder ---
@@ -200,20 +200,20 @@ export const growthStrings = {
     'growth.share.card.change.up': 'THI up {n} points',
     'growth.share.card.change.flat': 'THI unchanged',
     'growth.share.card.change.none': 'Change appears after the second measurement',
-    'growth.share.card.footer': 'Dingin · Personal self-monitoring · Not a diagnosis',
+    'growth.share.card.footer': 'AIHEAR · Personal self-monitoring · Not a diagnosis',
     'growth.share.image': 'Share as image',
     'growth.share.text': 'Share as text',
     'growth.share.pdf': 'Share as PDF',
     'growth.share.fail': 'The share could not be prepared. Please try again.',
-    'growth.share.shareTitle': 'Dingin progress card',
+    'growth.share.shareTitle': 'AIHEAR progress card',
     'growth.share.empty': 'No data for the card yet. Your scores will appear here once you complete the assessment and start the programme.',
     'growth.share.privacy': 'Sharing happens only through an action you start; the app never sends anything by itself.',
 
     // --- Invite ---
     'growth.invite.title': 'Invite a friend',
-    'growth.invite.body': 'If someone you know lives with tinnitus, you can recommend Dingin. The message contains only the store links; it carries no personal data.',
+    'growth.invite.body': 'If someone you know lives with tinnitus, you can recommend AIHEAR. The message contains only the store links; it carries no personal data.',
     'growth.invite.cta': 'Send invite',
-    'growth.invite.message': 'I am using Dingin, an evidence-based app for tinnitus. Short tests give a preliminary assessment and a personal programme.\n\n{stores}',
+    'growth.invite.message': 'I am using AIHEAR, an evidence-based app for tinnitus. Short tests give a preliminary assessment and a personal programme.\n\n{stores}',
 
     // --- Crisis card ---
     'growth.crisis.title': 'Urgent help',
@@ -248,7 +248,7 @@ export const growthStrings = {
     'growth.crisis.plan.clearConfirm': 'Delete the safety plan?',
     'growth.crisis.plan.item': '{group} {n}',
     'growth.crisis.offline': 'This page opens without an internet connection; the texts are embedded in the app.',
-    'growth.crisis.disclaimer': 'Dingin is not a crisis service. This page exists only to point you to the right place.',
+    'growth.crisis.disclaimer': 'AIHEAR is not a crisis service. This page exists only to point you to the right place.',
 
     // --- Clinic code ---
     'growth.clinic.title': 'Clinic code',
@@ -272,7 +272,7 @@ export const growthStrings = {
     // --- Evidence page ---
     'growth.evidence.title': 'Evidence and sources',
     'growth.evidence.row': 'Evidence page',
-    'growth.evidence.intro': 'What is Dingin based on? Every evidence badge in the app resolves to one of the sources below, grouped by level.',
+    'growth.evidence.intro': 'What is AIHEAR based on? Every evidence badge in the app resolves to one of the sources below, grouped by level.',
     'growth.evidence.level.guideline': 'Guidelines and systematic reviews',
     'growth.evidence.level.rct': 'Randomised controlled trials and instrument studies',
     'growth.evidence.level.expert': 'Expert consensus',
@@ -288,11 +288,11 @@ export const growthStrings = {
     'growth.evidence.claims.dont.title': 'What we do not say',
     'growth.evidence.claims.dont.1': '"Treats", "cures" or "makes the ringing go away".',
     'growth.evidence.claims.dont.2': 'Makes a final diagnosis or replaces a doctor\'s examination.',
-    'growth.evidence.claims.dont.3': '"Clinically proven app": Dingin has no controlled trial of its own yet.',
+    'growth.evidence.claims.dont.3': '"Clinically proven app": AIHEAR has no controlled trial of its own yet.',
     'growth.evidence.claims.dont.4': 'We do not use before/after patient images or patient testimonials.',
     'growth.evidence.ownData': 'About our own data we only use descriptive statements; no control-group claims.',
     'growth.evidence.regulatory.title': 'Regulatory status and privacy',
-    'growth.evidence.regulatory.body': 'Dingin is a preliminary assessment and self-management app; a doctor makes the final diagnosis. KVKK (Turkish data protection law): all data stays on your device and is never sent to a server. Only you transfer your health data, through a share you start yourself.',
+    'growth.evidence.regulatory.body': 'AIHEAR is a preliminary assessment and self-management app; a doctor makes the final diagnosis. KVKK (Turkish data protection law): all data stays on your device and is never sent to a server. Only you transfer your health data, through a share you start yourself.',
     'growth.evidence.advisory': 'Once the advisory board (ENT, audiology, clinical psychology, health law) is formed, names will appear only on this page and only as "advisor".',
 
     // --- Weekly review reminder ---

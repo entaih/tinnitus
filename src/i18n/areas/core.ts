@@ -371,7 +371,7 @@ export const coreStrings = {
     'settings.about': 'Hakkında',
     'settings.about.version': 'Sürüm',
     'settings.about.evidence': 'Kanıt ve kaynaklar',
-    'settings.about.regulatory': 'Dingin bir ön değerlendirme ve öz yönetim uygulamasıdır. Kesin tanıyı hekim koyar; uygulama KBB uzmanı ve odyolog muayenesinin yerini tutmaz ve iyileşme garantisi vermez.',
+    'settings.about.regulatory': 'AIHEAR bir ön değerlendirme ve öz yönetim uygulamasıdır. Kesin tanıyı hekim koyar; uygulama KBB uzmanı ve odyolog muayenesinin yerini tutmaz ve iyileşme garantisi vermez.',
     'settings.name': 'Görünen ad',
 
     // --- Notifications ---
@@ -851,7 +851,7 @@ export const coreStrings = {
     'settings.about': 'About',
     'settings.about.version': 'Version',
     'settings.about.evidence': 'Evidence and sources',
-    'settings.about.regulatory': 'Dingin is a preliminary assessment and self-management app. A doctor makes the final diagnosis; the app does not replace an ENT or audiology examination and does not guarantee improvement.',
+    'settings.about.regulatory': 'AIHEAR is a preliminary assessment and self-management app. A doctor makes the final diagnosis; the app does not replace an ENT or audiology examination and does not guarantee improvement.',
     'settings.name': 'Display name',
 
     'notif.title': 'Time for your daily check-in',

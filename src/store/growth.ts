@@ -62,7 +62,7 @@ interface GrowthState {
   safetyPlan: SafetyPlan;
   clinic: ClinicAttribution | null;
   weeklyReview: WeeklyReviewSetting | null;
-  /** Random, non-identifying code embedded in the invite deep link (dingin://invite?from=…). */
+  /** Random, non-identifying code embedded in the invite deep link (aihear://invite?from=…). */
   inviteCode: string;
   /** When the last share-moment card was shown and which one (at most one distinct moment per week; sprint 3 §B3). */
   lastShareMomentAt: string | null;

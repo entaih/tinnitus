@@ -6,10 +6,10 @@ import { useTheme } from '@/theme';
 import { useT } from '@/i18n';
 import { sparklinePoints, thiBandKey, type ProgressStats } from './progressCard';
 
-/** The Dingin mark: a calm ring with a flattening wave — drawn, not an image, so it scales and themes. */
+/** The AIHEAR mark: a calm ring with a flattening wave — drawn, not an image, so it scales and themes. */
 export function DinginMark({ size = 28, color }: { size?: number; color: string }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 32 32" accessibilityLabel="Dingin">
+    <Svg width={size} height={size} viewBox="0 0 32 32" accessibilityLabel="AIHEAR">
       <Circle cx="16" cy="16" r="14" stroke={color} strokeWidth="2.5" fill="none" />
       <Path d="M7 18 C 10 12, 13 12, 16 16 S 22 20, 25 15" stroke={color} strokeWidth="2.5" fill="none" strokeLinecap="round" />
     </Svg>
